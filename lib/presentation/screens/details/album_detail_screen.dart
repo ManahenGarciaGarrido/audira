@@ -8,7 +8,6 @@ import '../../../blocs/cart/cart_event.dart';
 import '../../../blocs/player/player_bloc.dart';
 import '../../../blocs/player/player_event.dart';
 import '../../../blocs/auth/auth_bloc.dart';
-import '../../../blocs/auth/auth_state.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_routes.dart';
 
@@ -77,8 +76,8 @@ class AlbumDetailScreen extends StatelessWidget {
                   Text(
                     album.artistNames.join(', '),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                          color: AppColors.textSecondary,
+                        ),
                   ),
                   const SizedBox(height: 4),
                   Text(

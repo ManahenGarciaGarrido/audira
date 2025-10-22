@@ -1,16 +1,16 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:share_plus/share_plus.dart' show Share;
-import '../../../blocs/player/player_bloc.dart';
-import '../../../blocs/player/player_state.dart';
-import '../../../blocs/player/player_event.dart';
+import 'package:share_plus/share_plus.dart';
+
 import '../../../blocs/auth/auth_bloc.dart';
-import '../../../blocs/auth/auth_state.dart';
-import '../../../data/models/song_model.dart';
-import '../../../data/models/playlist_model.dart';
-import '../../../data/repositories/mock_data_repository.dart';
+import '../../../blocs/player/player_bloc.dart';
+import '../../../blocs/player/player_event.dart';
+import '../../../blocs/player/player_state.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../data/models/song_model.dart';
+import '../../../data/repositories/mock_data_repository.dart';
 
 class FullPlayerScreen extends StatefulWidget {
   final SongModel song;
@@ -366,8 +366,9 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
               context.read<PlayerBloc>().add(const PlayerToggleShuffle());
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                      isShuffled ? 'Aleatorio desactivado' : 'Aleatorio activado'),
+                  content: Text(isShuffled
+                      ? 'Aleatorio desactivado'
+                      : 'Aleatorio activado'),
                   duration: const Duration(seconds: 1),
                 ),
               );
@@ -436,9 +437,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
           // Repeat
           IconButton(
             icon: Icon(
-              repeatMode == RepeatMode.one
-                  ? Icons.repeat_one
-                  : Icons.repeat,
+              repeatMode == RepeatMode.one ? Icons.repeat_one : Icons.repeat,
               size: 28,
             ),
             color: repeatMode != RepeatMode.off
@@ -508,9 +507,12 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
 
   void _shareSong() {
     final song = widget.song;
-    Share.share(
-      'Escucha "${song.title}" de ${song.artistName} en Audira!\n\nPrecio: \$${song.price}',
-      subject: song.title,
+    SharePlus.instance.share(
+      ShareParams(
+        text:
+            'Escucha "${song.title}" de ${song.artistName} en Audira!\n\nPrecio: \$${song.price}',
+        subject: song.title,
+      ),
     );
   }
 
@@ -542,8 +544,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
                       leading: const Icon(Icons.playlist_play,
                           color: AppColors.primary),
                       title: Text(playlist.name),
-                      subtitle:
-                          Text('${playlist.songIds.length} canciones'),
+                      subtitle: Text('${playlist.songIds.length} canciones'),
                       trailing: alreadyAdded
                           ? const Icon(Icons.check, color: Colors.green)
                           : null,
@@ -555,8 +556,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
                               Navigator.pop(dialogContext);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(
-                                      'Añadida a "${playlist.name}"'),
+                                  content: Text('Añadida a "${playlist.name}"'),
                                   backgroundColor: Colors.green,
                                 ),
                               );

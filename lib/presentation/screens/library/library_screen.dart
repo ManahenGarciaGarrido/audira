@@ -251,6 +251,8 @@ class _LibraryScreenState extends State<LibraryScreen>
     final user = context.read<AuthBloc>().state.user;
     final playlists = repository.getPlaylists(user?.id ?? '');
 
+    final stateContext = context;
+
     if (playlists.isEmpty) {
       return TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 600),
@@ -331,7 +333,7 @@ class _LibraryScreenState extends State<LibraryScreen>
                       height: 60,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: Colors.purple.withOpacity(0.2),
+                        color: Colors.purple.withValues(alpha: 0.2),
                       ),
                       child: const Icon(Icons.playlist_play,
                           color: Colors.purple, size: 32),
@@ -344,7 +346,7 @@ class _LibraryScreenState extends State<LibraryScreen>
                       '${songs.length} ${songs.length == 1 ? 'canción' : 'canciones'}',
                     ),
                     trailing: PopupMenuButton(
-                      itemBuilder: (context) => [
+                      itemBuilder: (popupContext) => [
                         PopupMenuItem(
                           child: const Row(
                             children: [
@@ -356,7 +358,10 @@ class _LibraryScreenState extends State<LibraryScreen>
                           onTap: () {
                             Future.delayed(const Duration(milliseconds: 100),
                                 () {
-                              _showEditPlaylistDialog(context, playlist);
+                              if (mounted) {
+                                // ignore: use_build_context_synchronously
+                                _showEditPlaylistDialog(stateContext, playlist);
+                              }
                             });
                           },
                         ),
@@ -434,8 +439,7 @@ class _LibraryScreenState extends State<LibraryScreen>
             onPressed: () {
               if (nameController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Por favor ingresa un nombre')),
+                  const SnackBar(content: Text('Por favor ingresa un nombre')),
                 );
                 return;
               }
@@ -520,8 +524,7 @@ class _LibraryScreenState extends State<LibraryScreen>
     );
   }
 
-  void _showPlaylistDetailDialog(
-      BuildContext context, PlaylistModel playlist) {
+  void _showPlaylistDetailDialog(BuildContext context, PlaylistModel playlist) {
     final repository = MockDataRepository();
     final songs = playlist.songIds
         .map((id) => repository.getSongById(id))
