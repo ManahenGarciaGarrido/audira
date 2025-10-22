@@ -67,6 +67,11 @@ export const addItemToCart = (req: Request, res: Response, next: NextFunction): 
       throw createError('NOT_FOUND', 'Producto no encontrado', 404, { resource: 'product', id: itemId });
     }
 
+    // Stock validation
+    if (!product.inStock) {
+      throw createError('BAD_REQUEST', 'Producto no disponible en stock', 400, { productId: itemId });
+    }
+
     const cartItem: CartItem = {
       itemId,
       name: product.name,
@@ -93,6 +98,15 @@ export const updateCartItemQuantity = (req: Request, res: Response, next: NextFu
 
     if (!quantity || quantity < 1) {
       throw createError('BAD_REQUEST', 'La cantidad debe ser al menos 1', 400);
+    }
+
+    // Stock validation
+    const product = extendedStorage.getProduct(itemId);
+    if (!product) {
+      throw createError('NOT_FOUND', 'Producto no encontrado', 404, { resource: 'product', id: itemId });
+    }
+    if (!product.inStock) {
+      throw createError('BAD_REQUEST', 'Producto no disponible en stock', 400, { productId: itemId });
     }
 
     const success = extendedStorage.updateCartItem(userId, itemId, quantity);

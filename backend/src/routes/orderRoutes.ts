@@ -13,7 +13,6 @@ import { validate } from '../middleware/validation';
 const router = Router();
 
 const createOrderValidation = [
-  body('userId').isUUID().withMessage('User ID must be a valid UUID'),
   body('items').isArray({ min: 1 }).withMessage('Order must contain at least one item'),
   body('items.*.itemId').notEmpty(),
   body('items.*.name').notEmpty(),

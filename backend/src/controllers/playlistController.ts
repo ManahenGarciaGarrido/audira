@@ -52,6 +52,21 @@ export const getUserPlaylists = (req: Request, res: Response, next: NextFunction
   }
 };
 
+export const getPlaylistDetails = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const { id } = req.params;
+    const playlist = extendedStorage.getPlaylist(id);
+
+    if (!playlist) {
+      throw createError('NOT_FOUND', 'Playlist no encontrada', 404, { resource: 'playlist', id });
+    }
+
+    res.status(200).json(playlist);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getPlaylistMetrics = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const { id } = req.params;
@@ -167,6 +182,10 @@ export const addSongToPlaylist = (req: Request, res: Response, next: NextFunctio
       throw createError('NOT_FOUND', 'Canción no encontrada', 404, { resource: 'song', id: songId });
     }
 
+    // Get the artist name
+    const artist = extendedStorage.getAlbum(song.albumId || '');
+    const artistName = artist?.artistName || 'Unknown Artist';
+
     // Check if song already exists in playlist
     const existingSongs = extendedStorage.getPlaylistSongs(id);
     const exists = existingSongs.some(s => s.songId === songId);
@@ -178,7 +197,7 @@ export const addSongToPlaylist = (req: Request, res: Response, next: NextFunctio
       id: uuidv4(),
       songId,
       name: song.title,
-      artistName: song.artistId,
+      artistName,
       duration: song.duration,
       position: position || existingSongs.length + 1,
       addedAt: new Date().toISOString()

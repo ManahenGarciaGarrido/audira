@@ -4,8 +4,17 @@ import { createError } from '../utils/errors';
 
 export const getAllStoreProducts = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const products = extendedStorage.getAllProducts();
-    res.status(200).json(products);
+    const { limit = 20, offset = 0 } = req.query;
+    const allProducts = extendedStorage.getAllProducts();
+    const paginatedProducts = allProducts.slice(
+      Number(offset),
+      Number(offset) + Number(limit)
+    );
+
+    res.status(200).json({
+      products: paginatedProducts,
+      total: allProducts.length
+    });
   } catch (error) {
     next(error);
   }

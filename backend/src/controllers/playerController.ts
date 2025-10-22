@@ -107,3 +107,89 @@ export const getUserPlaybackQueue = (req: Request, res: Response, next: NextFunc
     next(error);
   }
 };
+
+export const setUserPlaybackQueue = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const authReq = req as AuthRequest;
+    const { userId } = req.params;
+    const { queue } = req.body;
+
+    if (!authReq.user || authReq.user.id !== userId) {
+      throw createError('FORBIDDEN', 'No tienes permiso para modificar esta cola', 403);
+    }
+
+    if (!Array.isArray(queue)) {
+      throw createError('BAD_REQUEST', 'La cola debe ser un array', 400);
+    }
+
+    extendedStorage.setQueue(userId, queue);
+    res.status(200).json({ message: 'Cola actualizada correctamente', queue });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addToUserPlaybackQueue = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const authReq = req as AuthRequest;
+    const { userId } = req.params;
+    const { songId } = req.body;
+
+    if (!authReq.user || authReq.user.id !== userId) {
+      throw createError('FORBIDDEN', 'No tienes permiso para modificar esta cola', 403);
+    }
+
+    const song = extendedStorage.getSong(songId);
+    if (!song) {
+      throw createError('NOT_FOUND', 'Canción no encontrada', 404, { resource: 'song', id: songId });
+    }
+
+    const queueItem = {
+      songId: song.id,
+      title: song.title,
+      artistId: song.artistId,
+      duration: song.duration
+    };
+
+    extendedStorage.addToQueue(userId, queueItem);
+    res.status(201).json({ message: 'Canción añadida a la cola', item: queueItem });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeFromUserPlaybackQueue = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const authReq = req as AuthRequest;
+    const { userId, songId } = req.params;
+
+    if (!authReq.user || authReq.user.id !== userId) {
+      throw createError('FORBIDDEN', 'No tienes permiso para modificar esta cola', 403);
+    }
+
+    const success = extendedStorage.removeFromQueue(userId, songId);
+    if (!success) {
+      throw createError('NOT_FOUND', 'Canción no encontrada en la cola', 404);
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const clearUserPlaybackQueue = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const authReq = req as AuthRequest;
+    const { userId } = req.params;
+
+    if (!authReq.user || authReq.user.id !== userId) {
+      throw createError('FORBIDDEN', 'No tienes permiso para modificar esta cola', 403);
+    }
+
+    extendedStorage.clearQueue(userId);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};

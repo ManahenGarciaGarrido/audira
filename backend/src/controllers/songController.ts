@@ -6,8 +6,17 @@ import { createError } from '../utils/errors';
 
 export const getAllSongs = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const songs = extendedStorage.getAllSongs();
-    res.status(200).json(songs);
+    const { limit = 20, offset = 0 } = req.query;
+    const allSongs = extendedStorage.getAllSongs();
+    const paginatedSongs = allSongs.slice(
+      Number(offset),
+      Number(offset) + Number(limit)
+    );
+
+    res.status(200).json({
+      songs: paginatedSongs,
+      total: allSongs.length
+    });
   } catch (error) {
     next(error);
   }

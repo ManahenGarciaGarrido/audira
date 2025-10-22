@@ -8,7 +8,7 @@ import { AuthRequest } from '../middleware/auth';
 export const createOrder = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const authReq = req as AuthRequest;
-    const { userId, items, total, status = 'pending' } = req.body;
+    const { items, total, status = 'pending' } = req.body;
 
     if (!authReq.user) {
       throw createError('UNAUTHORIZED', 'Autenticación requerida', 401);

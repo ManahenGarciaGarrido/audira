@@ -6,8 +6,17 @@ import { createError } from '../utils/errors';
 
 export const getAllAlbums = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const albums = extendedStorage.getAllAlbums();
-    res.status(200).json(albums);
+    const { limit = 20, offset = 0 } = req.query;
+    const allAlbums = extendedStorage.getAllAlbums();
+    const paginatedAlbums = allAlbums.slice(
+      Number(offset),
+      Number(offset) + Number(limit)
+    );
+
+    res.status(200).json({
+      albums: paginatedAlbums,
+      total: allAlbums.length
+    });
   } catch (error) {
     next(error);
   }
@@ -75,6 +84,21 @@ export const deleteAlbum = (req: Request, res: Response, next: NextFunction): vo
       throw createError('NOT_FOUND', 'Álbum no encontrado', 404, { resource: 'album', id });
     }
     res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAlbumSongs = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const { id } = req.params;
+    const album = extendedStorage.getAlbum(id);
+    if (!album) {
+      throw createError('NOT_FOUND', 'Álbum no encontrado', 404, { resource: 'album', id });
+    }
+
+    const songs = extendedStorage.getAllSongs().filter(song => song.albumId === id);
+    res.status(200).json(songs);
   } catch (error) {
     next(error);
   }

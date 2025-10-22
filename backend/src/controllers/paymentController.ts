@@ -4,6 +4,7 @@ import { extendedStorage } from '../models/storageExtended';
 import { Payment } from '../types';
 import { createError } from '../utils/errors';
 import { AuthRequest } from '../middleware/auth';
+import { verifyWebhookSignature } from '../utils/webhook';
 
 export const initiatePayment = (req: Request, res: Response, next: NextFunction): void => {
   try {
@@ -84,9 +85,20 @@ export const getUserPaymentHistory = (req: Request, res: Response, next: NextFun
 export const paymentGatewayWebhook = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const { eventType, paymentId, status } = req.body;
+    const signature = req.headers['x-webhook-signature'] as string;
 
-    // In production, verify webhook signature here
-    // const signature = req.headers['x-webhook-signature'];
+    // Verify webhook signature
+    if (!signature) {
+      throw createError('BAD_REQUEST', 'Firma de webhook requerida', 400);
+    }
+
+    const webhookSecret = process.env.WEBHOOK_SECRET || 'default-webhook-secret';
+    const payload = JSON.stringify(req.body);
+    const isValid = verifyWebhookSignature(payload, signature, webhookSecret);
+
+    if (!isValid) {
+      throw createError('UNAUTHORIZED', 'Firma de webhook inválida', 401);
+    }
 
     if (!paymentId) {
       throw createError('BAD_REQUEST', 'Payment ID es requerido', 400);

@@ -6,8 +6,17 @@ import { createError } from '../utils/errors';
 
 export const getAllGenres = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const genres = extendedStorage.getAllGenres();
-    res.status(200).json(genres);
+    const { limit = 20, offset = 0 } = req.query;
+    const allGenres = extendedStorage.getAllGenres();
+    const paginatedGenres = allGenres.slice(
+      Number(offset),
+      Number(offset) + Number(limit)
+    );
+
+    res.status(200).json({
+      genres: paginatedGenres,
+      total: allGenres.length
+    });
   } catch (error) {
     next(error);
   }
