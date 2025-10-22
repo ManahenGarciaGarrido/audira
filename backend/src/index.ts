@@ -3,11 +3,27 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+// ÉPICA 1 routes
 import userRoutes from './routes/userRoutes';
 import metricsRoutes from './routes/metricsRoutes';
 import ratingsRoutes from './routes/ratingsRoutes';
 import commentsRoutes from './routes/commentsRoutes';
 import communicationRoutes from './routes/communicationRoutes';
+// ÉPICA 2 routes
+import genreRoutes from './routes/genreRoutes';
+import albumRoutes from './routes/albumRoutes';
+import songRoutes from './routes/songRoutes';
+import collaborationRoutes from './routes/collaborationRoutes';
+import discoveryRoutes from './routes/discoveryRoutes';
+// ÉPICA 3 routes
+import playerRoutes from './routes/playerRoutes';
+import libraryRoutes from './routes/libraryRoutes';
+import playlistRoutes from './routes/playlistRoutes';
+// ÉPICA 4 routes
+import storeRoutes from './routes/storeRoutes';
+import cartRoutes from './routes/cartRoutes';
+import orderRoutes from './routes/orderRoutes';
+import paymentRoutes from './routes/paymentRoutes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
 // Load environment variables
@@ -39,11 +55,30 @@ app.get('/health', (req, res) => {
 // API Routes - v1
 const API_PREFIX = '/api/v1';
 
+// ÉPICA 1: Gestión de Usuarios y Comunidad
 app.use(`${API_PREFIX}/users`, userRoutes);
 app.use(`${API_PREFIX}/metrics`, metricsRoutes);
 app.use(`${API_PREFIX}/ratings`, ratingsRoutes);
 app.use(`${API_PREFIX}/comments`, commentsRoutes);
 app.use(`${API_PREFIX}/contact`, communicationRoutes);
+
+// ÉPICA 2: Catálogo Musical y Contenido
+app.use(`${API_PREFIX}/genres`, genreRoutes);
+app.use(`${API_PREFIX}/albums`, albumRoutes);
+app.use(`${API_PREFIX}/songs`, songRoutes);
+app.use(`${API_PREFIX}/collaborations`, collaborationRoutes);
+app.use(`${API_PREFIX}`, discoveryRoutes); // /search, /recommendations, /trending
+
+// ÉPICA 3: Reproducción y Experiencia del Usuario
+app.use(`${API_PREFIX}/player`, playerRoutes);
+app.use(`${API_PREFIX}/library`, libraryRoutes);
+app.use(`${API_PREFIX}/playlists`, playlistRoutes);
+
+// ÉPICA 4: Tienda, Carrito y Pagos
+app.use(`${API_PREFIX}/store`, storeRoutes);
+app.use(`${API_PREFIX}/cart`, cartRoutes);
+app.use(`${API_PREFIX}/orders`, orderRoutes);
+app.use(`${API_PREFIX}/payments`, paymentRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
