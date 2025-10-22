@@ -99,21 +99,7 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-const server = app.listen(PORT, () => {
-  console.log(`
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║   🎵  AUDIRA API - Backend Server                        ║
-║                                                           ║
-║   Environment: ${process.env.NODE_ENV || 'development'}                                   ║
-║   Port:        ${PORT}                                        ║
-║   API Base:    ${API_PREFIX}                            ║
-║                                                           ║
-║   Status:      ✅ Server is running                       ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-  `);
-});
+const server = app.listen(PORT, () => {});
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
