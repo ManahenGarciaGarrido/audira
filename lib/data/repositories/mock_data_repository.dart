@@ -1,6 +1,8 @@
 import '../models/song_model.dart';
 import '../models/album_model.dart';
 import '../models/genre_model.dart';
+import '../models/playlist_model.dart';
+import '../models/review_model.dart';
 
 class MockDataRepository {
   // Datos mock de géneros
@@ -276,5 +278,131 @@ class MockDataRepository {
     } catch (e) {
       return null;
     }
+  }
+
+  // Métodos para agregar contenido
+  void addSong(SongModel song) {
+    _songs.add(song);
+  }
+
+  void addAlbum(AlbumModel album) {
+    _albums.add(album);
+  }
+
+  // Métodos para eliminar contenido
+  void removeSong(String id) {
+    _songs.removeWhere((song) => song.id == id);
+  }
+
+  void removeAlbum(String id) {
+    _albums.removeWhere((album) => album.id == id);
+  }
+
+  // Métodos para obtener contenido por artista
+  List<SongModel> getSongsByArtist(String artistId) {
+    return _songs.where((song) => song.artistId == artistId).toList();
+  }
+
+  List<AlbumModel> getAlbumsByArtist(String artistId) {
+    return _albums
+        .where((album) => album.artistIds.contains(artistId))
+        .toList();
+  }
+
+  // Datos mock de playlists
+  final List<PlaylistModel> _playlists = [];
+
+  // Métodos para playlists
+  List<PlaylistModel> getPlaylists(String userId) {
+    return _playlists.where((playlist) => playlist.userId == userId).toList();
+  }
+
+  void addPlaylist(PlaylistModel playlist) {
+    _playlists.add(playlist);
+  }
+
+  void removePlaylist(String id) {
+    _playlists.removeWhere((playlist) => playlist.id == id);
+  }
+
+  void updatePlaylist(PlaylistModel playlist) {
+    final index = _playlists.indexWhere((p) => p.id == playlist.id);
+    if (index != -1) {
+      _playlists[index] = playlist;
+    }
+  }
+
+  PlaylistModel? getPlaylistById(String id) {
+    try {
+      return _playlists.firstWhere((playlist) => playlist.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void addSongToPlaylist(String playlistId, String songId) {
+    final playlist = getPlaylistById(playlistId);
+    if (playlist != null && !playlist.songIds.contains(songId)) {
+      final updatedPlaylist = playlist.copyWith(
+        songIds: [...playlist.songIds, songId],
+      );
+      updatePlaylist(updatedPlaylist);
+    }
+  }
+
+  void removeSongFromPlaylist(String playlistId, String songId) {
+    final playlist = getPlaylistById(playlistId);
+    if (playlist != null) {
+      final updatedPlaylist = playlist.copyWith(
+        songIds: playlist.songIds.where((id) => id != songId).toList(),
+      );
+      updatePlaylist(updatedPlaylist);
+    }
+  }
+
+  // Datos mock de reviews
+  final List<ReviewModel> _reviews = [
+    ReviewModel(
+      id: 'review1',
+      songId: '1',
+      userId: 'user1',
+      userName: 'María García',
+      rating: 5.0,
+      comment: '¡Increíble canción! Me encanta el ritmo y la producción.',
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+    ReviewModel(
+      id: 'review2',
+      songId: '1',
+      userId: 'user2',
+      userName: 'Carlos López',
+      rating: 4.0,
+      comment: 'Muy buena producción. La voz es espectacular.',
+      createdAt: DateTime.now().subtract(const Duration(days: 5)),
+    ),
+    ReviewModel(
+      id: 'review3',
+      songId: '2',
+      userId: 'user3',
+      userName: 'Ana Martínez',
+      rating: 5.0,
+      comment: 'Perfect para bailar! Me encanta.',
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
+  ];
+
+  // Métodos para reviews
+  List<ReviewModel> getReviewsBySong(String songId) {
+    return _reviews.where((review) => review.songId == songId).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  void addReview(ReviewModel review) {
+    _reviews.add(review);
+  }
+
+  bool hasUserReviewedSong(String userId, String songId) {
+    return _reviews.any(
+        (review) => review.userId == userId && review.songId == songId);
   }
 }

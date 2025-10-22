@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/song_model.dart';
 import '../../../data/models/cart_item_model.dart';
+import '../../../data/models/review_model.dart';
+import '../../../data/repositories/mock_data_repository.dart';
 import '../../../blocs/player/player_bloc.dart';
 import '../../../blocs/player/player_event.dart';
 import '../../../blocs/cart/cart_bloc.dart';
@@ -11,9 +13,14 @@ import '../../../blocs/auth/auth_state.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/music_player_bar.dart';
 
-class SongDetailScreen extends StatelessWidget {
+class SongDetailScreen extends StatefulWidget {
   const SongDetailScreen({super.key});
 
+  @override
+  State<SongDetailScreen> createState() => _SongDetailScreenState();
+}
+
+class _SongDetailScreenState extends State<SongDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final song = ModalRoute.of(context)!.settings.arguments as SongModel;
@@ -232,76 +239,275 @@ class SongDetailScreen extends StatelessWidget {
   }
 
   Widget _buildReviewsSection(BuildContext context, SongModel song) {
+    final repository = MockDataRepository();
+    final reviews = repository.getReviewsBySong(song.id);
+    final user = context.read<AuthBloc>().state.user;
+    final hasReviewed = user != null
+        ? repository.hasUserReviewedSong(user.id, song.id)
+        : false;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Valoraciones', style: Theme.of(context).textTheme.titleLarge),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Valoraciones (${reviews.length})',
+                style: Theme.of(context).textTheme.titleLarge),
+            if (user != null && !hasReviewed)
+              TextButton.icon(
+                onPressed: () => _showAddReviewDialog(context, song),
+                icon: const Icon(Icons.rate_review),
+                label: const Text('Agregar'),
+              ),
+          ],
+        ),
         const SizedBox(height: 8),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const CircleAvatar(child: Icon(Icons.person)),
-                  title: const Text('Usuario Demo'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        if (reviews.isEmpty)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Center(
+                child: Column(
+                  children: [
+                    const Icon(Icons.rate_review,
+                        size: 48, color: Colors.grey),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Aún no hay valoraciones',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    const Text('¡Sé el primero en valorar esta canción!'),
+                  ],
+                ),
+              ),
+            ),
+          )
+        else
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: reviews.take(3).map((review) {
+                  return Column(
                     children: [
-                      Row(
-                        children: List.generate(
-                          5,
-                          (index) => Icon(
-                            index < 5 ? Icons.star : Icons.star_border,
-                            color: Colors.amber,
-                            size: 16,
-                          ),
+                      ListTile(
+                        leading: CircleAvatar(
+                          child: Text(review.userName[0].toUpperCase()),
+                        ),
+                        title: Text(review.userName),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: List.generate(
+                                5,
+                                (index) => Icon(
+                                  index < review.rating
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: Colors.amber,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(review.comment),
+                            const SizedBox(height: 4),
+                            Text(
+                              _formatReviewDate(review.createdAt),
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text('¡Increíble canción! Me encanta el ritmo.'),
+                      if (review != reviews.take(3).last) const Divider(),
                     ],
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const CircleAvatar(child: Icon(Icons.person)),
-                  title: const Text('Otro Usuario'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: List.generate(
-                          5,
-                          (index) => Icon(
-                            index < 4 ? Icons.star : Icons.star_border,
-                            color: Colors.amber,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text('Muy buena producción.'),
-                    ],
-                  ),
-                ),
-              ],
+                  );
+                }).toList(),
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Center(
-          child: TextButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Funcionalidad en desarrollo')),
-              );
-            },
-            child: const Text('Ver todas las valoraciones'),
+        if (reviews.length > 3)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: TextButton(
+                onPressed: () => _showAllReviewsDialog(context, song, reviews),
+                child: Text('Ver todas las ${reviews.length} valoraciones'),
+              ),
+            ),
           ),
-        ),
       ],
     );
+  }
+
+  void _showAddReviewDialog(BuildContext context, SongModel song) {
+    double rating = 5.0;
+    final commentController = TextEditingController();
+    final repository = MockDataRepository();
+    final user = context.read<AuthBloc>().state.user;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Agregar Valoración'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Calificación:'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  5,
+                  (index) => IconButton(
+                    icon: Icon(
+                      index < rating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: 32,
+                    ),
+                    onPressed: () {
+                      setDialogState(() {
+                        rating = (index + 1).toDouble();
+                      });
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: commentController,
+                decoration: const InputDecoration(
+                  labelText: 'Comentario',
+                  hintText: '¿Qué te pareció esta canción?',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (commentController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Por favor escribe un comentario')),
+                  );
+                  return;
+                }
+
+                final newReview = ReviewModel(
+                  id: 'review_${DateTime.now().millisecondsSinceEpoch}',
+                  songId: song.id,
+                  userId: user?.id ?? '',
+                  userName: user?.name ?? 'Usuario',
+                  rating: rating,
+                  comment: commentController.text,
+                  createdAt: DateTime.now(),
+                );
+
+                repository.addReview(newReview);
+                Navigator.pop(dialogContext);
+                setState(() {}); // Refresh UI
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('¡Valoración agregada!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              child: const Text('Publicar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAllReviewsDialog(
+      BuildContext context, SongModel song, List<ReviewModel> reviews) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('Valoraciones de ${song.title}'),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400,
+          child: ListView.builder(
+            itemCount: reviews.length,
+            itemBuilder: (context, index) {
+              final review = reviews[index];
+              return Column(
+                children: [
+                  ListTile(
+                    leading: CircleAvatar(
+                      child: Text(review.userName[0].toUpperCase()),
+                    ),
+                    title: Text(review.userName),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: List.generate(
+                            5,
+                            (i) => Icon(
+                              i < review.rating
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(review.comment),
+                        const SizedBox(height: 4),
+                        Text(
+                          _formatReviewDate(review.createdAt),
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (index < reviews.length - 1) const Divider(),
+                ],
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatReviewDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      if (difference.inHours == 0) {
+        return 'Hace ${difference.inMinutes} minutos';
+      }
+      return 'Hace ${difference.inHours} horas';
+    } else if (difference.inDays < 7) {
+      return 'Hace ${difference.inDays} días';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
   }
 
   String _formatDuration(Duration duration) {

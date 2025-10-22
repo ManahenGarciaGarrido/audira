@@ -1,10 +1,15 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart' show Share;
 import '../../../blocs/player/player_bloc.dart';
 import '../../../blocs/player/player_state.dart';
 import '../../../blocs/player/player_event.dart';
+import '../../../blocs/auth/auth_bloc.dart';
+import '../../../blocs/auth/auth_state.dart';
 import '../../../data/models/song_model.dart';
+import '../../../data/models/playlist_model.dart';
+import '../../../data/repositories/mock_data_repository.dart';
 import '../../../core/constants/app_colors.dart';
 
 class FullPlayerScreen extends StatefulWidget {
@@ -345,6 +350,8 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
 
   Widget _buildControls(BuildContext context, PlayerState state) {
     final isPlaying = state.status == PlayerStatus.playing;
+    final isShuffled = state.isShuffled;
+    final repeatMode = state.repeatMode;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -354,10 +361,15 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
           // Shuffle
           IconButton(
             icon: const Icon(Icons.shuffle, size: 28),
-            color: AppColors.textSecondary,
+            color: isShuffled ? AppColors.secondary : AppColors.textSecondary,
             onPressed: () {
+              context.read<PlayerBloc>().add(const PlayerToggleShuffle());
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Función próximamente')),
+                SnackBar(
+                  content: Text(
+                      isShuffled ? 'Aleatorio desactivado' : 'Aleatorio activado'),
+                  duration: const Duration(seconds: 1),
+                ),
               );
             },
           ),
@@ -367,9 +379,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
             icon: const Icon(Icons.skip_previous, size: 40),
             color: AppColors.textPrimary,
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Canción anterior')),
-              );
+              context.read<PlayerBloc>().add(const PlayerPrevious());
             },
           ),
 
@@ -419,19 +429,33 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
             icon: const Icon(Icons.skip_next, size: 40),
             color: AppColors.textPrimary,
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Siguiente canción')),
-              );
+              context.read<PlayerBloc>().add(const PlayerNext());
             },
           ),
 
           // Repeat
           IconButton(
-            icon: const Icon(Icons.repeat, size: 28),
-            color: AppColors.textSecondary,
+            icon: Icon(
+              repeatMode == RepeatMode.one
+                  ? Icons.repeat_one
+                  : Icons.repeat,
+              size: 28,
+            ),
+            color: repeatMode != RepeatMode.off
+                ? AppColors.secondary
+                : AppColors.textSecondary,
             onPressed: () {
+              context.read<PlayerBloc>().add(const PlayerToggleRepeat());
+              final message = switch (repeatMode) {
+                RepeatMode.off => 'Repetir todo activado',
+                RepeatMode.all => 'Repetir uno activado',
+                RepeatMode.one => 'Repetir desactivado',
+              };
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Repetir próximamente')),
+                SnackBar(
+                  content: Text(message),
+                  duration: const Duration(seconds: 1),
+                ),
               );
             },
           ),
@@ -450,9 +474,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
             icon: const Icon(Icons.share_outlined, size: 26),
             color: AppColors.textSecondary,
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Compartir')),
-              );
+              _shareSong();
             },
           ),
           AnimatedScale(
@@ -476,10 +498,77 @@ class _FullPlayerScreenState extends State<FullPlayerScreen>
             icon: const Icon(Icons.playlist_add, size: 26),
             color: AppColors.textSecondary,
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Añadir a playlist')),
-              );
+              _showAddToPlaylistDialog();
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _shareSong() {
+    final song = widget.song;
+    Share.share(
+      'Escucha "${song.title}" de ${song.artistName} en Audira!\n\nPrecio: \$${song.price}',
+      subject: song.title,
+    );
+  }
+
+  void _showAddToPlaylistDialog() {
+    final repository = MockDataRepository();
+    final user = context.read<AuthBloc>().state.user;
+    final playlists = repository.getPlaylists(user?.id ?? '');
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Añadir a Playlist'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: playlists.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('No tienes playlists. Créa una primero.'),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: playlists.length,
+                  itemBuilder: (context, index) {
+                    final playlist = playlists[index];
+                    final alreadyAdded =
+                        playlist.songIds.contains(widget.song.id);
+
+                    return ListTile(
+                      leading: const Icon(Icons.playlist_play,
+                          color: AppColors.primary),
+                      title: Text(playlist.name),
+                      subtitle:
+                          Text('${playlist.songIds.length} canciones'),
+                      trailing: alreadyAdded
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                      onTap: alreadyAdded
+                          ? null
+                          : () {
+                              repository.addSongToPlaylist(
+                                  playlist.id, widget.song.id);
+                              Navigator.pop(dialogContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Añadida a "${playlist.name}"'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            },
+                    );
+                  },
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cerrar'),
           ),
         ],
       ),

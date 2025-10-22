@@ -47,3 +47,28 @@ class PlayerUpdateProgress extends PlayerEvent {
   @override
   List<Object?> get props => [position];
 }
+
+class PlayerNext extends PlayerEvent {
+  const PlayerNext();
+}
+
+class PlayerPrevious extends PlayerEvent {
+  const PlayerPrevious();
+}
+
+class PlayerToggleShuffle extends PlayerEvent {
+  const PlayerToggleShuffle();
+}
+
+class PlayerToggleRepeat extends PlayerEvent {
+  const PlayerToggleRepeat();
+}
+
+class PlayerSetPlaylist extends PlayerEvent {
+  final List<SongModel> songs;
+
+  const PlayerSetPlaylist(this.songs);
+
+  @override
+  List<Object?> get props => [songs];
+}

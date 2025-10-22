@@ -226,9 +226,7 @@ class ProfileScreen extends StatelessWidget {
           title: const Text('Cambiar contraseña'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Funcionalidad en desarrollo')),
-            );
+            _showChangePasswordDialog(context);
           },
         ),
         ListTile(
@@ -236,9 +234,7 @@ class ProfileScreen extends StatelessWidget {
           title: const Text('Notificaciones'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Funcionalidad en desarrollo')),
-            );
+            _showNotificationsDialog(context);
           },
         ),
         ListTile(
@@ -246,9 +242,7 @@ class ProfileScreen extends StatelessWidget {
           title: const Text('Privacidad'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Funcionalidad en desarrollo')),
-            );
+            _showPrivacyDialog(context);
           },
         ),
         const Divider(),
@@ -321,14 +315,326 @@ class ProfileScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
+              if (nameController.text.isEmpty ||
+                  usernameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Por favor completa todos los campos')),
+                );
+                return;
+              }
+
+              // Note: En una app real, esto debería actualizar el usuario en el backend
+              // y luego actualizar el state del AuthBloc
               Navigator.pop(dialogContext);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Perfil actualizado')),
+                const SnackBar(
+                  content: Text('Perfil actualizado correctamente'),
+                  backgroundColor: Colors.green,
+                ),
               );
             },
             child: const Text('Guardar'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context) {
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    bool obscureText1 = true;
+    bool obscureText2 = true;
+    bool obscureText3 = true;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Cambiar Contraseña'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: currentPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Contraseña actual',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscureText1 ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          obscureText1 = !obscureText1;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: obscureText1,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: newPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Nueva contraseña',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscureText2 ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          obscureText2 = !obscureText2;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: obscureText2,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Confirmar nueva contraseña',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscureText3 ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          obscureText3 = !obscureText3;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: obscureText3,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (currentPasswordController.text.isEmpty ||
+                    newPasswordController.text.isEmpty ||
+                    confirmPasswordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Por favor completa todos los campos')),
+                  );
+                  return;
+                }
+
+                if (newPasswordController.text !=
+                    confirmPasswordController.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Las contraseñas no coinciden')),
+                  );
+                  return;
+                }
+
+                if (newPasswordController.text.length < 6) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content:
+                            Text('La contraseña debe tener al menos 6 caracteres')),
+                  );
+                  return;
+                }
+
+                Navigator.pop(dialogContext);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Contraseña actualizada correctamente'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              child: const Text('Cambiar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showNotificationsDialog(BuildContext context) {
+    bool emailNotifications = true;
+    bool pushNotifications = true;
+    bool newReleasesNotifications = true;
+    bool promotionsNotifications = false;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Notificaciones'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SwitchListTile(
+                  title: const Text('Notificaciones por email'),
+                  subtitle:
+                      const Text('Recibir actualizaciones por correo electrónico'),
+                  value: emailNotifications,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      emailNotifications = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Notificaciones push'),
+                  subtitle: const Text('Recibir notificaciones en el dispositivo'),
+                  value: pushNotifications,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      pushNotifications = value;
+                    });
+                  },
+                ),
+                const Divider(),
+                SwitchListTile(
+                  title: const Text('Nuevos lanzamientos'),
+                  subtitle: const Text('Notificar sobre nueva música'),
+                  value: newReleasesNotifications,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      newReleasesNotifications = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Promociones'),
+                  subtitle: const Text('Ofertas y descuentos especiales'),
+                  value: promotionsNotifications,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      promotionsNotifications = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Preferencias de notificaciones guardadas'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPrivacyDialog(BuildContext context) {
+    bool profilePublic = true;
+    bool showPlaylistsToOthers = true;
+    bool showPurchaseHistory = false;
+    bool allowDataAnalytics = true;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Privacidad'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Configuración de privacidad',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: const Text('Perfil público'),
+                  subtitle: const Text('Permitir que otros vean tu perfil'),
+                  value: profilePublic,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      profilePublic = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Mostrar playlists'),
+                  subtitle: const Text('Compartir tus playlists públicamente'),
+                  value: showPlaylistsToOthers,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      showPlaylistsToOthers = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Historial de compras'),
+                  subtitle: const Text('Mostrar tus compras en tu perfil'),
+                  value: showPurchaseHistory,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      showPurchaseHistory = value;
+                    });
+                  },
+                ),
+                const Divider(),
+                SwitchListTile(
+                  title: const Text('Análisis de datos'),
+                  subtitle: const Text('Ayudarnos a mejorar la app'),
+                  value: allowDataAnalytics,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      allowDataAnalytics = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Configuración de privacidad guardada'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        ),
       ),
     );
   }
