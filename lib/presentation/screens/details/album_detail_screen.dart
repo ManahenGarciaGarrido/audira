@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/album_model.dart';
 import '../../../data/models/cart_item_model.dart';
+import '../../../data/repositories/mock_data_repository.dart';
 import '../../../blocs/cart/cart_bloc.dart';
 import '../../../blocs/cart/cart_event.dart';
+import '../../../blocs/player/player_bloc.dart';
+import '../../../blocs/player/player_event.dart';
+import '../../../blocs/auth/auth_bloc.dart';
+import '../../../blocs/auth/auth_state.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_routes.dart';
 
 class AlbumDetailScreen extends StatelessWidget {
   const AlbumDetailScreen({super.key});
@@ -174,33 +180,7 @@ class AlbumDetailScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Card(
-                    child: Column(
-                      children: List.generate(
-                        album.songIds.length,
-                        (index) => ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: AppColors.primary,
-                            child: Text('${index + 1}'),
-                          ),
-                          title: Text('Canción ${index + 1}'),
-                          subtitle: const Text('3:45'),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.play_circle_outline),
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Compra el álbum para escuchar',
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildTracklist(context, album),
 
                   const SizedBox(height: 80),
                 ],
@@ -225,6 +205,105 @@ class AlbumDetailScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildTracklist(BuildContext context, AlbumModel album) {
+    final repository = MockDataRepository();
+    final user = context.read<AuthBloc>().state.user;
+
+    // Obtener las canciones del álbum
+    final songs = album.songIds
+        .map((id) => repository.getSongById(id))
+        .where((song) => song != null)
+        .toList();
+
+    if (songs.isEmpty) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Center(
+            child: Column(
+              children: [
+                const Icon(Icons.music_note, size: 48, color: Colors.grey),
+                const SizedBox(height: 8),
+                Text(
+                  'No hay canciones en este álbum',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Card(
+      child: Column(
+        children: songs.asMap().entries.map((entry) {
+          final index = entry.key;
+          final song = entry.value!;
+
+          return Column(
+            children: [
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: AppColors.primary,
+                  child: Text('${index + 1}'),
+                ),
+                title: Text(song.title),
+                subtitle: Text(
+                  '${song.artistName} • ${_formatSongDuration(song.duration)}',
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.info_outline),
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.songDetail,
+                          arguments: song,
+                        );
+                      },
+                      tooltip: 'Ver detalles',
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.play_circle_outline),
+                      onPressed: () {
+                        // Check if user owns the album or song
+                        if (user != null) {
+                          context.read<PlayerBloc>().add(
+                                PlayerPlaySong(song),
+                              );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Reproduciendo "${song.title}"'),
+                              backgroundColor: Colors.green,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Compra el álbum para escuchar',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      tooltip: 'Reproducir',
+                    ),
+                  ],
+                ),
+              ),
+              if (index < songs.length - 1) const Divider(height: 1),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
@@ -232,5 +311,11 @@ class AlbumDetailScreen extends StatelessWidget {
       return '${hours}h ${minutes}min';
     }
     return '${minutes}min';
+  }
+
+  String _formatSongDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 }
