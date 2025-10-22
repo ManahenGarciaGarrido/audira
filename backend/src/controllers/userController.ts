@@ -208,6 +208,7 @@ export const deleteUserAccount = (req: Request, res: Response, next: NextFunctio
 export const getUserFollowers = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const { id } = req.params;
+    const { limit = 20, offset = 0 } = req.query;
 
     const user = storage.getUser(id);
     if (!user) {
@@ -218,7 +219,7 @@ export const getUserFollowers = (req: Request, res: Response, next: NextFunction
     }
 
     const followerIds = storage.getFollowers(id);
-    const followers: UserProfile[] = followerIds
+    const allFollowers: UserProfile[] = followerIds
       .map(followerId => storage.getUser(followerId))
       .filter(Boolean)
       .map(user => ({
@@ -230,7 +231,15 @@ export const getUserFollowers = (req: Request, res: Response, next: NextFunction
         bio: user!.bio || ''
       }));
 
-    res.status(200).json(followers);
+    const paginatedFollowers = allFollowers.slice(
+      Number(offset),
+      Number(offset) + Number(limit)
+    );
+
+    res.status(200).json({
+      followers: paginatedFollowers,
+      total: allFollowers.length
+    });
   } catch (error) {
     next(error);
   }
@@ -239,6 +248,7 @@ export const getUserFollowers = (req: Request, res: Response, next: NextFunction
 export const getUserFollowing = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const { id } = req.params;
+    const { limit = 20, offset = 0 } = req.query;
 
     const user = storage.getUser(id);
     if (!user) {
@@ -249,7 +259,7 @@ export const getUserFollowing = (req: Request, res: Response, next: NextFunction
     }
 
     const followingIds = storage.getFollowing(id);
-    const following: UserProfile[] = followingIds
+    const allFollowing: UserProfile[] = followingIds
       .map(followingId => storage.getUser(followingId))
       .filter(Boolean)
       .map(user => ({
@@ -261,7 +271,86 @@ export const getUserFollowing = (req: Request, res: Response, next: NextFunction
         bio: user!.bio || ''
       }));
 
-    res.status(200).json(following);
+    const paginatedFollowing = allFollowing.slice(
+      Number(offset),
+      Number(offset) + Number(limit)
+    );
+
+    res.status(200).json({
+      following: paginatedFollowing,
+      total: allFollowing.length
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const followUser = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const authReq = req as AuthRequest;
+    const { id } = req.params;
+
+    if (!authReq.user) {
+      throw createError('UNAUTHORIZED', 'Autenticación requerida', 401);
+    }
+
+    const followerId = authReq.user.id;
+
+    // Check if trying to follow themselves
+    if (followerId === id) {
+      throw createError('BAD_REQUEST', 'No puedes seguirte a ti mismo', 400);
+    }
+
+    // Check if user to follow exists
+    const userToFollow = storage.getUser(id);
+    if (!userToFollow) {
+      throw createError('NOT_FOUND', 'Usuario no encontrado', 404, {
+        resource: 'user',
+        id
+      });
+    }
+
+    // Check if already following
+    const following = storage.getFollowing(followerId);
+    if (following.includes(id)) {
+      throw createError('CONFLICT', 'Ya sigues a este usuario', 409);
+    }
+
+    storage.addFollower(id, followerId);
+    res.status(200).json({ message: 'Usuario seguido exitosamente' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const unfollowUser = (req: Request, res: Response, next: NextFunction): void => {
+  try {
+    const authReq = req as AuthRequest;
+    const { id } = req.params;
+
+    if (!authReq.user) {
+      throw createError('UNAUTHORIZED', 'Autenticación requerida', 401);
+    }
+
+    const followerId = authReq.user.id;
+
+    // Check if user to unfollow exists
+    const userToUnfollow = storage.getUser(id);
+    if (!userToUnfollow) {
+      throw createError('NOT_FOUND', 'Usuario no encontrado', 404, {
+        resource: 'user',
+        id
+      });
+    }
+
+    // Check if currently following
+    const following = storage.getFollowing(followerId);
+    if (!following.includes(id)) {
+      throw createError('BAD_REQUEST', 'No sigues a este usuario', 400);
+    }
+
+    storage.removeFollower(id, followerId);
+    res.status(200).json({ message: 'Usuario dejado de seguir exitosamente' });
   } catch (error) {
     next(error);
   }

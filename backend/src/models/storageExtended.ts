@@ -126,6 +126,17 @@ class ExtendedStorage {
 
   getQueue(userId: string) { return this.playbackQueues.get(userId) || []; }
   setQueue(userId: string, queue: any[]) { this.playbackQueues.set(userId, queue); }
+  addToQueue(userId: string, item: any) {
+    if (!this.playbackQueues.has(userId)) this.playbackQueues.set(userId, []);
+    this.playbackQueues.get(userId)!.push(item);
+  }
+  removeFromQueue(userId: string, songId: string) {
+    const queue = this.playbackQueues.get(userId);
+    if (!queue) return false;
+    this.playbackQueues.set(userId, queue.filter(q => q.songId !== songId));
+    return true;
+  }
+  clearQueue(userId: string) { this.playbackQueues.set(userId, []); }
   getProgress(userId: string, songId: string) { return this.playbackProgress.get(userId)?.get(songId) || 0; }
   setProgress(userId: string, songId: string, progress: number) {
     if (!this.playbackProgress.has(userId)) this.playbackProgress.set(userId, new Map());

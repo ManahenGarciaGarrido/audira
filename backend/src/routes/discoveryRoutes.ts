@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import {
-  searchProducts,
+  searchContent,
   getUserRecommendations,
-  getTrendingProducts
+  getTrendingContent
 } from '../controllers/discoveryController';
 
 const router = Router();
 
-router.get('/search', searchProducts);
+router.get('/search', searchContent);
 router.get('/recommendations/user/:userId', getUserRecommendations);
-router.get('/trending', getTrendingProducts);
+router.get('/trending', getTrendingContent);
 
 export default router;

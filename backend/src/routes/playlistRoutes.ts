@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 import {
   createPlaylist,
   getUserPlaylists,
+  getPlaylistDetails,
   getPlaylistMetrics,
   updatePlaylist,
   deletePlaylist,
@@ -34,7 +35,8 @@ const addSongValidation = [
 
 router.post('/', authenticate, validate(createPlaylistValidation), createPlaylist);
 router.get('/user/:userId', getUserPlaylists);
-router.get('/:id', getPlaylistMetrics);
+router.get('/:id', getPlaylistDetails);
+router.get('/:id/metrics', getPlaylistMetrics);
 router.put('/:id', authenticate, validate(updatePlaylistValidation), updatePlaylist);
 router.delete('/:id', authenticate, deletePlaylist);
 router.get('/:id/songs', getPlaylistSongs);

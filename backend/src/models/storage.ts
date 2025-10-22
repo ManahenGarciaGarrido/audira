@@ -88,6 +88,11 @@ class InMemoryStorage {
     this.following.get(followerId)!.add(userId);
   }
 
+  removeFollower(userId: string, followerId: string): void {
+    this.followers.get(userId)?.delete(followerId);
+    this.following.get(followerId)?.delete(userId);
+  }
+
   // Rating methods
   getRating(id: string): Rating | undefined {
     return this.ratings.get(id);

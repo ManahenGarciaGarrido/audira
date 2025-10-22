@@ -6,7 +6,8 @@ import {
   getAlbumsByArtist,
   createAlbum,
   updateAlbum,
-  deleteAlbum
+  deleteAlbum,
+  getAlbumSongs
 } from '../controllers/albumController';
 import { authenticate } from '../middleware/auth';
 import { validate } from '../middleware/validation';
@@ -26,6 +27,7 @@ const updateAlbumValidation = [
 
 router.get('/', getAllAlbums);
 router.get('/:id', getAlbumById);
+router.get('/:id/songs', getAlbumSongs);
 router.get('/artist/:artistId', getAlbumsByArtist);
 router.post('/', authenticate, validate(createAlbumValidation), createAlbum);
 router.put('/:id', authenticate, validate(updateAlbumValidation), updateAlbum);

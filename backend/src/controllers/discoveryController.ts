@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { extendedStorage } from '../models/storageExtended';
 import { createError } from '../utils/errors';
 
-export const searchProducts = (req: Request, res: Response, next: NextFunction): void => {
+export const searchContent = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const { query } = req.query;
     if (!query || typeof query !== 'string') {
@@ -27,7 +27,7 @@ export const getUserRecommendations = (req: Request, res: Response, next: NextFu
   }
 };
 
-export const getTrendingProducts = (req: Request, res: Response, next: NextFunction): void => {
+export const getTrendingContent = (req: Request, res: Response, next: NextFunction): void => {
   try {
     // Mock trending - in production this would be based on actual metrics
     const albums = extendedStorage.getAllAlbums();

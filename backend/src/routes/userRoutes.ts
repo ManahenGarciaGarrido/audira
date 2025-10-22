@@ -8,7 +8,9 @@ import {
   updateUserProfile,
   deleteUserAccount,
   getUserFollowers,
-  getUserFollowing
+  getUserFollowing,
+  followUser,
+  unfollowUser
 } from '../controllers/userController';
 import { authenticate } from '../middleware/auth';
 import { validate } from '../middleware/validation';
@@ -42,5 +44,7 @@ router.put('/:id', authenticate, validate(updateProfileValidation), updateUserPr
 router.delete('/:id', authenticate, deleteUserAccount);
 router.get('/:id/followers', getUserFollowers);
 router.get('/:id/following', getUserFollowing);
+router.post('/:id/follow', authenticate, followUser);
+router.delete('/:id/unfollow', authenticate, unfollowUser);
 
 export default router;
