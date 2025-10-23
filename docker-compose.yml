@@ -1,58 +1,24 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Databases
-  postgres-users:
+  # PostgreSQL Databases - One per epic service
+  postgres-community:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: audira_users
+      POSTGRES_DB: audira_community
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
-      - postgres-users-data:/var/lib/postgresql/data
+      - postgres-community-data:/var/lib/postgresql/data
     networks:
       - audira-network
-
-  postgres-metrics:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_metrics
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres-metrics-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
-
-  postgres-ratings:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_ratings
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres-ratings-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
-
-  postgres-communication:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_communication
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5435:5432"
-    volumes:
-      - postgres-communication-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres-catalog:
     image: postgres:15-alpine
@@ -61,102 +27,52 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5436:5432"
+      - "5433:5432"
     volumes:
       - postgres-catalog-data:/var/lib/postgresql/data
     networks:
       - audira-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  postgres-player:
+  postgres-playback:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: audira_player
+      POSTGRES_DB: audira_playback
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5437:5432"
+      - "5434:5432"
     volumes:
-      - postgres-player-data:/var/lib/postgresql/data
+      - postgres-playback-data:/var/lib/postgresql/data
     networks:
       - audira-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  postgres-library:
+  postgres-commerce:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: audira_library
+      POSTGRES_DB: audira_commerce
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5438:5432"
+      - "5435:5432"
     volumes:
-      - postgres-library-data:/var/lib/postgresql/data
+      - postgres-commerce-data:/var/lib/postgresql/data
     networks:
       - audira-network
-
-  postgres-playlists:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_playlists
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5439:5432"
-    volumes:
-      - postgres-playlists-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
-
-  postgres-store:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_store
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5440:5432"
-    volumes:
-      - postgres-store-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
-
-  postgres-cart:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_cart
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5441:5432"
-    volumes:
-      - postgres-cart-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
-
-  postgres-orders:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_orders
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5442:5432"
-    volumes:
-      - postgres-orders-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
-
-  postgres-payments:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: audira_payments
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5443:5432"
-    volumes:
-      - postgres-payments-data:/var/lib/postgresql/data
-    networks:
-      - audira-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Infrastructure Services
   config-server:
@@ -202,177 +118,108 @@ services:
       timeout: 10s
       retries: 5
 
-  # Business Services
-  user-service:
-    build: ./user-service
+  # ÉPICA 1: Community Service (Users, Metrics, Ratings, Communication)
+  community-service:
+    build: ./community-service
     ports:
-      - "8082:8082"
+      - "9001:9001"
     depends_on:
-      - postgres-users
-      - discovery-server
+      postgres-community:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
     networks:
       - audira-network
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-users:5432/audira_users
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-community:5432/audira_community
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9001/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
-  metrics-service:
-    build: ./metrics-service
+  # ÉPICA 2: Music Catalog Service (Genres, Albums, Songs, Collaborations)
+  music-catalog-service:
+    build: ./music-catalog-service
     ports:
-      - "8081:8081"
+      - "9002:9002"
     depends_on:
-      - postgres-metrics
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-metrics:5432/audira_metrics
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  ratings-service:
-    build: ./ratings-service
-    ports:
-      - "8083:8083"
-    depends_on:
-      - postgres-ratings
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-ratings:5432/audira_ratings
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  communication-service:
-    build: ./communication-service
-    ports:
-      - "8084:8084"
-    depends_on:
-      - postgres-communication
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-communication:5432/audira_communication
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  catalog-service:
-    build: ./catalog-service
-    ports:
-      - "8085:8085"
-    depends_on:
-      - postgres-catalog
-      - discovery-server
+      postgres-catalog:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
     networks:
       - audira-network
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-catalog:5432/audira_catalog
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9002/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
-  player-service:
-    build: ./player-service
+  # ÉPICA 3: Playback Service (Playlists, Library, Playback, Queue, History)
+  playback-service:
+    build: ./playback-service
     ports:
-      - "8086:8086"
+      - "9003:9003"
     depends_on:
-      - postgres-player
-      - discovery-server
+      postgres-playback:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
     networks:
       - audira-network
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-player:5432/audira_player
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-playback:5432/audira_playback
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9003/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
-  library-service:
-    build: ./library-service
+  # ÉPICA 4: Commerce Service (Products, Store, Cart, Orders, Payments)
+  commerce-service:
+    build: ./commerce-service
     ports:
-      - "8087:8087"
+      - "9004:9004"
     depends_on:
-      - postgres-library
-      - discovery-server
+      postgres-commerce:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
     networks:
       - audira-network
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-library:5432/audira_library
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-commerce:5432/audira_commerce
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  playlist-service:
-    build: ./playlist-service
-    ports:
-      - "8088:8088"
-    depends_on:
-      - postgres-playlists
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-playlists:5432/audira_playlists
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  store-service:
-    build: ./store-service
-    ports:
-      - "8089:8089"
-    depends_on:
-      - postgres-store
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-store:5432/audira_store
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  cart-service:
-    build: ./cart-service
-    ports:
-      - "8090:8090"
-    depends_on:
-      - postgres-cart
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-cart:5432/audira_cart
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  order-service:
-    build: ./order-service
-    ports:
-      - "8091:8091"
-    depends_on:
-      - postgres-orders
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-orders:5432/audira_orders
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-
-  payment-service:
-    build: ./payment-service
-    ports:
-      - "8092:8092"
-    depends_on:
-      - postgres-payments
-      - discovery-server
-    networks:
-      - audira-network
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-payments:5432/audira_payments
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9004/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
 networks:
   audira-network:
     driver: bridge
 
 volumes:
-  postgres-users-data:
-  postgres-metrics-data:
-  postgres-ratings-data:
-  postgres-communication-data:
+  postgres-community-data:
   postgres-catalog-data:
-  postgres-player-data:
-  postgres-library-data:
-  postgres-playlists-data:
-  postgres-store-data:
-  postgres-cart-data:
-  postgres-orders-data:
-  postgres-payments-data:
+  postgres-playback-data:
+  postgres-commerce-data:
