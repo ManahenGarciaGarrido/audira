@@ -28,9 +28,18 @@
     </properties>
 
     <modules>
+        <!-- Infrastructure Services -->
         <module>config-server</module>
         <module>discovery-server</module>
         <module>api-gateway</module>
+
+        <!-- New Epic-based Services -->
+        <module>community-service</module>
+        <module>music-catalog-service</module>
+        <module>playback-service</module>
+        <module>commerce-service</module>
+
+        <!-- Old Services - Kept for reference, will be removed after migration
         <module>user-service</module>
         <module>metrics-service</module>
         <module>ratings-service</module>
@@ -43,6 +52,7 @@
         <module>cart-service</module>
         <module>order-service</module>
         <module>payment-service</module>
+        -->
     </modules>
 
     <dependencyManagement>

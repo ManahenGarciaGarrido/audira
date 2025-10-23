@@ -1,0 +1,116 @@
+package io.audira.catalog.service;
+
+import io.audira.catalog.model.Album;
+import io.audira.catalog.model.Song;
+import io.audira.catalog.repository.AlbumRepository;
+import io.audira.catalog.repository.SongRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class AlbumService {
+
+    private final AlbumRepository albumRepository;
+    private final SongRepository songRepository;
+
+    @Transactional
+    public Album createAlbum(Album album) {
+        return albumRepository.save(album);
+    }
+
+    public List<Album> getAllAlbums() {
+        return albumRepository.findAll();
+    }
+
+    public Album getAlbumById(Long id) {
+        Album album = albumRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Album not found with id: " + id));
+        // Calculate and set price based on songs
+        album.setPrice(calculateAlbumPrice(id));
+        return album;
+    }
+
+    public BigDecimal calculateAlbumPrice(Long albumId) {
+        List<Song> songs = songRepository.findByAlbumId(albumId);
+        if (songs.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal totalSongsPrice = songs.stream()
+                .map(Song::getPrice)
+                .filter(price -> price != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Apply 15% discount by default
+        BigDecimal discount = BigDecimal.valueOf(0.15);
+        return totalSongsPrice.multiply(BigDecimal.ONE.subtract(discount));
+    }
+
+    public List<Album> getAlbumsByArtist(Long artistId) {
+        return albumRepository.findByArtistId(artistId);
+    }
+
+    public List<Album> getAlbumsByGenre(Long genreId) {
+        List<Album> albums = albumRepository.findByGenreId(genreId);
+        // Calculate prices for each album
+        albums.forEach(album -> album.setPrice(calculateAlbumPrice(album.getId())));
+        return albums;
+    }
+
+    public List<Album> searchAlbumsByTitle(String title) {
+        return albumRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public List<Album> getRecentAlbums() {
+        return albumRepository.findRecentAlbums();
+    }
+
+    @Transactional
+    public Album updateAlbum(Long id, Album albumDetails) {
+        Album album = albumRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Album not found with id: " + id));
+
+        if (albumDetails.getTitle() != null) {
+            album.setTitle(albumDetails.getTitle());
+        }
+
+        if (albumDetails.getArtistId() != null) {
+            album.setArtistId(albumDetails.getArtistId());
+        }
+
+        if (albumDetails.getGenreIds() != null) {
+            album.setGenreIds(albumDetails.getGenreIds());
+        }
+
+        if (albumDetails.getReleaseDate() != null) {
+            album.setReleaseDate(albumDetails.getReleaseDate());
+        }
+
+        if (albumDetails.getCoverImageUrl() != null) {
+            album.setCoverImageUrl(albumDetails.getCoverImageUrl());
+        }
+
+        // Price is calculated, not set manually
+        // if (albumDetails.getPrice() != null) {
+        //     album.setPrice(albumDetails.getPrice());
+        // }
+
+        if (albumDetails.getDescription() != null) {
+            album.setDescription(albumDetails.getDescription());
+        }
+
+        return albumRepository.save(album);
+    }
+
+    @Transactional
+    public void deleteAlbum(Long id) {
+        if (!albumRepository.existsById(id)) {
+            throw new IllegalArgumentException("Album not found with id: " + id);
+        }
+        albumRepository.deleteById(id);
+    }
+}
