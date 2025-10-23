@@ -1,5 +1,7 @@
 package io.audira.playback.service;
 
+// Importa el nuevo Enum
+import io.audira.playback.model.RepeatMode; 
 import io.audira.playback.model.PlayQueue;
 import io.audira.playback.repository.PlayQueueRepository;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +70,8 @@ public class QueueService {
     @Transactional
     public PlayQueue setRepeatMode(Long userId, String repeatMode) {
         PlayQueue queue = getUserQueue(userId);
-        queue.setRepeatMode(io.audira.player.model.RepeatMode.valueOf(repeatMode.toUpperCase()));
+        // LÍNEA 71 CORREGIDA: Usa el Enum importado
+        queue.setRepeatMode(RepeatMode.valueOf(repeatMode.toUpperCase())); 
         return playQueueRepository.save(queue);
     }
 
@@ -78,7 +81,8 @@ public class QueueService {
                 .songIds(new ArrayList<>())
                 .currentIndex(0)
                 .shuffle(false)
-                .repeatMode(io.audira.player.model.RepeatMode.OFF)
+                // LÍNEA 81 CORREGIDA: Usa el Enum importado
+                .repeatMode(RepeatMode.OFF) 
                 .build();
         return playQueueRepository.save(queue);
     }

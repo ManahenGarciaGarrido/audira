@@ -27,17 +27,16 @@ COPY music-catalog-service ./music-catalog-service/
 COPY playback-service ./playback-service/
 
 # 5. Construir (package) SÓLO el módulo específico
-RUN mvn package -DskipTests -pl discovery-server -am
+RUN mvn package -DskipTests -pl community-service -am
 
 # ETAPA 2: Ejecución (Run)
 FROM eclipse-temurin:17-jre-focal
 WORKDIR /app
 
 # 6. Copiar el JAR del módulo específico
-COPY --from=build /app/discovery-server/target/*.jar app.jar
+COPY --from=build /app/community-service/target/*.jar app.jar
 
 # 7. Exponer el puerto específico
-EXPOSE 8761
+EXPOSE 9001
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
-

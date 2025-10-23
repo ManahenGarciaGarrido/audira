@@ -76,7 +76,9 @@ services:
 
   # Infrastructure Services
   config-server:
-    build: ./config-server
+    build:
+      context: . 
+      dockerfile: ./config-server/Dockerfile
     ports:
       - "8888:8888"
     networks:
@@ -88,7 +90,9 @@ services:
       retries: 5
 
   discovery-server:
-    build: ./discovery-server
+    build:
+      context: . 
+      dockerfile: ./discovery-server/Dockerfile
     ports:
       - "8761:8761"
     depends_on:
@@ -102,7 +106,9 @@ services:
       retries: 5
 
   api-gateway:
-    build: ./api-gateway
+    build:
+      context: . 
+      dockerfile: ./api-gateway/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
@@ -120,7 +126,9 @@ services:
 
   # ÉPICA 1: Community Service (Users, Metrics, Ratings, Communication)
   community-service:
-    build: ./community-service
+    build:
+      context: . 
+      dockerfile: ./community-service/Dockerfile
     ports:
       - "9001:9001"
     depends_on:
@@ -144,7 +152,9 @@ services:
 
   # ÉPICA 2: Music Catalog Service (Genres, Albums, Songs, Collaborations)
   music-catalog-service:
-    build: ./music-catalog-service
+    build:
+      context: . 
+      dockerfile: ./music-catalog-service/Dockerfile
     ports:
       - "9002:9002"
     depends_on:
@@ -168,7 +178,9 @@ services:
 
   # ÉPICA 3: Playback Service (Playlists, Library, Playback, Queue, History)
   playback-service:
-    build: ./playback-service
+    build:
+      context: . 
+      dockerfile: ./playback-service/Dockerfile
     ports:
       - "9003:9003"
     depends_on:
@@ -192,7 +204,9 @@ services:
 
   # ÉPICA 4: Commerce Service (Products, Store, Cart, Orders, Payments)
   commerce-service:
-    build: ./commerce-service
+    build:
+      context: . 
+      dockerfile: ./commerce-service/Dockerfile
     ports:
       - "9004:9004"
     depends_on:

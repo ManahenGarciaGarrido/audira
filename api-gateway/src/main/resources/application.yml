@@ -15,7 +15,8 @@ spring:
         - id: community-service
           uri: lb://community-service
           predicates:
-            - Path=/api/users/**,/api/metrics/**,/api/ratings/**,/api/comments/**,/api/contact/**,/api/faq/**,/api/notifications/**
+            # AÑADIDO /api/auth/** para permitir el login/registro
+            - Path=/api/auth/**,/api/users/**,/api/metrics/**,/api/ratings/**,/api/comments/**,/api/contact/**,/api/faq/**,/api/notifications/**
 
         # ÉPICA 2: Catálogo Musical y Contenido
         - id: music-catalog-service
@@ -38,7 +39,8 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      # CORREGIDO: "localhost" cambiado por el nombre del servicio Docker "discovery-server"
+      defaultZone: http://discovery-server:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 
@@ -47,3 +49,4 @@ management:
     web:
       exposure:
         include: health,info,gateway
+

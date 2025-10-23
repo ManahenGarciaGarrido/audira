@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "playlist_songs")
+@Table(name = "playlist_songs", indexes = {
+    @Index(name = "idx_playlist_id", columnList = "playlistId")
+})
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,7 +28,7 @@ public class PlaylistSong {
     private Long songId;
 
     @Column(nullable = false)
-    private Integer position;
+    private int position;
 
     @Column(nullable = false)
     private LocalDateTime addedAt;

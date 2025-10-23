@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",
+                                "/api/users/auth/**",
                                 "/public/**",
                                 "/actuator/**"
                         ).permitAll()
@@ -64,3 +64,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+
