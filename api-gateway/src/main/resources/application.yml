@@ -1,0 +1,74 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+        - id: metrics-service
+          uri: lb://metrics-service
+          predicates:
+            - Path=/api/metrics/**
+        - id: ratings-service
+          uri: lb://ratings-service
+          predicates:
+            - Path=/api/ratings/**,/api/comments/**
+        - id: communication-service
+          uri: lb://communication-service
+          predicates:
+            - Path=/api/contact/**,/api/faqs/**,/api/notifications/**
+        - id: catalog-service
+          uri: lb://catalog-service
+          predicates:
+            - Path=/api/genres/**,/api/albums/**,/api/songs/**,/api/collaborations/**,/api/discovery/**
+        - id: player-service
+          uri: lb://player-service
+          predicates:
+            - Path=/api/player/**
+        - id: library-service
+          uri: lb://library-service
+          predicates:
+            - Path=/api/library/**
+        - id: playlist-service
+          uri: lb://playlist-service
+          predicates:
+            - Path=/api/playlists/**
+        - id: store-service
+          uri: lb://store-service
+          predicates:
+            - Path=/api/products/**
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/api/cart/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
