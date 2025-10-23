@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # AUDIRA MICROSERVICES - MEGA TEST SCRIPT (PowerShell)
 # Este script prueba TODOS los endpoints de TODOS los servicios
 # Se detiene al primer error que encuentre
@@ -96,7 +96,7 @@ function Invoke-ApiRequest {
 
         $response = Invoke-RestMethod @params
         return @{
-            StatusCode = 200
+            StatusCode = 200 # Asumimos 200 en éxito de Invoke-RestMethod
             Body = $response
         }
     }
@@ -108,9 +108,25 @@ function Invoke-ApiRequest {
 
         $errorBody = ""
         try {
-            $errorBody = $_.ErrorDetails.Message
+            # Intenta leer el cuerpo del error
+            $errorBody = $_.Exception.Response.Content.ReadAsStringAsync().Result
         } catch {
-            $errorBody = $_.Exception.Message
+            try {
+                 $errorBody = $_.ErrorDetails.Message
+            } catch {
+                $errorBody = $_.Exception.Message
+            }
+        }
+
+        # Manejo especial para 404 y otros
+        if ($statusCode -ne 200 -and $errorBody -like "*{*") {
+             try {
+                # Intenta deserializar el JSON de error
+                $errorJson = $errorBody | ConvertFrom-Json
+                $errorBody = "Error: $($errorJson.error), Path: $($errorJson.path), Status: $($errorJson.status), Message: $($errorJson.message)"
+             } catch {
+                # Si falla, usa el body tal cual
+             }
         }
 
         return @{
@@ -121,6 +137,7 @@ function Invoke-ApiRequest {
     }
 }
 
+
 function Check-Response {
     param(
         [object]$Response,
@@ -129,11 +146,11 @@ function Check-Response {
     )
 
     if ($Response.Error) {
-        Print-Error "$TestName - Expected HTTP $ExpectedCode but got $($Response.StatusCode). Error: $($Response.Body)"
+        Print-Error "$TestName - Expected HTTP $ExpectedCode but got $($Response.StatusCode). Body: $($Response.Body)"
     }
 
     if ($Response.StatusCode -ne $ExpectedCode) {
-        Print-Error "$TestName - Expected HTTP $ExpectedCode but got $($Response.StatusCode)"
+        Print-Error "$TestName - Expected HTTP $ExpectedCode but got $($Response.StatusCode). Body: $($Response.Body)"
     }
 
     Print-Success "$TestName (HTTP $($Response.StatusCode))"
@@ -170,7 +187,7 @@ function Wait-ForService {
 
 Write-Host @"
 
-   ___   __  ______  _____  ___  ___
+    ___   __  ______  _____  ___  ___
   / _ | / / / / __ \/  _/ |/ / |/ _ |
  / __ |/ /_/ / /_/ // // /|  /| / __ |
 /_/ |_|\____/\____/___/_/ |_/ |_/_/ |_|
@@ -205,13 +222,17 @@ Start-Sleep -Seconds 10
 Print-Header "2. USER SERVICE - Autenticación y Gestión de Usuarios"
 
 Print-Test "Crear nuevo usuario"
+# --- CORRECCIÓN AQUÍ ---
+# Se envían firstName y lastName en lugar de fullName para coincidir con el DTO
 $registerBody = @{
     username = "testuser"
     email = "testuser@audira.com"
     password = "Password123!"
-    fullName = "Test User"
+    firstName = "Test"
+    lastName = "User"
 }
-$response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/auth/register" -Body $registerBody
+# La ruta pública sigue siendo /api/users/auth/register
+$response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/users/auth/register" -Body $registerBody
 $userData = Check-Response $response 200 "Registro de usuario"
 $script:TEST_USER_ID = $userData.id
 Write-Host "Usuario creado con ID: $($script:TEST_USER_ID)"
@@ -221,7 +242,7 @@ $loginBody = @{
     username = "testuser"
     password = "Password123!"
 }
-$response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/auth/login" -Body $loginBody
+$response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/users/auth/login" -Body $loginBody
 $loginData = Check-Response $response 200 "Login de usuario"
 $script:JWT_TOKEN = $loginData.token
 Write-Host "JWT Token obtenido: $($script:JWT_TOKEN.Substring(0, [Math]::Min(50, $script:JWT_TOKEN.Length)))..."
@@ -461,7 +482,9 @@ $response = Invoke-ApiRequest -Method GET -Uri "$API_GATEWAY/api/library/$($scri
 Check-Response $response 200 "Obtener biblioteca por tipo" | Out-Null
 
 Print-Test "Marcar como favorito"
-$response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/library/$($script:TEST_USER_ID)/favorite?itemType=SONG&itemId=$($script:TEST_SONG_ID)" -Headers $authHeaders
+# --- CORRECCIÓN AQUÍ ---
+# Faltaba escapar los ampersands
+$response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/library/$($script:TEST_USER_ID)/favorite?itemType=SONG`&itemId=$($script:TEST_SONG_ID)" -Headers $authHeaders
 Check-Response $response 200 "Marcar como favorito" | Out-Null
 
 Print-Test "Obtener favoritos"
@@ -507,7 +530,9 @@ Check-Response $response 200 "Actualizar colección" | Out-Null
 Print-Header "6. RATINGS SERVICE - Calificaciones y Comentarios"
 
 Print-Test "Crear/actualizar calificación"
-$ratingParams = "userId=$($script:TEST_USER_ID)&entityType=SONG&entityId=$($script:TEST_SONG_ID)&rating=5"
+# --- CORRECCIÓN AQUÍ ---
+# Faltaba escapar los ampersands
+$ratingParams = "userId=$($script:TEST_USER_ID)`&entityType=SONG`&entityId=$($script:TEST_SONG_ID)`&rating=5"
 $response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/ratings?$ratingParams" -Headers $authHeaders -ContentType "application/x-www-form-urlencoded"
 $ratingData = Check-Response $response 200 "Crear calificación"
 $script:TEST_RATING_ID = $ratingData.id
@@ -570,7 +595,9 @@ Check-Response $response 200 "Actualizar comentario" | Out-Null
 Print-Header "7. CART SERVICE - Carrito de Compras"
 
 Print-Test "Agregar item al carrito"
-$cartParams = "itemType=SONG&itemId=$($script:TEST_SONG_ID)&quantity=1&price=1.99"
+# --- CORRECCIÓN AQUÍ ---
+# Faltaba escapar los ampersands
+$cartParams = "itemType=SONG`&itemId=$($script:TEST_SONG_ID)`&quantity=1`&price=1.99"
 $response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/cart/$($script:TEST_USER_ID)/items?$cartParams" -Headers $authHeaders -ContentType "application/x-www-form-urlencoded"
 Check-Response $response 200 "Agregar item al carrito" | Out-Null
 
@@ -847,7 +874,9 @@ Check-Response $response 200 "Actualizar estado de orden" | Out-Null
 Print-Header "12. PAYMENT SERVICE - Procesamiento de Pagos"
 
 Print-Test "Crear pago"
-$paymentParams = "orderId=$($script:TEST_ORDER_ID)&userId=$($script:TEST_USER_ID)&amount=1.99&paymentMethod=CREDIT_CARD"
+# --- CORRECCIÓN AQUÍ ---
+# Faltaba escapar los ampersands
+$paymentParams = "orderId=$($script:TEST_ORDER_ID)`&userId=$($script:TEST_USER_ID)`&amount=1.99`&paymentMethod=CREDIT_CARD"
 $response = Invoke-ApiRequest -Method POST -Uri "$API_GATEWAY/api/payments?$paymentParams" -Headers $authHeaders -ContentType "application/x-www-form-urlencoded"
 $paymentData = Check-Response $response 200 "Crear pago"
 $script:TEST_PAYMENT_ID = $paymentData.id
@@ -988,7 +1017,9 @@ $response = Invoke-ApiRequest -Method DELETE -Uri "$API_GATEWAY/api/library/coll
 Check-Response $response 204 "Eliminar colección" | Out-Null
 
 Print-Test "Eliminar de biblioteca"
-$response = Invoke-ApiRequest -Method DELETE -Uri "$API_GATEWAY/api/library?userId=$($script:TEST_USER_ID)&itemType=SONG&itemId=$($script:TEST_SONG_ID)" -Headers $authHeaders
+# --- CORRECCIÓN AQUÍ ---
+# Faltaba escapar los ampersands
+$response = Invoke-ApiRequest -Method DELETE -Uri "$API_GATEWAY/api/library?userId=$($script:TEST_USER_ID)`&itemType=SONG`&itemId=$($script:TEST_SONG_ID)" -Headers $authHeaders
 Check-Response $response 204 "Eliminar de biblioteca" | Out-Null
 
 if (![string]::IsNullOrEmpty($script:CART_ITEM_ID)) {
@@ -1042,7 +1073,7 @@ Print-Header "RESUMEN DE PRUEBAS"
 Write-Host @"
 ╔════════════════════════════════════════════════╗
 ║                                                ║
-║          🎉 TODAS LAS PRUEBAS PASARON 🎉       ║
+║           🎉 TODAS LAS PRUEBAS PASARON 🎉            ║
 ║                                                ║
 ╚════════════════════════════════════════════════╝
 "@ -ForegroundColor Green
@@ -1056,21 +1087,21 @@ Write-Host "Pruebas fallidas: " -NoNewline -ForegroundColor Cyan
 Write-Host "0" -ForegroundColor Green
 Write-Host ""
 Write-Host "Servicios probados:" -ForegroundColor Yellow
-Write-Host "  ✓ Config Server" -ForegroundColor Green
-Write-Host "  ✓ Eureka Discovery Server" -ForegroundColor Green
-Write-Host "  ✓ API Gateway" -ForegroundColor Green
-Write-Host "  ✓ User Service (Autenticación y Usuarios)" -ForegroundColor Green
-Write-Host "  ✓ Catalog Service (Géneros, Álbumes, Canciones, Colaboraciones)" -ForegroundColor Green
-Write-Host "  ✓ Player Service (Reproducción, Cola, Historial)" -ForegroundColor Green
-Write-Host "  ✓ Library Service (Biblioteca y Colecciones)" -ForegroundColor Green
-Write-Host "  ✓ Ratings Service (Calificaciones y Comentarios)" -ForegroundColor Green
-Write-Host "  ✓ Cart Service (Carrito de Compras)" -ForegroundColor Green
-Write-Host "  ✓ Playlist Service (Listas de Reproducción)" -ForegroundColor Green
-Write-Host "  ✓ Store Service (Tienda de Productos)" -ForegroundColor Green
-Write-Host "  ✓ Communication Service (FAQ, Contacto, Notificaciones)" -ForegroundColor Green
-Write-Host "  ✓ Order Service (Gestión de Órdenes)" -ForegroundColor Green
-Write-Host "  ✓ Payment Service (Procesamiento de Pagos)" -ForegroundColor Green
-Write-Host "  ✓ Metrics Service (Métricas de Usuario, Artista, Canción, Global)" -ForegroundColor Green
+Write-Host "   ✓ Config Server" -ForegroundColor Green
+Write-Host "   ✓ Eureka Discovery Server" -ForegroundColor Green
+Write-Host "   ✓ API Gateway" -ForegroundColor Green
+Write-Host "   ✓ User Service (Autenticación y Usuarios)" -ForegroundColor Green
+Write-Host "   ✓ Catalog Service (Géneros, Álbumes, Canciones, Colaboraciones)" -ForegroundColor Green
+Write-Host "   ✓ Player Service (Reproducción, Cola, Historial)" -ForegroundColor Green
+Write-Host "   ✓ Library Service (Biblioteca y Colecciones)" -ForegroundColor Green
+Write-Host "   ✓ Ratings Service (Calificaciones y Comentarios)" -ForegroundColor Green
+Write-Host "   ✓ Cart Service (Carrito de Compras)" -ForegroundColor Green
+Write-Host "   ✓ Playlist Service (Listas de Reproducción)" -ForegroundColor Green
+Write-Host "   ✓ Store Service (Tienda de Productos)" -ForegroundColor Green
+Write-Host "   ✓ Communication Service (FAQ, Contacto, Notificaciones)" -ForegroundColor Green
+Write-Host "   ✓ Order Service (Gestión de Órdenes)" -ForegroundColor Green
+Write-Host "   ✓ Payment Service (Procesamiento de Pagos)" -ForegroundColor Green
+Write-Host "   ✓ Metrics Service (Métricas de Usuario, Artista, Canción, Global)" -ForegroundColor Green
 Write-Host ""
 Write-Host "═══════════════════════════════════════════════════════════" -ForegroundColor Magenta
 Write-Host "El sistema Audira está funcionando perfectamente!" -ForegroundColor Green

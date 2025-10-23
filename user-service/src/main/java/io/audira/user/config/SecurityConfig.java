@@ -33,8 +33,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/auth/**", "/api/users/public/**").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/public/**",
+                                "/actuator/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

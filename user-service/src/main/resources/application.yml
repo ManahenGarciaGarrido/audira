@@ -30,6 +30,7 @@ eureka:
     register-with-eureka: true
   instance:
     prefer-ip-address: true
+    hostname: ${spring.cloud.client.ip-address}
 
 management:
   endpoints:

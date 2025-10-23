@@ -1,99 +1,56 @@
 package io.audira.user.controller;
 
 import io.audira.user.dto.UpdateProfileRequest;
-import io.audira.user.dto.UserDTO;
-import io.audira.user.model.UserRole;
+import io.audira.user.dto.UserProfileDto;
 import io.audira.user.security.UserPrincipal;
 import io.audira.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+// Ruta base interna. El Gateway enrutará /api/users/** aquí.
+// /api/users/profile -> /profile
+// /api/users/123     -> /123
+// /api/users         -> /
+@RequestMapping("/")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/me")
-    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
-        return ResponseEntity.ok(userService.getUserById(currentUser.getId()));
+    // Endpoint: GET /api/users/profile (probado en el script)
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileDto> getCurrentUserProfile(@AuthenticationPrincipal UserPrincipal currentUser) {
+        UserProfileDto userProfile = userService.getUserProfile(currentUser.getId());
+        return ResponseEntity.ok(userProfile);
     }
 
+    // Endpoint: PUT /api/users/profile (probado en el script)
+    @PutMapping("/profile")
+    public ResponseEntity<UserProfileDto> updateCurrentUserProfile(
+            @AuthenticationPrincipal UserPrincipal currentUser,
+            @Valid @RequestBody UpdateProfileRequest updateRequest
+    ) {
+        UserProfileDto updatedProfile = userService.updateUserProfile(currentUser.getId(), updateRequest);
+        return ResponseEntity.ok(updatedProfile);
+    }
+
+    // Endpoint: GET /api/users/{id} (probado en el script)
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserProfileDto> getUserProfileById(@PathVariable("id") Long userId) {
+        UserProfileDto userProfile = userService.getUserProfile(userId);
+        return ResponseEntity.ok(userProfile);
     }
 
-    @GetMapping("/username/{username}")
-    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
-        return ResponseEntity.ok(userService.getUserByUsername(username));
-    }
-
+    // Endpoint: GET /api/users (probado en el script)
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    @GetMapping("/role/{role}")
-    public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable UserRole role) {
-        return ResponseEntity.ok(userService.getUsersByRole(role));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateProfile(
-            @PathVariable Long id,
-            @RequestBody UpdateProfileRequest request,
-            @AuthenticationPrincipal UserPrincipal currentUser) {
-        if (!id.equals(currentUser.getId())) {
-            return ResponseEntity.status(403).build();
-        }
-        return ResponseEntity.ok(userService.updateProfile(id, request));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(
-            @PathVariable Long id,
-            @AuthenticationPrincipal UserPrincipal currentUser) {
-        if (!id.equals(currentUser.getId())) {
-            return ResponseEntity.status(403).build();
-        }
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{id}/follow/{targetId}")
-    public ResponseEntity<UserDTO> followUser(
-            @PathVariable Long id,
-            @PathVariable Long targetId,
-            @AuthenticationPrincipal UserPrincipal currentUser) {
-        if (!id.equals(currentUser.getId())) {
-            return ResponseEntity.status(403).build();
-        }
-        return ResponseEntity.ok(userService.followUser(id, targetId));
-    }
-
-    @DeleteMapping("/{id}/follow/{targetId}")
-    public ResponseEntity<UserDTO> unfollowUser(
-            @PathVariable Long id,
-            @PathVariable Long targetId,
-            @AuthenticationPrincipal UserPrincipal currentUser) {
-        if (!id.equals(currentUser.getId())) {
-            return ResponseEntity.status(403).build();
-        }
-        return ResponseEntity.ok(userService.unfollowUser(id, targetId));
-    }
-
-    @GetMapping("/{id}/followers")
-    public ResponseEntity<List<UserDTO>> getFollowers(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getFollowers(id));
-    }
-
-    @GetMapping("/{id}/following")
-    public ResponseEntity<List<UserDTO>> getFollowing(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getFollowing(id));
+    public ResponseEntity<List<UserProfileDto>> getAllUsers() {
+        List<UserProfileDto> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 }

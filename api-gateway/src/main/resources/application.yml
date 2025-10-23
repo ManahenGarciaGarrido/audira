@@ -26,7 +26,7 @@ spring:
         - id: communication-service
           uri: lb://communication-service
           predicates:
-            - Path=/api/contact/**,/api/faqs/**,/api/notifications/**
+            - Path=/api/contact/**, /api/faq/**, /api/notifications/**
         - id: catalog-service
           uri: lb://catalog-service
           predicates:
@@ -34,7 +34,7 @@ spring:
         - id: player-service
           uri: lb://player-service
           predicates:
-            - Path=/api/player/**
+            - Path=/api/playback/**, /api/queue/**, /api/history/**
         - id: library-service
           uri: lb://library-service
           predicates:
