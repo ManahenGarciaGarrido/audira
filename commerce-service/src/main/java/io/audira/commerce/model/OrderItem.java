@@ -23,8 +23,9 @@ public class OrderItem {
     @Column(nullable = false)
     private Long orderId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String itemType;
+    private ItemType itemType;
 
     @Column(nullable = false)
     private Long itemId;

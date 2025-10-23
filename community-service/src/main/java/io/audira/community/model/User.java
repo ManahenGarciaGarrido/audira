@@ -34,6 +34,9 @@ public abstract class User {
     private String username;
 
     @Column(nullable = false)
+    private String password; // TODO: Remove when Firebase auth is fully implemented
+
+    @Column(nullable = false)
     private String firstName;
 
     @Column(nullable = false)
@@ -48,6 +51,10 @@ public abstract class User {
     private String location;
 
     private String website;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
 
     @Column(nullable = false)
     private Boolean isActive;

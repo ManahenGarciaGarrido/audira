@@ -1,8 +1,7 @@
 package io.audira.community.service;
 
 import io.audira.community.dto.*;
-import io.audira.community.model.User;
-import io.audira.community.model.UserRole;
+import io.audira.community.model.*;
 import io.audira.community.repository.UserRepository;
 import io.audira.community.security.JwtTokenProvider;
 import io.audira.community.security.UserPrincipal;
@@ -35,16 +34,48 @@ public class UserService {
             throw new RuntimeException("Username already in use");
         }
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .role(request.getRole())
-                .isActive(true)
-                .isVerified(false)
-                .build();
+        User user;
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        String uid = request.getEmail(); // TODO: Use Firebase UID
+
+        // Create specific user type based on role
+        if (request.getRole() == UserRole.ARTIST) {
+            user = Artist.builder()
+                    .email(request.getEmail())
+                    .username(request.getUsername())
+                    .password(encodedPassword)
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .role(request.getRole())
+                    .uid(uid)
+                    .isActive(true)
+                    .isVerified(false)
+                    .build();
+        } else if (request.getRole() == UserRole.ADMIN) {
+            user = Admin.builder()
+                    .email(request.getEmail())
+                    .username(request.getUsername())
+                    .password(encodedPassword)
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .role(request.getRole())
+                    .uid(uid)
+                    .isActive(true)
+                    .isVerified(false)
+                    .build();
+        } else {
+            user = RegularUser.builder()
+                    .email(request.getEmail())
+                    .username(request.getUsername())
+                    .password(encodedPassword)
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .role(request.getRole())
+                    .uid(uid)
+                    .isActive(true)
+                    .isVerified(false)
+                    .build();
+        }
 
         user = userRepository.save(user);
 
