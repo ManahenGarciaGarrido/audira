@@ -1,7 +1,6 @@
 package io.audira.communication.controller;
 
 import io.audira.communication.model.ContactMessage;
-import io.audira.communication.model.MessageStatus;
 import io.audira.communication.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +17,12 @@ public class ContactController {
     @PostMapping
     public ResponseEntity<ContactMessage> createMessage(
             @RequestParam Long userId,
+            @RequestParam String name,
             @RequestParam String email,
             @RequestParam String subject,
-            @RequestParam String message) {
-        return ResponseEntity.ok(contactService.createMessage(userId, email, subject, message));
+            @RequestParam String message,
+            @RequestParam(required = false) ContactMessage.MessageType messageType) {
+        return ResponseEntity.ok(contactService.createMessage(userId, name, email, subject, message, messageType));
     }
 
     @GetMapping("/user/{userId}")
@@ -35,7 +36,7 @@ public class ContactController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<ContactMessage>> getMessagesByStatus(@PathVariable MessageStatus status) {
+    public ResponseEntity<List<ContactMessage>> getMessagesByStatus(@PathVariable ContactMessage.MessageStatus status) {
         return ResponseEntity.ok(contactService.getMessagesByStatus(status));
     }
 
@@ -47,7 +48,7 @@ public class ContactController {
     @PutMapping("/{id}/status")
     public ResponseEntity<ContactMessage> updateStatus(
             @PathVariable Long id,
-            @RequestParam MessageStatus status) {
+            @RequestParam ContactMessage.MessageStatus status) {
         return ResponseEntity.ok(contactService.updateStatus(id, status));
     }
 

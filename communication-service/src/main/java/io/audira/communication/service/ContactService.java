@@ -1,7 +1,6 @@
 package io.audira.communication.service;
 
 import io.audira.communication.model.ContactMessage;
-import io.audira.communication.model.MessageStatus;
 import io.audira.communication.repository.ContactMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +15,15 @@ public class ContactService {
     private final ContactMessageRepository contactMessageRepository;
 
     @Transactional
-    public ContactMessage createMessage(Long userId, String email, String subject, String message) {
+    public ContactMessage createMessage(Long userId, String name, String email, String subject, String message, ContactMessage.MessageType messageType) {
         ContactMessage contactMessage = ContactMessage.builder()
                 .userId(userId)
+                .name(name)
                 .email(email)
                 .subject(subject)
                 .message(message)
-                .status(MessageStatus.PENDING)
+                .messageType(messageType != null ? messageType : ContactMessage.MessageType.GENERAL_INQUIRY)
+                .status(ContactMessage.MessageStatus.PENDING)
                 .build();
         return contactMessageRepository.save(contactMessage);
     }
@@ -31,7 +32,7 @@ public class ContactService {
         return contactMessageRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    public List<ContactMessage> getMessagesByStatus(MessageStatus status) {
+    public List<ContactMessage> getMessagesByStatus(ContactMessage.MessageStatus status) {
         return contactMessageRepository.findByStatus(status);
     }
 
@@ -41,7 +42,7 @@ public class ContactService {
     }
 
     @Transactional
-    public ContactMessage updateStatus(Long id, MessageStatus status) {
+    public ContactMessage updateStatus(Long id, ContactMessage.MessageStatus status) {
         ContactMessage message = getMessageById(id);
         message.setStatus(status);
         return contactMessageRepository.save(message);
@@ -52,7 +53,7 @@ public class ContactService {
         ContactMessage message = getMessageById(id);
         message.setResponse(response);
         message.setRespondedAt(LocalDateTime.now());
-        message.setStatus(MessageStatus.RESOLVED);
+        message.setStatus(ContactMessage.MessageStatus.RESOLVED);
         return contactMessageRepository.save(message);
     }
 

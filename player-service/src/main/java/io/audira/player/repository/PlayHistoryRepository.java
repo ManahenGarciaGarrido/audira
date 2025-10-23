@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface PlayHistoryRepository extends JpaRepository<PlayHistory, Long> {
     List<PlayHistory> findByUserIdOrderByPlayedAtDesc(Long userId);
+    List<PlayHistory> findTop20ByUserIdOrderByPlayedAtDesc(Long userId);
     List<PlayHistory> findByUserIdAndSongIdOrderByPlayedAtDesc(Long userId, Long songId);
     List<PlayHistory> findBySongId(Long songId);
     List<PlayHistory> findByUserIdAndPlayedAtBetweenOrderByPlayedAtDesc(
