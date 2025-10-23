@@ -9,8 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface CollaborationRepository extends JpaRepository<Collaboration, Long> {
-    Optional<Collaboration> findBySongId(Long songId);
+    List<Collaboration> findBySongId(Long songId);
 
     @Query("SELECT c FROM Collaboration c WHERE :artistId MEMBER OF c.collaboratorIds")
-    List<Collaboration> findByCollaboratorId(Long artistId);
+    List<Collaboration> findByCollaboratorIdsContaining(Long artistId);
 }
