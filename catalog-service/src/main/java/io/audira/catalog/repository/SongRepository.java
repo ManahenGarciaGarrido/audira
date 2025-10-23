@@ -12,6 +12,10 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     List<Song> findByAlbumId(Long albumId);
     List<Song> findByGenreId(Long genreId);
     List<Song> findByTitleContainingIgnoreCase(String title);
+    List<Song> findTop20ByOrderByCreatedAtDesc();
+
+    @Query("SELECT s FROM Song s WHERE LOWER(s.title) LIKE LOWER(CONCAT('%', :query, '%'))")
+    List<Song> searchByTitleOrArtist(String query);
 
     @Query("SELECT s FROM Song s WHERE s.artistId = :artistId OR s.id IN " +
            "(SELECT c.songId FROM Collaboration c WHERE :artistId MEMBER OF c.collaboratorIds)")

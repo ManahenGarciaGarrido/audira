@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface ContactMessageRepository extends JpaRepository<ContactMessage, Long> {
     List<ContactMessage> findByUserId(Long userId);
+    List<ContactMessage> findByUserIdOrderByCreatedAtDesc(Long userId);
     List<ContactMessage> findByStatus(ContactMessage.MessageStatus status);
     List<ContactMessage> findByMessageType(ContactMessage.MessageType messageType);
     List<ContactMessage> findByAssignedToUserId(Long assignedToUserId);
