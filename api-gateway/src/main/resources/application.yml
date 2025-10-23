@@ -11,54 +11,29 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: user-service
-          uri: lb://user-service
+        # ÉPICA 1: Gestión de Usuarios y Comunidad
+        - id: community-service
+          uri: lb://community-service
           predicates:
-            - Path=/api/users/**
-        - id: metrics-service
-          uri: lb://metrics-service
-          predicates:
-            - Path=/api/metrics/**
-        - id: ratings-service
-          uri: lb://ratings-service
-          predicates:
-            - Path=/api/ratings/**,/api/comments/**
-        - id: communication-service
-          uri: lb://communication-service
-          predicates:
-            - Path=/api/contact/**, /api/faq/**, /api/notifications/**
-        - id: catalog-service
-          uri: lb://catalog-service
+            - Path=/api/users/**,/api/metrics/**,/api/ratings/**,/api/comments/**,/api/contact/**,/api/faq/**,/api/notifications/**
+
+        # ÉPICA 2: Catálogo Musical y Contenido
+        - id: music-catalog-service
+          uri: lb://music-catalog-service
           predicates:
             - Path=/api/genres/**,/api/albums/**,/api/songs/**,/api/collaborations/**,/api/discovery/**
-        - id: player-service
-          uri: lb://player-service
+
+        # ÉPICA 3: Reproducción y Experiencia del Usuario
+        - id: playback-service
+          uri: lb://playback-service
           predicates:
-            - Path=/api/playback/**, /api/queue/**, /api/history/**
-        - id: library-service
-          uri: lb://library-service
+            - Path=/api/playback/**,/api/queue/**,/api/history/**,/api/library/**,/api/playlists/**
+
+        # ÉPICA 4: Tienda, Carrito y Pagos
+        - id: commerce-service
+          uri: lb://commerce-service
           predicates:
-            - Path=/api/library/**
-        - id: playlist-service
-          uri: lb://playlist-service
-          predicates:
-            - Path=/api/playlists/**
-        - id: store-service
-          uri: lb://store-service
-          predicates:
-            - Path=/api/products/**
-        - id: cart-service
-          uri: lb://cart-service
-          predicates:
-            - Path=/api/cart/**
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/api/orders/**
-        - id: payment-service
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/payments/**
+            - Path=/api/products/**,/api/cart/**,/api/orders/**,/api/payments/**
 
 eureka:
   client:
