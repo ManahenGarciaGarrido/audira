@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/player/queue")
+@RequestMapping("/api/queue")
 @RequiredArgsConstructor
 public class QueueController {
 

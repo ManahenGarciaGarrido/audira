@@ -10,29 +10,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/collaborations")
 @RequiredArgsConstructor
 public class CollaboratorController {
 
     private final CollaboratorService collaboratorService;
 
-    @PostMapping("/collaborations")
+    @PostMapping
     public ResponseEntity<Collaborator> addCollaborator(@RequestBody Collaborator collaborator) {
         Collaborator created = collaboratorService.addCollaborator(collaborator);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @GetMapping("/collaborations/song/{songId}")
+    @GetMapping("/song/{songId}")
     public ResponseEntity<List<Collaborator>> getCollaboratorsBySong(@PathVariable Long songId) {
         return ResponseEntity.ok(collaboratorService.getCollaboratorsBySong(songId));
     }
 
-    @GetMapping("/collaborations/artist/{artistId}")
+    @GetMapping("/artist/{artistId}")
     public ResponseEntity<List<Collaborator>> getCollaborationsByArtist(@PathVariable Long artistId) {
         return ResponseEntity.ok(collaboratorService.getCollaborationsByArtist(artistId));
     }
 
-    @DeleteMapping("/collaborations/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeCollaborator(@PathVariable Long id) {
         collaboratorService.removeCollaborator(id);
         return ResponseEntity.noContent().build();
