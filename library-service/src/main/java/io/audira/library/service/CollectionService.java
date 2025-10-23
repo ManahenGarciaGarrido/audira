@@ -15,13 +15,7 @@ public class CollectionService {
     private final CollectionRepository collectionRepository;
 
     @Transactional
-    public Collection createCollection(Long userId, String name, String description) {
-        Collection collection = Collection.builder()
-                .userId(userId)
-                .name(name)
-                .description(description)
-                .build();
-
+    public Collection createCollection(Collection collection) {
         return collectionRepository.save(collection);
     }
 
@@ -29,43 +23,43 @@ public class CollectionService {
         return collectionRepository.findByUserId(userId);
     }
 
+    public Collection getCollectionById(Long collectionId) {
+        return collectionRepository.findById(collectionId)
+                .orElseThrow(() -> new IllegalArgumentException("Collection not found with id: " + collectionId));
+    }
+
     public Optional<Collection> getCollection(Long collectionId, Long userId) {
         return collectionRepository.findByIdAndUserId(collectionId, userId);
     }
 
     @Transactional
-    public Collection updateCollection(Long collectionId, Long userId, String name, String description) {
-        Optional<Collection> collectionOptional = collectionRepository.findByIdAndUserId(collectionId, userId);
+    public Collection updateCollection(Long collectionId, Collection collectionDetails) {
+        Collection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(() -> new IllegalArgumentException("Collection not found with id: " + collectionId));
 
-        if (collectionOptional.isEmpty()) {
-            throw new IllegalArgumentException("Collection not found");
+        if (collectionDetails.getName() != null) {
+            collection.setName(collectionDetails.getName());
         }
-
-        Collection collection = collectionOptional.get();
-        if (name != null) {
-            collection.setName(name);
-        }
-        if (description != null) {
-            collection.setDescription(description);
+        if (collectionDetails.getDescription() != null) {
+            collection.setDescription(collectionDetails.getDescription());
         }
 
         return collectionRepository.save(collection);
     }
 
     @Transactional
-    public void deleteCollection(Long collectionId, Long userId) {
-        collectionRepository.deleteByIdAndUserId(collectionId, userId);
+    public void deleteCollection(Long collectionId) {
+        if (!collectionRepository.existsById(collectionId)) {
+            throw new IllegalArgumentException("Collection not found with id: " + collectionId);
+        }
+        collectionRepository.deleteById(collectionId);
     }
 
     @Transactional
-    public Collection addItemToCollection(Long collectionId, Long userId, Long itemId) {
-        Optional<Collection> collectionOptional = collectionRepository.findByIdAndUserId(collectionId, userId);
+    public Collection addItemToCollection(Long collectionId, Long itemId) {
+        Collection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(() -> new IllegalArgumentException("Collection not found with id: " + collectionId));
 
-        if (collectionOptional.isEmpty()) {
-            throw new IllegalArgumentException("Collection not found");
-        }
-
-        Collection collection = collectionOptional.get();
         if (!collection.getItemIds().contains(itemId)) {
             collection.getItemIds().add(itemId);
             return collectionRepository.save(collection);
@@ -75,14 +69,10 @@ public class CollectionService {
     }
 
     @Transactional
-    public Collection removeItemFromCollection(Long collectionId, Long userId, Long itemId) {
-        Optional<Collection> collectionOptional = collectionRepository.findByIdAndUserId(collectionId, userId);
+    public Collection removeItemFromCollection(Long collectionId, Long itemId) {
+        Collection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(() -> new IllegalArgumentException("Collection not found with id: " + collectionId));
 
-        if (collectionOptional.isEmpty()) {
-            throw new IllegalArgumentException("Collection not found");
-        }
-
-        Collection collection = collectionOptional.get();
         collection.getItemIds().remove(itemId);
         return collectionRepository.save(collection);
     }

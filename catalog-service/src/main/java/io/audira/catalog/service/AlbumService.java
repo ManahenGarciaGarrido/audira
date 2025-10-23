@@ -23,8 +23,9 @@ public class AlbumService {
         return albumRepository.findAll();
     }
 
-    public Optional<Album> getAlbumById(Long id) {
-        return albumRepository.findById(id);
+    public Album getAlbumById(Long id) {
+        return albumRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Album not found with id: " + id));
     }
 
     public List<Album> getAlbumsByArtist(Long artistId) {

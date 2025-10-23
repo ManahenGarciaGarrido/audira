@@ -26,8 +26,9 @@ public class GenreService {
         return genreRepository.findAll();
     }
 
-    public Optional<Genre> getGenreById(Long id) {
-        return genreRepository.findById(id);
+    public Genre getGenreById(Long id) {
+        return genreRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Genre not found with id: " + id));
     }
 
     public Optional<Genre> getGenreByName(String name) {

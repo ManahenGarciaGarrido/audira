@@ -21,13 +21,14 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     @Transactional
-    public Payment createPayment(Long orderId, Long userId, BigDecimal amount, PaymentMethod paymentMethod) {
-        log.info("Creating payment for order {} by user {} with amount {}", orderId, userId, amount);
+    public Payment createPayment(Long orderId, Long userId, Double amount, PaymentMethod paymentMethod) {
+        BigDecimal amountDecimal = BigDecimal.valueOf(amount);
+        log.info("Creating payment for order {} by user {} with amount {}", orderId, userId, amountDecimal);
 
         Payment payment = Payment.builder()
                 .orderId(orderId)
                 .userId(userId)
-                .amount(amount)
+                .amount(amountDecimal)
                 .paymentMethod(paymentMethod)
                 .status(PaymentStatus.PENDING)
                 .transactionId(generateTransactionId())
@@ -40,8 +41,8 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment processPayment(Long paymentId) {
-        log.info("Processing payment with ID {}", paymentId);
+    public Payment processPayment(Long paymentId, String transactionId) {
+        log.info("Processing payment with ID {} and transaction ID {}", paymentId, transactionId);
 
         Payment payment = getPaymentById(paymentId);
 
@@ -50,14 +51,17 @@ public class PaymentService {
         }
 
         try {
+            // Set the provided transaction ID
+            payment.setTransactionId(transactionId);
+
             // Simulate payment gateway processing
             // In a real implementation, you would call the actual payment gateway API here
             boolean paymentSuccessful = simulatePaymentGateway(payment);
 
             if (paymentSuccessful) {
-                payment.setStatus(PaymentStatus.COMPLETED);
-                payment.setPaymentGatewayResponse("Payment processed successfully");
-                log.info("Payment {} processed successfully", paymentId);
+                payment.setStatus(PaymentStatus.PROCESSING);
+                payment.setPaymentGatewayResponse("Payment being processed");
+                log.info("Payment {} set to processing", paymentId);
             } else {
                 payment.setStatus(PaymentStatus.FAILED);
                 payment.setErrorMessage("Payment processing failed");
@@ -68,6 +72,40 @@ public class PaymentService {
             payment.setErrorMessage(e.getMessage());
             log.error("Error processing payment {}: {}", paymentId, e.getMessage());
         }
+
+        return paymentRepository.save(payment);
+    }
+
+    @Transactional
+    public Payment completePayment(Long paymentId) {
+        log.info("Completing payment with ID {}", paymentId);
+
+        Payment payment = getPaymentById(paymentId);
+
+        if (payment.getStatus() != PaymentStatus.PROCESSING && payment.getStatus() != PaymentStatus.PENDING) {
+            throw new IllegalStateException("Payment must be in PROCESSING or PENDING status to complete");
+        }
+
+        payment.setStatus(PaymentStatus.COMPLETED);
+        payment.setPaymentGatewayResponse("Payment completed successfully");
+        log.info("Payment {} completed successfully", paymentId);
+
+        return paymentRepository.save(payment);
+    }
+
+    @Transactional
+    public Payment failPayment(Long paymentId) {
+        log.info("Failing payment with ID {}", paymentId);
+
+        Payment payment = getPaymentById(paymentId);
+
+        if (payment.getStatus() == PaymentStatus.COMPLETED || payment.getStatus() == PaymentStatus.REFUNDED) {
+            throw new IllegalStateException("Cannot fail a completed or refunded payment");
+        }
+
+        payment.setStatus(PaymentStatus.FAILED);
+        payment.setErrorMessage("Payment marked as failed");
+        log.info("Payment {} marked as failed", paymentId);
 
         return paymentRepository.save(payment);
     }
@@ -108,12 +146,17 @@ public class PaymentService {
                 .orElseThrow(() -> new RuntimeException("Payment not found with transaction ID: " + transactionId));
     }
 
-    public List<Payment> getPaymentsByUserId(Long userId) {
+    public List<Payment> getUserPayments(Long userId) {
         return paymentRepository.findByUserId(userId);
     }
 
-    public List<Payment> getPaymentsByOrderId(Long orderId) {
-        return paymentRepository.findByOrderId(orderId);
+    public Payment getPaymentByOrderId(Long orderId) {
+        List<Payment> payments = paymentRepository.findByOrderId(orderId);
+        if (payments.isEmpty()) {
+            throw new RuntimeException("No payment found for order ID: " + orderId);
+        }
+        // Return the most recent payment for the order
+        return payments.get(payments.size() - 1);
     }
 
     public List<Payment> getPaymentsByStatus(PaymentStatus status) {
