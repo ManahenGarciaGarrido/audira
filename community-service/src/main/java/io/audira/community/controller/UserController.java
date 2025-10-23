@@ -13,11 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-// Ruta base interna. El Gateway enrutará /api/users/** aquí.
-// /api/users/profile -> /profile
-// /api/users/123     -> /123
-// /api/users         -> /
-@RequestMapping("/")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
