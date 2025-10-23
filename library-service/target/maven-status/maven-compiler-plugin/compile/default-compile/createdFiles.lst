@@ -1,0 +1,12 @@
+io\audira\library\controller\CollectionController.class
+io\audira\library\service\LibraryService.class
+io\audira\library\model\LibraryItem.class
+io\audira\library\repository\LibraryItemRepository.class
+io\audira\library\model\ItemType.class
+io\audira\library\repository\CollectionRepository.class
+io\audira\library\controller\LibraryController.class
+io\audira\library\LibraryServiceApplication.class
+io\audira\library\model\Collection.class
+io\audira\library\service\CollectionService.class
+io\audira\library\model\Collection$CollectionBuilder.class
+io\audira\library\model\LibraryItem$LibraryItemBuilder.class

@@ -1,0 +1,9 @@
+io\audira\store\model\ProductVariant$ProductVariantBuilder.class
+io\audira\store\controller\ProductController.class
+io\audira\store\repository\ProductVariantRepository.class
+io\audira\store\model\Product.class
+io\audira\store\model\ProductVariant.class
+io\audira\store\StoreServiceApplication.class
+io\audira\store\service\ProductService.class
+io\audira\store\repository\ProductRepository.class
+io\audira\store\model\Product$ProductBuilder.class

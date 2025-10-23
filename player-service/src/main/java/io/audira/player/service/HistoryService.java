@@ -20,7 +20,7 @@ public class HistoryService {
                 .userId(userId)
                 .songId(songId)
                 .playedAt(LocalDateTime.now())
-                .completionPercentage(completionPercentage)
+                .completionPercentage(completionPercentage.doubleValue())
                 .build();
         return playHistoryRepository.save(history);
     }

@@ -68,7 +68,7 @@ public class QueueService {
     @Transactional
     public PlayQueue setRepeatMode(Long userId, String repeatMode) {
         PlayQueue queue = getUserQueue(userId);
-        queue.setRepeatMode(repeatMode);
+        queue.setRepeatMode(io.audira.player.model.RepeatMode.valueOf(repeatMode.toUpperCase()));
         return playQueueRepository.save(queue);
     }
 
@@ -78,7 +78,7 @@ public class QueueService {
                 .songIds(new ArrayList<>())
                 .currentIndex(0)
                 .shuffle(false)
-                .repeatMode("OFF")
+                .repeatMode(io.audira.player.model.RepeatMode.OFF)
                 .build();
         return playQueueRepository.save(queue);
     }

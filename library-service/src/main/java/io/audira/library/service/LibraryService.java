@@ -41,11 +41,13 @@ public class LibraryService {
         return libraryItemRepository.findByUserId(userId);
     }
 
-    public List<LibraryItem> getUserLibraryByType(Long userId, ItemType itemType) {
+    // FIX: Renamed from 'getUserLibraryByType' to match controller
+    public List<LibraryItem> getLibraryByType(Long userId, ItemType itemType) {
         return libraryItemRepository.findByUserIdAndItemType(userId, itemType);
     }
 
-    public List<LibraryItem> getUserFavorites(Long userId) {
+    // FIX: Renamed from 'getUserFavorites' to match controller
+    public List<LibraryItem> getFavorites(Long userId) {
         return libraryItemRepository.findByUserIdAndIsFavorite(userId, true);
     }
 
@@ -69,5 +71,11 @@ public class LibraryService {
 
     public Optional<LibraryItem> getLibraryItem(Long userId, ItemType itemType, Long itemId) {
         return libraryItemRepository.findByUserIdAndItemTypeAndItemId(userId, itemType, itemId);
+    }
+
+    // FIX: Added missing 'clearLibrary' method
+    @Transactional
+    public void clearLibrary(Long userId) {
+        libraryItemRepository.deleteByUserId(userId);
     }
 }

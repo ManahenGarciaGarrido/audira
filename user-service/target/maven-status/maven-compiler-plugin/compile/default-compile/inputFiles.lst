@@ -1,0 +1,17 @@
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\model\UserRole.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\security\CustomUserDetailsService.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\service\UserService.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\security\JwtTokenProvider.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\UserServiceApplication.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\dto\UpdateProfileRequest.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\repository\UserRepository.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\security\JwtAuthenticationFilter.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\dto\RegisterRequest.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\model\User.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\security\UserPrincipal.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\dto\AuthResponse.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\controller\AuthController.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\controller\UserController.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\config\SecurityConfig.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\dto\UserDTO.java
+C:\Users\manah\OneDrive\Desktop\Temario_4_GIIIS\ASEE\audira_v2\user-service\src\main\java\io\audira\user\dto\LoginRequest.java

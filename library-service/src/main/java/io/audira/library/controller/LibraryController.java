@@ -49,9 +49,12 @@ public class LibraryController {
         return ResponseEntity.ok(libraryService.getFavorites(userId));
     }
 
-    @PutMapping("/items/{id}/favorite")
-    public ResponseEntity<LibraryItem> toggleFavorite(@PathVariable Long id) {
-        return ResponseEntity.ok(libraryService.toggleFavorite(id));
+    @PutMapping("/items/favorite")
+    public ResponseEntity<LibraryItem> toggleFavorite(
+            @RequestParam Long userId,
+            @RequestParam ItemType itemType,
+            @RequestParam Long itemId) {
+        return ResponseEntity.ok(libraryService.toggleFavorite(userId, itemType, itemId));
     }
 
     @DeleteMapping("/user/{userId}")

@@ -1,0 +1,12 @@
+io\audira\ratings\model\Comment$CommentBuilder.class
+io\audira\ratings\repository\CommentRepository.class
+io\audira\ratings\model\EntityType.class
+io\audira\ratings\model\Rating$RatingBuilder.class
+io\audira\ratings\controller\CommentController.class
+io\audira\ratings\model\Comment.class
+io\audira\ratings\service\CommentService.class
+io\audira\ratings\service\RatingService.class
+io\audira\ratings\RatingsServiceApplication.class
+io\audira\ratings\controller\RatingController.class
+io\audira\ratings\repository\RatingRepository.class
+io\audira\ratings\model\Rating.class
