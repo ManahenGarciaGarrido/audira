@@ -31,5 +31,14 @@ class CartClear extends CartEvent {
 }
 
 class CartCheckout extends CartEvent {
-  const CartCheckout();
+  final String? shippingAddress;
+
+  const CartCheckout({this.shippingAddress});
+
+  @override
+  List<Object?> get props => [shippingAddress];
+}
+
+class CartLoad extends CartEvent {
+  const CartLoad();
 }
