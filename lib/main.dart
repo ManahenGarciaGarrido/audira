@@ -5,8 +5,8 @@ import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_event.dart';
 import 'blocs/player/player_bloc.dart';
 import 'blocs/cart/cart_bloc.dart';
+import 'blocs/cart/cart_event.dart';
 import 'blocs/library/library_bloc.dart';
-import 'data/repositories/mock_data_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,22 +18,19 @@ class AudiraApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final repository = MockDataRepository();
-
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-          create: (context) =>
-              AuthBloc(repository)..add(const AuthCheckStatus()),
+          create: (context) => AuthBloc()..add(const AuthCheckStatus()),
         ),
         BlocProvider<PlayerBloc>(
           create: (context) => PlayerBloc(),
         ),
         BlocProvider<CartBloc>(
-          create: (context) => CartBloc(),
+          create: (context) => CartBloc()..add(const CartLoad()),
         ),
         BlocProvider<LibraryBloc>(
-          create: (context) => LibraryBloc(repository),
+          create: (context) => LibraryBloc(),
         ),
       ],
       child: const App(),

@@ -8,6 +8,9 @@ import '../../../data/models/album_model.dart';
 import '../../../data/repositories/mock_data_repository.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import 'create_song_screen.dart';
+import 'create_album_screen.dart';
+import 'artist_stats_screen.dart';
 
 class StudioScreen extends StatelessWidget {
   const StudioScreen({super.key});
@@ -59,7 +62,7 @@ class StudioScreen extends StatelessWidget {
           ),
           bottomNavigationBar: const BottomNavBar(currentIndex: 3),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showUploadDialog(context),
+            onPressed: () => _navigateToCreateSong(context),
             icon: const Icon(Icons.add),
             label: const Text('Subir Música'),
             backgroundColor: AppColors.primary,
@@ -147,19 +150,19 @@ class StudioScreen extends StatelessWidget {
                 context,
                 'Subir Canción',
                 Icons.upload_file,
-                () => _showUploadDialog(context),
+                () => _navigateToCreateSong(context),
               ),
               _buildActionCard(
                 context,
                 'Crear Álbum',
                 Icons.album,
-                () => _showCreateAlbumDialog(context),
+                () => _navigateToCreateAlbum(context),
               ),
               _buildActionCard(
                 context,
                 'Ver Estadísticas',
                 Icons.bar_chart,
-                () => _showStatsDialog(context),
+                () => _navigateToStats(context),
               ),
               _buildActionCard(
                 context,
@@ -249,7 +252,55 @@ class StudioScreen extends StatelessWidget {
     );
   }
 
-  void _showUploadDialog(BuildContext context) {
+  void _navigateToCreateSong(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CreateSongScreen(),
+      ),
+    ).then((result) {
+      if (result != null) {
+        // Canción creada exitosamente
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Canción creada exitosamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    });
+  }
+
+  void _navigateToCreateAlbum(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CreateAlbumScreen(),
+      ),
+    ).then((result) {
+      if (result != null) {
+        // Álbum creado exitosamente
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Álbum creado exitosamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    });
+  }
+
+  void _navigateToStats(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ArtistStatsScreen(),
+      ),
+    );
+  }
+
+  // Mantener el viejo método para referencia pero renombrado
+  void _showUploadDialog_OLD(BuildContext context) {
     final titleController = TextEditingController();
     final priceController = TextEditingController(text: '1.99');
     final repository = MockDataRepository();
