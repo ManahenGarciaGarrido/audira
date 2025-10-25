@@ -10,6 +10,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import 'create_song_screen.dart';
 import 'create_album_screen.dart';
+import 'artist_stats_screen.dart';
 
 class StudioScreen extends StatelessWidget {
   const StudioScreen({super.key});
@@ -161,7 +162,7 @@ class StudioScreen extends StatelessWidget {
                 context,
                 'Ver Estadísticas',
                 Icons.bar_chart,
-                () => _showStatsDialog(context),
+                () => _navigateToStats(context),
               ),
               _buildActionCard(
                 context,
@@ -287,6 +288,15 @@ class StudioScreen extends StatelessWidget {
         );
       }
     });
+  }
+
+  void _navigateToStats(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ArtistStatsScreen(),
+      ),
+    );
   }
 
   // Mantener el viejo método para referencia pero renombrado

@@ -7,6 +7,7 @@ import '../../../data/models/user_model.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import 'user_stats_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -221,6 +222,21 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildAccountActions(BuildContext context) {
     return Column(
       children: [
+        ListTile(
+          leading: const Icon(Icons.bar_chart),
+          title: const Text('Mis Estadísticas'),
+          subtitle: const Text('Ver tiempo de escucha y más'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserStatsScreen(),
+              ),
+            );
+          },
+        ),
+        const Divider(),
         ListTile(
           leading: const Icon(Icons.security),
           title: const Text('Cambiar contraseña'),

@@ -7,6 +7,7 @@ import '../../../blocs/library/library_bloc.dart';
 import '../../../blocs/library/library_event.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/cart_item_model.dart';
+import '../checkout/checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -185,46 +186,11 @@ class CartScreen extends StatelessWidget {
   }
 
   void _handleCheckout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Confirmar compra'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Método de pago:'),
-            const SizedBox(height: 8),
-            const ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('Tarjeta de crédito'),
-              subtitle: Text('**** **** **** 4242'),
-              contentPadding: EdgeInsets.zero,
-            ),
-            const Divider(),
-            BlocBuilder<CartBloc, CartState>(
-              builder: (context, state) {
-                return Text(
-                  'Total: \$${state.total.toStringAsFixed(2)}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                );
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              context.read<CartBloc>().add(const CartCheckout());
-            },
-            child: const Text('Confirmar'),
-          ),
-        ],
+    // Navegar a la pantalla completa de checkout
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CheckoutScreen(),
       ),
     );
   }
