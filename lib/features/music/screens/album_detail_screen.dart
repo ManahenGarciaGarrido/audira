@@ -9,6 +9,7 @@ import 'package:audira_frontend/core/models/song.dart';
 import 'package:audira_frontend/core/providers/auth_provider.dart';
 import 'package:audira_frontend/core/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -303,7 +304,11 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              // TODO: Implement share functionality
+              final textToCopy = 'Check out "${_album!.title}" album on Audira!';
+              Clipboard.setData(ClipboardData(text: textToCopy));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Album link copied to clipboard')),
+              );
             },
           ),
         ],
@@ -477,6 +482,11 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
   }
 
   Widget _buildActionButtons() {
+    final audioProvider = Provider.of<AudioProvider>(context, listen: false);
+    final libraryProvider = Provider.of<LibraryProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isFavorite = libraryProvider.isAlbumFavorite(_album!.id);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -484,10 +494,15 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
           Expanded(
             child: ElevatedButton.icon(
               onPressed: () {
-                // TODO: Play album
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Playing album...')),
-                );
+                if (_album != null) {
+                  audioProvider.playAlbum(_album!);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Playing album...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.play_arrow),
               label: const Text('Play Album'),
@@ -511,11 +526,35 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
           ),
           const SizedBox(width: 8),
           IconButton(
-            onPressed: () {
-              // TODO: Toggle favorite
+            onPressed: () async {
+              if (!authProvider.isAuthenticated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please login to add favorites'),
+                  ),
+                );
+                return;
+              }
+              try {
+                await libraryProvider.toggleAlbumFavorite(
+                  authProvider.currentUser!.id,
+                  _album!,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(isFavorite
+                        ? 'Removed from favorites'
+                        : 'Added to favorites'),
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
             },
-            icon: const Icon(Icons.favorite_border),
-            color: AppTheme.primaryBlue,
+            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+            color: isFavorite ? Colors.red : AppTheme.primaryBlue,
           ),
         ],
       ),
@@ -578,9 +617,13 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
                 IconButton(
                   icon: const Icon(Icons.play_circle_outline),
                   onPressed: () {
-                    // TODO: Play demo
+                    final audioProvider = context.read<AudioProvider>();
+                    audioProvider.playSong(song, demo: true);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Playing ${song.name} demo...')),
+                      SnackBar(
+                        content: Text('Playing ${song.name} demo...'),
+                        duration: const Duration(seconds: 2),
+                      ),
                     );
                   },
                 ),
@@ -705,8 +748,21 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
                                 IconButton(
                                   icon: const Icon(Icons.thumb_up_outlined,
                                       size: 18),
-                                  onPressed: () {
-                                    // TODO: Like comment
+                                  onPressed: () async {
+                                    try {
+                                      await _commentService.likeComment(comment.id);
+                                      _loadRatingsAndComments();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Comment liked'),
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Error: $e')),
+                                      );
+                                    }
                                   },
                                 ),
                                 if (comment.likesCount > 0)

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/providers/audio_provider.dart';
+import '../../../core/providers/library_provider.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/cart_provider.dart';
 import '../../../core/models/song.dart';
 import '../../../config/theme.dart';
 
@@ -354,18 +358,41 @@ class PlaybackScreen extends StatelessWidget {
 
   Widget _buildSecondaryControls(
       BuildContext context, AudioProvider audioProvider, Song song) {
+    final libraryProvider = Provider.of<LibraryProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isFavorite = libraryProvider.isSongFavorite(song.id);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(
-          icon: const Icon(Icons.favorite_border),
+          icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
           iconSize: 28,
-          color: AppTheme.textGrey,
-          onPressed: () {
-            // TODO: Add to favorites
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Added to favorites')),
-            );
+          color: isFavorite ? Colors.red : AppTheme.textGrey,
+          onPressed: () async {
+            if (!authProvider.isAuthenticated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please login to add favorites')),
+              );
+              return;
+            }
+            try {
+              await libraryProvider.toggleSongFavorite(
+                authProvider.currentUser!.id,
+                song,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(isFavorite
+                      ? 'Removed from favorites'
+                      : 'Added to favorites'),
+                ),
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: $e')),
+              );
+            }
           },
         ),
         IconButton(
@@ -373,10 +400,7 @@ class PlaybackScreen extends StatelessWidget {
           iconSize: 28,
           color: AppTheme.textGrey,
           onPressed: () {
-            // TODO: Add to playlist
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Add to playlist - Coming soon')),
-            );
+            _showAddToPlaylistDialog(context, song);
           },
         ),
         IconButton(
@@ -384,10 +408,7 @@ class PlaybackScreen extends StatelessWidget {
           iconSize: 28,
           color: AppTheme.textGrey,
           onPressed: () {
-            // TODO: Share song
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Share - Coming soon')),
-            );
+            _shareSong(context, song);
           },
         ),
         IconButton(
@@ -399,6 +420,78 @@ class PlaybackScreen extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+
+  void _showAddToPlaylistDialog(BuildContext context, Song song) {
+    final authProvider = context.read<AuthProvider>();
+    if (!authProvider.isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please login to add to playlist')),
+      );
+      return;
+    }
+
+    final libraryProvider = context.read<LibraryProvider>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add to Playlist'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.add_circle_outline),
+                title: const Text('Create New Playlist'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/playlist/create');
+                },
+              ),
+              const Divider(),
+              if (libraryProvider.playlists.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('No playlists yet'),
+                )
+              else
+                ...libraryProvider.playlists.map((playlist) => ListTile(
+                      leading: const Icon(Icons.playlist_play),
+                      title: Text(playlist.name),
+                      onTap: () async {
+                        try {
+                          await libraryProvider.addSongToPlaylist(
+                            playlist.id,
+                            song.id,
+                          );
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Added to ${playlist.name}'),
+                            ),
+                          );
+                        } catch (e) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: $e')),
+                          );
+                        }
+                      },
+                    )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _shareSong(BuildContext context, Song song) {
+    final textToCopy = 'Check out "${song.name}" on Audira!';
+    Clipboard.setData(ClipboardData(text: textToCopy));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Song link copied to clipboard')),
     );
   }
 
@@ -480,6 +573,10 @@ class PlaybackScreen extends StatelessWidget {
   }
 
   void _showOptionsBottomSheet(BuildContext context) {
+    final audioProvider = context.read<AudioProvider>();
+    final currentSong = audioProvider.currentSong;
+    if (currentSong == null) return;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: AppTheme.surfaceBlack,
@@ -489,9 +586,34 @@ class PlaybackScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.shopping_cart),
             title: const Text('Add to Cart'),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              // TODO: Add to cart
+              final authProvider = context.read<AuthProvider>();
+              if (!authProvider.isAuthenticated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please login to add items to cart'),
+                  ),
+                );
+                return;
+              }
+              final cartProvider = context.read<CartProvider>();
+              try {
+                await cartProvider.addToCart(
+                  authProvider.currentUser!.id,
+                  'SONG',
+                  currentSong.id,
+                  currentSong.price,
+                  1,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Song added to cart')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
             },
           ),
           ListTile(
@@ -499,15 +621,40 @@ class PlaybackScreen extends StatelessWidget {
             title: const Text('Add to Playlist'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Add to playlist
+              _showAddToPlaylistDialog(context, currentSong);
             },
           ),
           ListTile(
             leading: const Icon(Icons.favorite_border),
             title: const Text('Add to Favorites'),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              // TODO: Add to favorites
+              final authProvider = context.read<AuthProvider>();
+              if (!authProvider.isAuthenticated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please login to add favorites')),
+                );
+                return;
+              }
+              final libraryProvider = context.read<LibraryProvider>();
+              try {
+                await libraryProvider.toggleSongFavorite(
+                  authProvider.currentUser!.id,
+                  currentSong,
+                );
+                final isFavorite = libraryProvider.isSongFavorite(currentSong.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(isFavorite
+                        ? 'Added to favorites'
+                        : 'Removed from favorites'),
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
             },
           ),
           ListTile(
@@ -515,7 +662,7 @@ class PlaybackScreen extends StatelessWidget {
             title: const Text('Share'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Share
+              _shareSong(context, currentSong);
             },
           ),
         ],
