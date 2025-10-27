@@ -39,22 +39,34 @@ class AuthProvider with ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final response = await _authService.login(
-      emailOrUsername: emailOrUsername,
-      password: password,
-    );
+    try {
+      print(
+          'AUTH_PROVIDER: Llamando a _authService.login...'); // <-- AÑADE ESTO
 
-    if (response.success && response.data != null) {
-      _currentUser = response.data!.user;
-      _isAuthenticated = true;
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } else {
-      _error = response.error;
-      _isLoading = false;
-      notifyListeners();
+      final response = await _authService.login(
+        emailOrUsername: emailOrUsername,
+        password: password,
+      );
+
+      print(
+          'AUTH_PROVIDER: _authService.login HA TERMINADO.'); // <-- AÑADE ESTO
+
+      if (response.success && response.data != null) {
+        _currentUser = response.data!.user;
+        _isAuthenticated = true;
+        return true;
+      } else {
+        _error = response.error;
+        return false;
+      }
+    } catch (e) {
+      print('AUTH_PROVIDER: Excepción capturada: $e'); // <-- AÑADE ESTO
+      _error = 'Ocurrió un error inesperado. Revisa tu conexión.';
       return false;
+    } finally {
+      print('AUTH_PROVIDER: Bloque FINALLY ejecutado.'); // <-- AÑADE ESTO
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

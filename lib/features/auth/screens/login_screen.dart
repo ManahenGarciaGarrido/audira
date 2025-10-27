@@ -35,6 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
 
+    print('LOGIN_SCREEN: El login fue exitoso? -> $success');
+
     if (!mounted) return;
 
     if (success) {
@@ -46,6 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
+      print(
+          'LOGIN_SCREEN: Error recibido del provider -> ${authProvider.error}');
       // Mostrar error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -58,8 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -147,24 +149,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 32),
 
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed:
-                              authProvider.isLoading ? null : _handleLogin,
-                          child: authProvider.isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text('Iniciar Sesión'),
-                        ),
-                      ).animate().fadeIn(delay: 800.ms).scale(),
+                      Selector<AuthProvider, bool>(
+                        selector: (context, provider) => provider.isLoading,
+                        builder: (context, isLoading, child) {
+                          // Este 'builder' se reconstruye solo cuando 'isLoading' cambia
+                          return SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: isLoading ? null : _handleLogin,
+                              child: isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Text('Iniciar Sesión'),
+                            ),
+                          ).animate().fadeIn(delay: 800.ms).scale();
+                        },
+                      ),
 
                       const SizedBox(height: 16),
 

@@ -100,7 +100,7 @@ class AuthService {
   }) async {
     try {
       final body = {
-        'email': emailOrUsername,
+        'emailOrUsername': emailOrUsername,
         'password': password,
       };
 
