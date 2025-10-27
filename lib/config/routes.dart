@@ -9,6 +9,8 @@ import '../features/music/screens/genre_detail_screen.dart';
 import '../features/common/screens/faq_screen.dart';
 import '../features/common/screens/contact_screen.dart';
 import '../features/playback/screens/playback_screen.dart';
+import '../features/search/screens/search_screen.dart';
+import '../features/notifications/screens/notifications_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -86,6 +88,12 @@ class AppRoutes {
 
       case playback:
         return MaterialPageRoute(builder: (_) => const PlaybackScreen());
+
+      case search:
+        return MaterialPageRoute(builder: (_) => const SearchScreen());
+
+      case notifications:
+        return MaterialPageRoute(builder: (_) => const NotificationsScreen());
 
       // Placeholders for routes to be implemented
       case playlist:
