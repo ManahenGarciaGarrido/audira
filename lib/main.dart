@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'app.dart';
-import 'blocs/auth/auth_bloc.dart';
-import 'blocs/auth/auth_event.dart';
-import 'blocs/player/player_bloc.dart';
-import 'blocs/cart/cart_bloc.dart';
-import 'blocs/cart/cart_event.dart';
-import 'blocs/library/library_bloc.dart';
+import 'package:provider/provider.dart';
+import 'config/theme.dart';
+import 'core/providers/auth_provider.dart';
+import 'core/providers/cart_provider.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'features/home/screens/main_layout.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const AudiraApp());
 }
 
@@ -18,22 +15,33 @@ class AudiraApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiProvider(
       providers: [
-        BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc()..add(const AuthCheckStatus()),
-        ),
-        BlocProvider<PlayerBloc>(
-          create: (context) => PlayerBloc(),
-        ),
-        BlocProvider<CartBloc>(
-          create: (context) => CartBloc()..add(const CartLoad()),
-        ),
-        BlocProvider<LibraryBloc>(
-          create: (context) => LibraryBloc(),
-        ),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
-      child: const App(),
+      child: MaterialApp(
+        title: 'Audira',
+        theme: AppTheme.darkTheme,
+        debugShowCheckedModeBanner: false,
+        home: Consumer<AuthProvider>(
+          builder: (context, authProvider, _) {
+            if (authProvider.isLoading) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            if (authProvider.isAuthenticated) {
+              return const MainLayout();
+            }
+
+            return const LoginScreen();
+          },
+        ),
+      ),
     );
   }
 }
