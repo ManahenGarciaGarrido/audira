@@ -44,7 +44,7 @@ class _AdminFaqsScreenState extends State<AdminFaqsScreen> {
     }
   }
 
-  Future<void> _deleteFaq(int faqId) async {
+  Future<void> _deleteFaq(int id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -66,7 +66,7 @@ class _AdminFaqsScreenState extends State<AdminFaqsScreen> {
 
     if (confirmed == true) {
       try {
-        final response = await _faqService.deleteFaq(faqId);
+        final response = await _faqService.deleteFaq(id);
         if (response.success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('FAQ deleted successfully')),
@@ -265,7 +265,7 @@ class _AdminFaqsScreenState extends State<AdminFaqsScreen> {
               try {
                 if (isEditing) {
                   await _faqService.updateFaq(
-                    faqId: faq.id,
+                    id: faq.id,
                     question: question,
                     answer: answer,
                     category: category,

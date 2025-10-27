@@ -1,9 +1,12 @@
 import '../api_client.dart';
 import '../../../config/constants.dart';
 import '../../models/playlist.dart';
+import '../../models/song.dart';
+import 'music_service.dart';
 
 class PlaylistService {
   final ApiClient _apiClient = ApiClient();
+  final MusicService _musicService = MusicService();
 
   Future<ApiResponse<List<Playlist>>> getUserPlaylists(int userId) async {
     final response =
@@ -23,6 +26,28 @@ class PlaylistService {
       return ApiResponse(success: true, data: Playlist.fromJson(response.data));
     }
     return ApiResponse(success: false, error: response.error);
+  }
+
+  Future<ApiResponse<Map<String, dynamic>>> getPlaylistWithSongs(int id) async {
+    final playlistResponse = await getPlaylistById(id);
+    if (!playlistResponse.success || playlistResponse.data == null) {
+      return ApiResponse(success: false, error: playlistResponse.error);
+    }
+
+    final playlist = playlistResponse.data!;
+    final List<Song> songs = [];
+
+    for (final songId in playlist.songIds) {
+      final songResponse = await _musicService.getSongById(songId);
+      if (songResponse.success && songResponse.data != null) {
+        songs.add(songResponse.data!);
+      }
+    }
+
+    return ApiResponse(
+      success: true,
+      data: {'playlist': playlist, 'songs': songs},
+    );
   }
 
   Future<ApiResponse<Playlist>> createPlaylist(

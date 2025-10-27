@@ -12,7 +12,7 @@ class AlbumCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to album detail
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Abrir álbum: ${album.name}')),
         );

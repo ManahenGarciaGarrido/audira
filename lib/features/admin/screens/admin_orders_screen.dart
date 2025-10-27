@@ -117,7 +117,6 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
                           subtitle: Text(
                             '\$${order['total'].toStringAsFixed(2)} • ${_formatDate(order['date'])}\nStatus: ${order['status'].toUpperCase()}',
                           ),
-                          isThreeLine: true,
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(16),

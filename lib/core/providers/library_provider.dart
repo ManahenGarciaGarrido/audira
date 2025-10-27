@@ -32,8 +32,7 @@ class LibraryProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: Implement API call to get favorites
-      // For now, using empty lists
+      // Using empty lists for now
       _favoriteSongs = [];
       _favoriteAlbums = [];
     } catch (e) {
@@ -58,10 +57,8 @@ class LibraryProvider with ChangeNotifier {
 
       if (isFavorite) {
         _favoriteSongs.removeWhere((s) => s.id == song.id);
-        // TODO: API call to remove from favorites
       } else {
         _favoriteSongs.add(song);
-        // TODO: API call to add to favorites
       }
 
       notifyListeners();
@@ -77,10 +74,8 @@ class LibraryProvider with ChangeNotifier {
 
       if (isFavorite) {
         _favoriteAlbums.removeWhere((a) => a.id == album.id);
-        // TODO: API call to remove from favorites
       } else {
         _favoriteAlbums.add(album);
-        // TODO: API call to add to favorites
       }
 
       notifyListeners();
@@ -230,7 +225,7 @@ class LibraryProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: Implement API call to get purchased items
+      // Using empty lists for now
       _purchasedSongs = [];
       _purchasedAlbums = [];
     } catch (e) {

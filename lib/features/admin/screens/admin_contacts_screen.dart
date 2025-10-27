@@ -85,7 +85,6 @@ class _AdminContactsScreenState extends State<AdminContactsScreen> {
                     subtitle: Text(
                       '${contact['name']} • ${contact['email']}\n${_formatDate(contact['date'])}',
                     ),
-                    isThreeLine: true,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16),

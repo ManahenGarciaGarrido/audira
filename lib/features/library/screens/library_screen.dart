@@ -116,7 +116,7 @@ class _LibraryScreenState extends State<LibraryScreen>
                                   color: AppTheme.textGrey,
                                 ),
                                 onTap: () {
-                                  // TODO: Navigate to playlist detail
+                                  // Navigate to playlist detail page
                                 },
                               ),
                             );

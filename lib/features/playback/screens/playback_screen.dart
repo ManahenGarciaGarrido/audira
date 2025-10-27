@@ -600,11 +600,11 @@ class PlaybackScreen extends StatelessWidget {
               final cartProvider = context.read<CartProvider>();
               try {
                 await cartProvider.addToCart(
-                  authProvider.currentUser!.id,
-                  'SONG',
-                  currentSong.id,
-                  currentSong.price,
-                  1,
+                  userId: authProvider.currentUser!.id,
+                  itemType: 'SONG',
+                  itemId: currentSong.id,
+                  price: currentSong.price,
+                  quantity: 1,
                 );
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Song added to cart')),

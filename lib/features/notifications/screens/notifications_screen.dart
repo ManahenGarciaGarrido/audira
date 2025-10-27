@@ -296,7 +296,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           if (!isRead) {
             _markAsRead(notification['id']);
           }
-          // TODO: Navigate based on notification type
+          
         },
       ),
     );

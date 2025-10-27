@@ -21,6 +21,7 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
   final PlaylistService _playlistService = PlaylistService();
 
   Playlist? _playlist;
+  List<Song> _songs = [];
   bool _isLoading = false;
   String? _error;
 
@@ -37,9 +38,12 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
     });
 
     try {
-      final response = await _playlistService.getPlaylist(widget.playlistId);
+      final response = await _playlistService.getPlaylistWithSongs(widget.playlistId);
       if (response.success && response.data != null) {
-        setState(() => _playlist = response.data);
+        setState(() {
+          _playlist = response.data['playlist'];
+          _songs = response.data['songs'] ?? [];
+        });
       } else {
         setState(() => _error = response.error ?? 'Failed to load playlist');
       }
@@ -170,14 +174,14 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                   ).animate().fadeIn(delay: 200.ms),
                 const SizedBox(height: 8),
                 Text(
-                  '${_playlist!.songs.length} songs',
+                  '${_songs.length} songs',
                   style: const TextStyle(color: AppTheme.textSecondary),
                 ).animate().fadeIn(delay: 250.ms),
                 const SizedBox(height: 16),
-                if (_playlist!.songs.isNotEmpty)
+                if (_songs.isNotEmpty)
                   ElevatedButton.icon(
                     onPressed: () {
-                      audioProvider.playQueue(_playlist!.songs);
+                      audioProvider.playQueue(_songs);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Playing playlist...')),
                       );
@@ -194,12 +198,12 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
           ),
           const Divider(height: 1),
           Expanded(
-            child: _playlist!.songs.isEmpty
+            child: _songs.isEmpty
                 ? const Center(child: Text('No songs in this playlist'))
                 : ListView.builder(
-                    itemCount: _playlist!.songs.length,
+                    itemCount: _songs.length,
                     itemBuilder: (context, index) {
-                      final song = _playlist!.songs[index];
+                      final song = _songs[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: ListTile(

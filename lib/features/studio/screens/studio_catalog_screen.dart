@@ -238,7 +238,7 @@ class _StudioCatalogScreenState extends State<StudioCatalogScreen>
               backgroundColor: AppTheme.primaryBlue,
               child: Icon(Icons.album, color: Colors.white),
             ),
-            title: Text(album.title),
+            title: Text(album.name),
             subtitle: Text('\$${album.price.toStringAsFixed(2)}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,

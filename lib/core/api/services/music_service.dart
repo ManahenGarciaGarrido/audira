@@ -144,6 +144,22 @@ class MusicService {
     return ApiResponse(success: false, error: response.error);
   }
 
+  // Delete methods (Admin only)
+  Future<ApiResponse<void>> deleteSong(int id) async {
+    final response = await _apiClient.delete('${AppConstants.songsUrl}/$id');
+    return ApiResponse(success: response.success, error: response.error);
+  }
+
+  Future<ApiResponse<void>> deleteAlbum(int id) async {
+    final response = await _apiClient.delete('${AppConstants.albumsUrl}/$id');
+    return ApiResponse(success: response.success, error: response.error);
+  }
+
+  Future<ApiResponse<void>> deleteGenre(int id) async {
+    final response = await _apiClient.delete('${AppConstants.genresUrl}/$id');
+    return ApiResponse(success: response.success, error: response.error);
+  }
+
   // Artists
   Future<ApiResponse<Artist>> getArtistById(int id) async {
     final response = await _apiClient.get('/api/users/$id', requiresAuth: false);
