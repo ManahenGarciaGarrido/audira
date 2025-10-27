@@ -24,12 +24,17 @@ class _MainLayoutState extends State<MainLayout> {
   List<Widget> get _screens {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isAuthenticated = authProvider.isAuthenticated;
+    final userRole = authProvider.currentUser?.role;
 
     return [
       const HomeScreen(),
       const StoreScreen(),
       if (isAuthenticated) const LibraryScreen(),
       const CartScreen(),
+      if (isAuthenticated && userRole == 'ARTIST')
+        _buildComingSoonScreen('Studio'),
+      if (isAuthenticated && userRole == 'ADMIN')
+        _buildComingSoonScreen('Admin Panel'),
       if (isAuthenticated) const ProfileScreen(),
     ];
   }
@@ -37,6 +42,7 @@ class _MainLayoutState extends State<MainLayout> {
   List<NavigationDestination> get _destinations {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isAuthenticated = authProvider.isAuthenticated;
+    final userRole = authProvider.currentUser?.role;
 
     return [
       const NavigationDestination(
@@ -60,6 +66,18 @@ class _MainLayoutState extends State<MainLayout> {
         selectedIcon: Icon(Icons.shopping_cart),
         label: 'Carrito',
       ),
+      if (isAuthenticated && userRole == 'ARTIST')
+        const NavigationDestination(
+          icon: Icon(Icons.mic_outlined),
+          selectedIcon: Icon(Icons.mic),
+          label: 'Studio',
+        ),
+      if (isAuthenticated && userRole == 'ADMIN')
+        const NavigationDestination(
+          icon: Icon(Icons.admin_panel_settings_outlined),
+          selectedIcon: Icon(Icons.admin_panel_settings),
+          label: 'Admin',
+        ),
       if (isAuthenticated)
         const NavigationDestination(
           icon: Icon(Icons.person_outline),
@@ -69,6 +87,27 @@ class _MainLayoutState extends State<MainLayout> {
     ];
   }
 
+  Widget _buildComingSoonScreen(String title) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.construction, size: 64, color: AppTheme.primaryBlue),
+          const SizedBox(height: 16),
+          Text(
+            '$title Coming Soon',
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'This feature is under development',
+            style: TextStyle(color: AppTheme.textGrey),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,12 +115,15 @@ class _MainLayoutState extends State<MainLayout> {
         title: const Text('Audira'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.pushNamed(context, '/search');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.help_outline),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const FAQScreen()),
-              );
+              Navigator.pushNamed(context, '/faq');
             },
           ),
           Consumer<CartProvider>(
@@ -91,7 +133,7 @@ class _MainLayoutState extends State<MainLayout> {
                   IconButton(
                     icon: const Icon(Icons.notifications_outlined),
                     onPressed: () {
-                      // TODO: Navigate to notifications
+                      Navigator.pushNamed(context, '/notifications');
                     },
                   ),
                   if (cartProvider.itemCount > 0)
