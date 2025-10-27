@@ -81,7 +81,10 @@ class SongListItem extends StatelessWidget {
             }
           },
         ),
-        onTap: onTap,
+        onTap: onTap ??
+            () {
+              Navigator.pushNamed(context, '/song', arguments: song.id);
+            },
       ),
     );
   }

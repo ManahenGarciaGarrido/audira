@@ -54,6 +54,12 @@ dependencies:
   # Image Picker
   image_picker: ^1.0.7
 
+  # File Picker
+  file_picker: ^8.1.6
+
+  # Share
+  share_plus: ^10.1.2
+
   # Charts for statistics
   fl_chart: ^1.1.1
 

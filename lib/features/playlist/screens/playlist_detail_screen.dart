@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../config/theme.dart';
 import '../../../core/models/playlist.dart';
 import '../../../core/models/song.dart';
@@ -141,9 +142,15 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.share),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share - Coming soon')),
+            onPressed: () async {
+              final shareText = '🎵 Mira mi playlist "${_playlist!.name}" en Audira!\n\n'
+                  '${_songs.length} canciones\n'
+                  '${_playlist!.description ?? ""}\n\n'
+                  '¡Escúchala ahora!';
+
+              await Share.share(
+                shareText,
+                subject: 'Mira esta playlist en Audira',
               );
             },
           ),

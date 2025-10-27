@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import '../../../config/theme.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/cart_provider.dart';
+import '../../common/widgets/mini_player.dart';
 import 'home_screen.dart';
 import '../../store/screens/store_screen.dart';
 import '../../library/screens/library_screen.dart';
@@ -146,15 +147,22 @@ class _MainLayoutState extends State<MainLayout> {
           ),
         ],
       ),
-      body: PageTransitionSwitcher(
-        transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-          return FadeThroughTransition(
-            animation: primaryAnimation,
-            secondaryAnimation: secondaryAnimation,
-            child: child,
-          );
-        },
-        child: _screens[_currentIndex],
+      body: Column(
+        children: [
+          Expanded(
+            child: PageTransitionSwitcher(
+              transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
+                return FadeThroughTransition(
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  child: child,
+                );
+              },
+              child: _screens[_currentIndex],
+            ),
+          ),
+          const MiniPlayer(),
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,

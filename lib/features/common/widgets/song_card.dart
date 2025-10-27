@@ -12,10 +12,7 @@ class SongCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Abrir: ${song.name}')),
-        );
+        Navigator.pushNamed(context, '/song', arguments: song.id);
       },
       child: Container(
         width: 160,

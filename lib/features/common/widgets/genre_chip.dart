@@ -15,10 +15,7 @@ class GenreChip extends StatelessWidget {
       labelStyle: const TextStyle(color: Colors.white),
       side: BorderSide(color: AppTheme.primaryBlue.withValues(alpha: 0.3)),
       onPressed: () {
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ver género: ${genre.name}')),
-        );
+        Navigator.pushNamed(context, '/genre', arguments: genre.id);
       },
     );
   }

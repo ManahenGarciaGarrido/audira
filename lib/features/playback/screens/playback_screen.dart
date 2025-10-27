@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/providers/audio_provider.dart';
 import '../../../core/providers/library_provider.dart';
 import '../../../core/providers/auth_provider.dart';
@@ -126,7 +127,7 @@ class PlaybackScreen extends StatelessWidget {
         width: 300,
         height: 300,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
               color: AppTheme.primaryBlue.withValues(alpha: 0.3),
@@ -137,8 +138,8 @@ class PlaybackScreen extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+            // Rotating disc
+            ClipOval(
               child: song.imageUrls.isNotEmpty
                   ? CachedNetworkImage(
                       imageUrl: song.imageUrls.first,
@@ -160,6 +161,27 @@ class PlaybackScreen extends StatelessWidget {
                       color: AppTheme.surfaceBlack,
                       child: const Icon(Icons.music_note, size: 64),
                     ),
+            )
+                .animate(
+                  onPlay: (controller) => controller.repeat(),
+                )
+                .rotate(
+                  duration: audioProvider.isPlaying ? 3.seconds : 0.seconds,
+                ),
+            // Center hole effect
+            Center(
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.backgroundBlack.withValues(alpha: 0.8),
+                  border: Border.all(
+                    color: AppTheme.textGrey.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                ),
+              ),
             ),
             if (audioProvider.isDemoMode)
               Positioned(
@@ -489,12 +511,25 @@ class PlaybackScreen extends StatelessWidget {
     );
   }
 
-  void _shareSong(BuildContext context, Song song) {
-    final textToCopy = 'Check out "${song.name}" on Audira!';
-    Clipboard.setData(ClipboardData(text: textToCopy));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Song link copied to clipboard')),
-    );
+  void _shareSong(BuildContext context, Song song) async {
+    try {
+      final shareText = '🎵 Escucha "${song.name}" en Audira!\n\n'
+          'Precio: \$${song.price.toStringAsFixed(2)}\n'
+          'Duración: ${song.durationFormatted}\n\n'
+          '¡Disponible ahora!';
+
+      await Share.share(
+        shareText,
+        subject: 'Mira esta canción en Audira',
+      );
+    } catch (e) {
+      // Fallback to clipboard if share fails
+      final textToCopy = 'Escucha "${song.name}" en Audira!';
+      Clipboard.setData(ClipboardData(text: textToCopy));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enlace copiado al portapapeles')),
+      );
+    }
   }
 
   void _showQueueBottomSheet(BuildContext context) {

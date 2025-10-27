@@ -83,7 +83,10 @@ class AlbumListItem extends StatelessWidget {
             }
           },
         ),
-        onTap: onTap,
+        onTap: onTap ??
+            () {
+              Navigator.pushNamed(context, '/album', arguments: album.id);
+            },
       ),
     );
   }

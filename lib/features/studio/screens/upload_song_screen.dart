@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../../config/theme.dart';
 import '../../../core/providers/auth_provider.dart';
 
@@ -38,21 +40,50 @@ class _UploadSongScreenState extends State<UploadSongScreen> {
   }
 
   Future<void> _pickAudioFile() async {
-    setState(() {
-      _audioFileName = 'sample_song.mp3';
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Audio file selection - Coming soon')),
-    );
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.audio,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          _audioFileName = result.files.first.name;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Audio seleccionado: ${result.files.first.name}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al seleccionar audio: $e')),
+      );
+    }
   }
 
   Future<void> _pickImageFile() async {
-    setState(() {
-      _imageFileName = 'cover_art.jpg';
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Image file selection - Coming soon')),
-    );
+    try {
+      final picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 2000,
+        maxHeight: 2000,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _imageFileName = image.name;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Imagen seleccionada: ${image.name}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al seleccionar imagen: $e')),
+      );
+    }
   }
 
   Future<void> _uploadSong() async {

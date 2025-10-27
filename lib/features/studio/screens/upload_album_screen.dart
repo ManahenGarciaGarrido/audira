@@ -2,7 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import '../../../config/theme.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/api/services/music_service.dart';
+import '../../../core/models/song.dart';
 
 class UploadAlbumScreen extends StatefulWidget {
   const UploadAlbumScreen({super.key});
@@ -34,35 +39,66 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
   }
 
   Future<void> _pickCoverImage() async {
-    setState(() => _coverImageFileName = 'album_cover.jpg');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Image file selection - Coming soon')),
-    );
+    try {
+      final picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 2000,
+        maxHeight: 2000,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _coverImageFileName = image.name;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Imagen seleccionada: ${image.name}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al seleccionar imagen: $e')),
+      );
+    }
   }
 
   Future<void> _selectSongs() async {
-    final songs = await showDialog<List<String>>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Songs'),
-        content: const Text('Song selection dialog - Coming soon'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, []),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, ['Song 1', 'Song 2', 'Song 3']);
-            },
-            child: const Text('Select'),
-          ),
-        ],
-      ),
-    );
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.currentUser == null) return;
 
-    if (songs != null) {
-      setState(() => _selectedSongs = songs);
+    try {
+      final musicService = MusicService();
+      final response = await musicService.getSongsByArtist(
+        authProvider.currentUser!.id,
+      );
+
+      if (!response.success || response.data == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No se pudieron cargar las canciones')),
+          );
+        }
+        return;
+      }
+
+      final songs = response.data!;
+      if (!mounted) return;
+
+      final selectedSongs = await showDialog<List<String>>(
+        context: context,
+        builder: (context) => _SongSelectionDialog(songs: songs),
+      );
+
+      if (selectedSongs != null) {
+        setState(() => _selectedSongs = selectedSongs);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
   }
 
@@ -304,6 +340,71 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
               ),
         ],
       ),
+    );
+  }
+}
+
+class _SongSelectionDialog extends StatefulWidget {
+  final List<Song> songs;
+
+  const _SongSelectionDialog({required this.songs});
+
+  @override
+  State<_SongSelectionDialog> createState() => _SongSelectionDialogState();
+}
+
+class _SongSelectionDialogState extends State<_SongSelectionDialog> {
+  final Set<int> _selectedIndices = {};
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Select Songs'),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: widget.songs.isEmpty
+            ? const Center(
+                child: Text('No songs available. Upload songs first.'),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.songs.length,
+                itemBuilder: (context, index) {
+                  final song = widget.songs[index];
+                  final isSelected = _selectedIndices.contains(index);
+
+                  return CheckboxListTile(
+                    title: Text(song.name),
+                    subtitle: Text(song.durationFormatted),
+                    value: isSelected,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          _selectedIndices.add(index);
+                        } else {
+                          _selectedIndices.remove(index);
+                        }
+                      });
+                    },
+                  );
+                },
+              ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final selectedSongs = _selectedIndices
+                .map((index) => widget.songs[index].name)
+                .toList();
+            Navigator.pop(context, selectedSongs);
+          },
+          child: Text('Select (${_selectedIndices.length})'),
+        ),
+      ],
     );
   }
 }
