@@ -5,6 +5,7 @@ import 'config/routes.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/providers/cart_provider.dart';
 import 'core/providers/audio_provider.dart';
+import 'core/providers/library_provider.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/home/screens/main_layout.dart';
 
@@ -22,6 +23,7 @@ class AudiraApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => LibraryProvider()),
       ],
       child: MaterialApp(
         title: 'Audira',
