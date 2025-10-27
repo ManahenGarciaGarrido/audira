@@ -15,7 +15,6 @@ class StudioDashboardScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Welcome section
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -51,10 +50,7 @@ class StudioDashboardScreen extends StatelessWidget {
               .animate()
               .fadeIn(duration: 400.ms)
               .scale(begin: const Offset(0.9, 0.9)),
-
           const SizedBox(height: 24),
-
-          // Studio options
           _buildStudioCard(
             context,
             icon: Icons.upload_file,
@@ -63,9 +59,7 @@ class StudioDashboardScreen extends StatelessWidget {
             color: Colors.purple,
             route: '/studio/upload-song',
           ).animate(delay: 100.ms).fadeIn().slideX(begin: -0.2),
-
           const SizedBox(height: 12),
-
           _buildStudioCard(
             context,
             icon: Icons.album,
@@ -74,9 +68,7 @@ class StudioDashboardScreen extends StatelessWidget {
             color: Colors.blue,
             route: '/studio/upload-album',
           ).animate(delay: 200.ms).fadeIn().slideX(begin: -0.2),
-
           const SizedBox(height: 12),
-
           _buildStudioCard(
             context,
             icon: Icons.bar_chart,
@@ -85,9 +77,7 @@ class StudioDashboardScreen extends StatelessWidget {
             color: Colors.green,
             route: '/studio/stats',
           ).animate(delay: 300.ms).fadeIn().slideX(begin: -0.2),
-
           const SizedBox(height: 12),
-
           _buildStudioCard(
             context,
             icon: Icons.library_music,

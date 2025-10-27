@@ -27,14 +27,15 @@ class SongCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
+            // Image (Altura fija: 120)
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
               child: song.imageUrls.isNotEmpty
                   ? CachedNetworkImage(
                       imageUrl: song.imageUrls.first,
                       width: 160,
-                      height: 120,
+                      height: 120, // Altura fija
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
                         width: 160,
@@ -53,16 +54,21 @@ class SongCard extends StatelessWidget {
                     )
                   : Container(
                       width: 160,
-                      height: 120,
+                      height: 120, // Altura fija
                       color: AppTheme.surfaceBlack,
                       child: const Icon(Icons.music_note, size: 48),
                     ),
             ),
-            // Info
+
+            // Info (Ahora con padding vertical reducido)
+            // No usamos Expanded aquí, dejamos que el tamaño se ajuste al contenido
             Padding(
-              padding: const EdgeInsets.all(12),
+              // MODIFICADO: Padding vertical reducido de 12 a 8
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize:
+                    MainAxisSize.min, // La columna ocupa solo lo necesario
                 children: [
                   Text(
                     song.name,
@@ -70,12 +76,14 @@ class SongCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  // MODIFICADO: SizedBox reducido de 4 a 2
+                  const SizedBox(height: 2),
                   Text(
                     song.durationFormatted,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  const SizedBox(height: 4),
+                  // MODIFICADO: SizedBox reducido de 4 a 2
+                  const SizedBox(height: 2),
                   Text(
                     '\$${song.price.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
