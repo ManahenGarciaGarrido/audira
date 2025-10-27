@@ -32,7 +32,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @Nonnull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/auth")) {
+        String path = request.getServletPath();
+        logger.debug("Processing request for path: {}", path);
+
+        // Bypass JWT authentication for auth endpoints
+        if (path.contains("/api/auth")) {
+            logger.debug("Bypassing JWT filter for auth endpoint: {}", path);
             filterChain.doFilter(request, response);
             return;
         }
@@ -48,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.debug("User authenticated successfully: {}", userId);
             }
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
