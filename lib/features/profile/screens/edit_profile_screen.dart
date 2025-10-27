@@ -1,12 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:audira_frontend/core/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/api/auth_service.dart';
 import '../../../config/theme.dart';
+import '../../../core/api/api_client.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  const EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -33,7 +37,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _locationController = TextEditingController(text: user?.location ?? '');
     _websiteController = TextEditingController(text: user?.website ?? '');
 
-    // Listen for changes
     _firstNameController.addListener(() => setState(() => _hasChanges = true));
     _lastNameController.addListener(() => setState(() => _hasChanges = true));
     _bioController.addListener(() => setState(() => _hasChanges = true));
@@ -68,10 +71,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'website': _websiteController.text.trim(),
       };
 
-      final response = await authService.updateProfile(updates);
+      final ApiResponse<User> response =
+          await authService.updateProfile(updates);
 
-      if (response['success'] == true) {
-        // Refresh profile in provider
+      if (response.success) {
         await context.read<AuthProvider>().refreshProfile();
 
         if (mounted) {
@@ -81,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           setState(() => _hasChanges = false);
         }
       } else {
-        throw Exception(response['message'] ?? 'Failed to update profile');
+        throw Exception(response.error ?? 'Failed to update profile');
       }
     } catch (e) {
       if (mounted) {
@@ -122,14 +125,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Profile picture section
               Center(
                 child: Stack(
                   children: [
                     CircleAvatar(
                       radius: 60,
                       backgroundColor: AppTheme.primaryBlue,
-                      child: const Icon(Icons.person, size: 60, color: Colors.white),
+                      // TODO: Mostrar imagen de perfil real si existe
+                      child: const Icon(Icons.person,
+                          size: 60, color: Colors.white),
                     ),
                     Positioned(
                       bottom: 0,
@@ -152,11 +156,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ],
                 ),
-              ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.8, 0.8)),
-
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .scale(begin: const Offset(0.8, 0.8)),
               const SizedBox(height: 32),
-
-              // First name
               TextFormField(
                 controller: _firstNameController,
                 decoration: const InputDecoration(
@@ -165,16 +169,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   prefixIcon: Icon(Icons.person),
                 ),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your first name';
-                  }
                   return null;
                 },
               ).animate(delay: 100.ms).fadeIn().slideX(begin: -0.2),
-
               const SizedBox(height: 16),
-
-              // Last name
               TextFormField(
                 controller: _lastNameController,
                 decoration: const InputDecoration(
@@ -183,10 +181,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   prefixIcon: Icon(Icons.person_outline),
                 ),
               ).animate(delay: 200.ms).fadeIn().slideX(begin: -0.2),
-
               const SizedBox(height: 16),
-
-              // Bio
               TextFormField(
                 controller: _bioController,
                 decoration: const InputDecoration(
@@ -197,10 +192,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 maxLines: 3,
               ).animate(delay: 300.ms).fadeIn().slideX(begin: -0.2),
-
               const SizedBox(height: 16),
-
-              // Location
               TextFormField(
                 controller: _locationController,
                 decoration: const InputDecoration(
@@ -209,10 +201,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   prefixIcon: Icon(Icons.location_on),
                 ),
               ).animate(delay: 400.ms).fadeIn().slideX(begin: -0.2),
-
               const SizedBox(height: 16),
-
-              // Website
               TextFormField(
                 controller: _websiteController,
                 decoration: const InputDecoration(
@@ -222,10 +211,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 keyboardType: TextInputType.url,
               ).animate(delay: 500.ms).fadeIn().slideX(begin: -0.2),
-
               const SizedBox(height: 32),
-
-              // Save button
               ElevatedButton(
                 onPressed: _hasChanges && !_isLoading ? _saveChanges : null,
                 style: ElevatedButton.styleFrom(
@@ -241,8 +227,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('Save Changes', style: TextStyle(fontSize: 16)),
-              ).animate(delay: 600.ms).fadeIn().scale(begin: const Offset(0.9, 0.9)),
+                    : const Text('Save Changes',
+                        style: TextStyle(fontSize: 16)),
+              )
+                  .animate(delay: 600.ms)
+                  .fadeIn()
+                  .scale(begin: const Offset(0.9, 0.9)),
             ],
           ),
         ),

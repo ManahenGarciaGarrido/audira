@@ -1,5 +1,5 @@
-import '../api_client.dart';
-import '../../models/comment.dart';
+import 'package:audira_frontend/core/api/api_client.dart';
+import 'package:audira_frontend/core/models/comment.dart';
 
 class CommentService {
   static final CommentService _instance = CommentService._internal();
@@ -30,12 +30,20 @@ class CommentService {
 
       if (response.success && response.data != null) {
         final comment = Comment.fromJson(response.data);
-        return ApiResponse.success(comment);
+        return ApiResponse(
+          success: true,
+          data: comment,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to create comment');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to create comment',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -52,12 +60,20 @@ class CommentService {
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final comments = data.map((json) => Comment.fromJson(json)).toList();
-        return ApiResponse.success(comments);
+        return ApiResponse(
+          success: true,
+          data: comments,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch comments');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch comments',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -69,12 +85,20 @@ class CommentService {
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final comments = data.map((json) => Comment.fromJson(json)).toList();
-        return ApiResponse.success(comments);
+        return ApiResponse(
+          success: true,
+          data: comments,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch user comments');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch user comments',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -91,12 +115,20 @@ class CommentService {
 
       if (response.success && response.data != null) {
         final comment = Comment.fromJson(response.data);
-        return ApiResponse.success(comment);
+        return ApiResponse(
+          success: true,
+          data: comment,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to update comment');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to update comment',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -106,12 +138,20 @@ class CommentService {
       final response = await _apiClient.delete('/api/comments/$commentId');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to delete comment');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to delete comment',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -121,12 +161,20 @@ class CommentService {
       final response = await _apiClient.post('/api/comments/$commentId/like');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to like comment');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to like comment',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -136,12 +184,20 @@ class CommentService {
       final response = await _apiClient.delete('/api/comments/$commentId/like');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to unlike comment');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to unlike comment',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 }

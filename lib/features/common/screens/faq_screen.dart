@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/models/faq.dart';
@@ -152,8 +154,7 @@ class _FAQScreenState extends State<FAQScreen> {
         itemCount: _categories.length,
         itemBuilder: (context, index) {
           final category = _categories[index];
-          final isSelected =
-              (_selectedCategory ?? 'ALL') == category;
+          final isSelected = (_selectedCategory ?? 'ALL') == category;
 
           return Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -208,18 +209,16 @@ class _FAQScreenState extends State<FAQScreen> {
           faq.question,
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        subtitle: faq.category != null
-            ? Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  faq.category!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.primaryBlue,
-                  ),
-                ),
-              )
-            : null,
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            faq.category,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppTheme.primaryBlue,
+            ),
+          ),
+        ),
         onExpansionChanged: (expanded) {
           if (expanded) {
             // Increment view count

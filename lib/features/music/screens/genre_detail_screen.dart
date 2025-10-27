@@ -1,18 +1,17 @@
+import 'package:audira_frontend/config/theme.dart';
+import 'package:audira_frontend/core/api/services/music_service.dart';
+import 'package:audira_frontend/core/models/album.dart';
+import 'package:audira_frontend/core/models/genre.dart';
+import 'package:audira_frontend/core/models/song.dart';
+import 'package:audira_frontend/features/common/widgets/album_list_item.dart';
+import 'package:audira_frontend/features/common/widgets/song_list_item.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/models/genre.dart';
-import '../../../core/models/song.dart';
-import '../../../core/models/album.dart';
-import '../../../core/api/services/music_service.dart';
-import '../../../config/theme.dart';
-import '../../common/widgets/song_list_item.dart';
-import '../../common/widgets/album_list_item.dart';
 
 class GenreDetailScreen extends StatefulWidget {
   final int genreId;
 
-  const GenreDetailScreen({Key? key, required this.genreId}) : super(key: key);
+  const GenreDetailScreen({super.key, required this.genreId});
 
   @override
   State<GenreDetailScreen> createState() => _GenreDetailScreenState();

@@ -9,7 +9,7 @@ import '../../../config/theme.dart';
 class CreatePlaylistScreen extends StatefulWidget {
   final int? playlistId; // For editing existing playlist
 
-  const CreatePlaylistScreen({Key? key, this.playlistId}) : super(key: key);
+  const CreatePlaylistScreen({super.key, this.playlistId});
 
   @override
   State<CreatePlaylistScreen> createState() => _CreatePlaylistScreenState();
@@ -23,7 +23,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   bool _isLoading = false;
   bool _showPreview = false;
 
-  List<Song> _selectedSongs = [];
+  final List<Song> _selectedSongs = [];
 
   @override
   void dispose() {
@@ -99,7 +99,8 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.playlistId == null ? 'Create Playlist' : 'Edit Playlist'),
+        title: Text(
+            widget.playlistId == null ? 'Create Playlist' : 'Edit Playlist'),
         actions: [
           IconButton(
             icon: Icon(_showPreview ? Icons.edit : Icons.preview),
@@ -157,12 +158,13 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             Card(
               child: SwitchListTile(
                 title: const Text('Make playlist public'),
-                subtitle: const Text('Anyone can see and listen to this playlist'),
+                subtitle:
+                    const Text('Anyone can see and listen to this playlist'),
                 value: _isPublic,
                 onChanged: (value) {
                   setState(() => _isPublic = value);
                 },
-                activeColor: AppTheme.primaryBlue,
+                activeThumbColor: AppTheme.primaryBlue,
               ),
             ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
 
@@ -194,7 +196,8 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
               Center(
                 child: Column(
                   children: [
-                    const Icon(Icons.music_note, size: 64, color: AppTheme.textGrey),
+                    const Icon(Icons.music_note,
+                        size: 64, color: AppTheme.textGrey),
                     const SizedBox(height: 16),
                     Text(
                       'No songs added yet',
@@ -280,7 +283,8 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                       style: const TextStyle(color: Colors.white70),
                     ),
                     const SizedBox(width: 16),
-                    const Icon(Icons.music_note, size: 16, color: Colors.white70),
+                    const Icon(Icons.music_note,
+                        size: 16, color: Colors.white70),
                     const SizedBox(width: 4),
                     Text(
                       '${_selectedSongs.length} songs',
@@ -290,7 +294,10 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                 ),
               ],
             ),
-          ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.9, 0.9)),
+          )
+              .animate()
+              .fadeIn(duration: 400.ms)
+              .scale(begin: const Offset(0.9, 0.9)),
 
           const SizedBox(height: 24),
 
@@ -312,7 +319,8 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             Center(
               child: Column(
                 children: [
-                  const Icon(Icons.music_note, size: 64, color: AppTheme.textGrey),
+                  const Icon(Icons.music_note,
+                      size: 64, color: AppTheme.textGrey),
                   const SizedBox(height: 16),
                   Text(
                     'No songs in this playlist',
@@ -348,7 +356,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
       decoration: BoxDecoration(
         color: AppTheme.surfaceBlack,
         border: Border(
-          top: BorderSide(color: AppTheme.textGrey.withOpacity(0.2)),
+          top: BorderSide(color: AppTheme.textGrey.withValues(alpha: 0.2)),
         ),
       ),
       child: Row(
@@ -373,7 +381,9 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(widget.playlistId == null ? 'Create Playlist' : 'Save Changes'),
+                  : Text(widget.playlistId == null
+                      ? 'Create Playlist'
+                      : 'Save Changes'),
             ),
           ),
         ],

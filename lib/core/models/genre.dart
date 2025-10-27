@@ -5,6 +5,8 @@ class Genre extends Equatable {
   final String name;
   final String? description;
   final String? imageUrl;
+  final String? color;
+  final String? icon;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -13,6 +15,8 @@ class Genre extends Equatable {
     required this.name,
     this.description,
     this.imageUrl,
+    this.color,
+    this.icon,
     this.createdAt,
     this.updatedAt,
   });
@@ -23,6 +27,8 @@ class Genre extends Equatable {
       name: json['name'] as String,
       description: json['description'] as String?,
       imageUrl: json['imageUrl'] as String?,
+      color: json['color'] as String?,
+      icon: json['icon'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : null,
@@ -38,6 +44,8 @@ class Genre extends Equatable {
       'name': name,
       'description': description,
       'imageUrl': imageUrl,
+      'color': color,
+      'icon': icon,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
@@ -48,6 +56,8 @@ class Genre extends Equatable {
     String? name,
     String? description,
     String? imageUrl,
+    String? color,
+    String? icon,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -56,6 +66,8 @@ class Genre extends Equatable {
       name: name ?? this.name,
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
+      color: color ?? this.color,
+      icon: icon ?? this.icon,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -67,6 +79,8 @@ class Genre extends Equatable {
         name,
         description,
         imageUrl,
+        color,
+        icon,
         createdAt,
         updatedAt,
       ];

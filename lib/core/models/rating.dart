@@ -3,9 +3,10 @@ import 'package:equatable/equatable.dart';
 class Rating extends Equatable {
   final int id;
   final int userId;
-  final String entityType; // SONG, ALBUM, ARTIST, PLAYLIST
+  final String entityType;
   final int entityId;
-  final int rating; // 1-5 stars
+  final int rating;
+  final String? comment;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -15,6 +16,7 @@ class Rating extends Equatable {
     required this.entityType,
     required this.entityId,
     required this.rating,
+    this.comment,
     this.createdAt,
     this.updatedAt,
   });
@@ -26,6 +28,7 @@ class Rating extends Equatable {
       entityType: json['entityType'] as String,
       entityId: json['entityId'] as int,
       rating: json['rating'] as int,
+      comment: json['comment'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : null,
@@ -42,6 +45,7 @@ class Rating extends Equatable {
       'entityType': entityType,
       'entityId': entityId,
       'rating': rating,
+      'comment': comment,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
@@ -54,6 +58,7 @@ class Rating extends Equatable {
         entityType,
         entityId,
         rating,
+        comment,
         createdAt,
         updatedAt,
       ];

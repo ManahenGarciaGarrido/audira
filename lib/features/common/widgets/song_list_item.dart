@@ -9,8 +9,13 @@ import '../../../core/providers/cart_provider.dart';
 
 class SongListItem extends StatelessWidget {
   final Song song;
+  final void Function()? onTap;
 
-  const SongListItem({super.key, required this.song});
+  const SongListItem({
+    super.key,
+    required this.song,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +62,7 @@ class SongListItem extends StatelessWidget {
                 itemType: AppConstants.itemTypeSong,
                 itemId: song.id,
                 price: song.price,
+                quantity: 1,
               );
               if (success && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -75,12 +81,7 @@ class SongListItem extends StatelessWidget {
             }
           },
         ),
-        onTap: () {
-          // TODO: Navigate to song detail
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ver detalles: ${song.name}')),
-          );
-        },
+        onTap: onTap,
       ),
     );
   }

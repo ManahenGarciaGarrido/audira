@@ -1,5 +1,5 @@
-import '../api_client.dart';
-import '../../models/rating.dart';
+import 'package:audira_frontend/core/api/api_client.dart';
+import 'package:audira_frontend/core/models/rating.dart';
 
 class RatingService {
   static final RatingService _instance = RatingService._internal();
@@ -30,12 +30,20 @@ class RatingService {
 
       if (response.success && response.data != null) {
         final rating = Rating.fromJson(response.data);
-        return ApiResponse.success(rating);
+        return ApiResponse(
+          success: true,
+          data: rating,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to create rating');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to create rating',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -47,12 +55,20 @@ class RatingService {
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final ratings = data.map((json) => Rating.fromJson(json)).toList();
-        return ApiResponse.success(ratings);
+        return ApiResponse(
+          success: true,
+          data: ratings,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch user ratings');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch user ratings',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -69,12 +85,20 @@ class RatingService {
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final ratings = data.map((json) => Rating.fromJson(json)).toList();
-        return ApiResponse.success(ratings);
+        return ApiResponse(
+          success: true,
+          data: ratings,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch entity ratings');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch entity ratings',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -89,12 +113,20 @@ class RatingService {
       );
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch rating stats');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch rating stats',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -112,15 +144,27 @@ class RatingService {
       if (response.success) {
         if (response.data != null) {
           final rating = Rating.fromJson(response.data);
-          return ApiResponse.success(rating);
+          return ApiResponse(
+            success: true,
+            data: rating,
+            statusCode: response.statusCode,
+          );
         } else {
-          return ApiResponse.success(null);
+          return ApiResponse(
+            success: true,
+            data: null,
+            statusCode: response.statusCode,
+          );
         }
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch user rating');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch user rating',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -130,12 +174,20 @@ class RatingService {
       final response = await _apiClient.delete('/api/ratings/$ratingId');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to delete rating');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to delete rating',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 }

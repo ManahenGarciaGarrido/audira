@@ -1,12 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:audira_frontend/config/theme.dart';
+import 'package:audira_frontend/core/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/api/services/contact_service.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../../config/theme.dart';
 
 class ContactScreen extends StatefulWidget {
-  const ContactScreen({Key? key}) : super(key: key);
+  const ContactScreen({super.key});
 
   @override
   State<ContactScreen> createState() => _ContactScreenState();
@@ -60,15 +62,15 @@ class _ContactScreenState extends State<ContactScreen> {
         email: _emailController.text.trim(),
         subject: _subjectController.text.trim(),
         message: _messageController.text.trim(),
-        userId: authProvider.isAuthenticated
-            ? authProvider.currentUser!.id
-            : null,
+        userId:
+            authProvider.isAuthenticated ? authProvider.currentUser!.id : null,
       );
 
       if (response.success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Message sent successfully! We will get back to you soon.'),
+            content: Text(
+                'Message sent successfully! We will get back to you soon.'),
             backgroundColor: Colors.green,
           ),
         );

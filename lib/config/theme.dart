@@ -15,6 +15,8 @@ class AppTheme {
   static const Color textGrey = Color(0xFFB3B3B3);
   static const Color textDarkGrey = Color(0xFF757575);
 
+  static const Color textSecondary = textGrey;
+
   static const Color errorRed = Color(0xFFCF6679);
   static const Color successGreen = Color(0xFF4CAF50);
   static const Color warningOrange = Color(0xFFFF9800);

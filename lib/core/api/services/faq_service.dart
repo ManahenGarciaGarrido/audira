@@ -1,5 +1,5 @@
-import '../api_client.dart';
-import '../../models/faq.dart';
+import 'package:audira_frontend/core/api/api_client.dart';
+import 'package:audira_frontend/core/models/faq.dart';
 
 class FaqService {
   static final FaqService _instance = FaqService._internal();
@@ -16,12 +16,20 @@ class FaqService {
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final faqs = data.map((json) => FAQ.fromJson(json)).toList();
-        return ApiResponse.success(faqs);
+        return ApiResponse(
+          success: true,
+          data: faqs,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch FAQs');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch FAQs',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -33,12 +41,20 @@ class FaqService {
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final faqs = data.map((json) => FAQ.fromJson(json)).toList();
-        return ApiResponse.success(faqs);
+        return ApiResponse(
+          success: true,
+          data: faqs,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch active FAQs');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch active FAQs',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -50,12 +66,20 @@ class FaqService {
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final faqs = data.map((json) => FAQ.fromJson(json)).toList();
-        return ApiResponse.success(faqs);
+        return ApiResponse(
+          success: true,
+          data: faqs,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch FAQs by category');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch FAQs by category',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -66,12 +90,20 @@ class FaqService {
 
       if (response.success && response.data != null) {
         final faq = FAQ.fromJson(response.data);
-        return ApiResponse.success(faq);
+        return ApiResponse(
+          success: true,
+          data: faq,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch FAQ');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch FAQ',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -81,12 +113,20 @@ class FaqService {
       final response = await _apiClient.post('/api/faqs/$id/view');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to increment view count');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to increment view count',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -96,12 +136,20 @@ class FaqService {
       final response = await _apiClient.post('/api/faqs/$id/helpful');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to mark as helpful');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to mark as helpful',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -111,12 +159,20 @@ class FaqService {
       final response = await _apiClient.post('/api/faqs/$id/not-helpful');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to mark as not helpful');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to mark as not helpful',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -140,12 +196,20 @@ class FaqService {
 
       if (response.success && response.data != null) {
         final faq = FAQ.fromJson(response.data);
-        return ApiResponse.success(faq);
+        return ApiResponse(
+          success: true,
+          data: faq,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to create FAQ');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to create FAQ',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -168,12 +232,20 @@ class FaqService {
 
       if (response.success && response.data != null) {
         final faq = FAQ.fromJson(response.data);
-        return ApiResponse.success(faq);
+        return ApiResponse(
+          success: true,
+          data: faq,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to update FAQ');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to update FAQ',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -184,12 +256,20 @@ class FaqService {
 
       if (response.success && response.data != null) {
         final faq = FAQ.fromJson(response.data);
-        return ApiResponse.success(faq);
+        return ApiResponse(
+          success: true,
+          data: faq,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to toggle FAQ status');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to toggle FAQ status',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -199,12 +279,20 @@ class FaqService {
       final response = await _apiClient.delete('/api/faqs/$id');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to delete FAQ');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to delete FAQ',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 }

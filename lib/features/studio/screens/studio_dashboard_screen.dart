@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
 
 class StudioDashboardScreen extends StatelessWidget {
-  const StudioDashboardScreen({Key? key}) : super(key: key);
+  const StudioDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,10 @@ class StudioDashboardScreen extends StatelessWidget {
                 ),
               ],
             ),
-          ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.9, 0.9)),
+          )
+              .animate()
+              .fadeIn(duration: 400.ms)
+              .scale(begin: const Offset(0.9, 0.9)),
 
           const SizedBox(height: 24),
 
@@ -118,7 +121,7 @@ class StudioDashboardScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, size: 32, color: color),

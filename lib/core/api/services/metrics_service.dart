@@ -1,4 +1,4 @@
-import '../api_client.dart';
+import 'package:audira_frontend/core/api/api_client.dart';
 
 class MetricsService {
   static final MetricsService _instance = MetricsService._internal();
@@ -13,27 +13,44 @@ class MetricsService {
       final response = await _apiClient.get('/api/metrics/users/$userId');
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch user metrics');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch user metrics',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
   /// Get artist metrics/statistics
-  Future<ApiResponse<Map<String, dynamic>>> getArtistMetrics(int artistId) async {
+  Future<ApiResponse<Map<String, dynamic>>> getArtistMetrics(
+      int artistId) async {
     try {
       final response = await _apiClient.get('/api/metrics/artists/$artistId');
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch artist metrics');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch artist metrics',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -43,12 +60,20 @@ class MetricsService {
       final response = await _apiClient.get('/api/metrics/songs/$songId');
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch song metrics');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch song metrics',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -58,12 +83,20 @@ class MetricsService {
       final response = await _apiClient.get('/api/metrics/global');
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch global metrics');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch global metrics',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -72,16 +105,24 @@ class MetricsService {
     try {
       final response = await _apiClient.get(
         '/api/metrics/songs/top',
-        queryParams: {'limit': limit.toString()},
+        queryParameters: {'limit': limit.toString()},
       );
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as List<dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as List<dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch top songs');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch top songs',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -90,16 +131,24 @@ class MetricsService {
     try {
       final response = await _apiClient.get(
         '/api/metrics/artists/top',
-        queryParams: {'limit': limit.toString()},
+        queryParameters: {'limit': limit.toString()},
       );
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as List<dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as List<dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch top artists');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch top artists',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -111,27 +160,35 @@ class MetricsService {
     DateTime? endDate,
   }) async {
     try {
-      final queryParams = <String, String>{};
-      if (limit != null) queryParams['limit'] = limit.toString();
+      final queryParameters = <String, String>{};
+      if (limit != null) queryParameters['limit'] = limit.toString();
       if (startDate != null) {
-        queryParams['startDate'] = startDate.toIso8601String();
+        queryParameters['startDate'] = startDate.toIso8601String();
       }
       if (endDate != null) {
-        queryParams['endDate'] = endDate.toIso8601String();
+        queryParameters['endDate'] = endDate.toIso8601String();
       }
 
       final response = await _apiClient.get(
         '/api/metrics/users/$userId/history',
-        queryParams: queryParams.isNotEmpty ? queryParams : null,
+        queryParameters: queryParameters.isNotEmpty ? queryParameters : null,
       );
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as List<dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as List<dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch listening history');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch listening history',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -143,16 +200,24 @@ class MetricsService {
     try {
       final response = await _apiClient.get(
         '/api/metrics/artists/$artistId/top-songs',
-        queryParams: {'limit': limit.toString()},
+        queryParameters: {'limit': limit.toString()},
       );
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as List<dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as List<dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch artist top songs');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch artist top songs',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 }

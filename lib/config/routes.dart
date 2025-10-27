@@ -119,7 +119,6 @@ class AppRoutes {
       case studioUploadAlbum:
       case studioStats:
       case studioCatalog:
-      case admin:
       case adminSongs:
       case adminAlbums:
       case adminGenres:

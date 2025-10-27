@@ -1,6 +1,6 @@
-import '../api_client.dart';
-import '../../models/song.dart';
-import '../../models/album.dart';
+import 'package:audira_frontend/core/api/api_client.dart';
+import 'package:audira_frontend/core/models/album.dart';
+import 'package:audira_frontend/core/models/song.dart';
 
 class DiscoveryService {
   static final DiscoveryService _instance = DiscoveryService._internal();
@@ -14,18 +14,26 @@ class DiscoveryService {
     try {
       final response = await _apiClient.get(
         '/api/discovery/search/songs',
-        queryParams: {'query': query},
+        queryParameters: {'query': query},
       );
 
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final songs = data.map((json) => Song.fromJson(json)).toList();
-        return ApiResponse.success(songs);
+        return ApiResponse(
+          success: true,
+          data: songs,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to search songs');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to search songs',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -34,18 +42,26 @@ class DiscoveryService {
     try {
       final response = await _apiClient.get(
         '/api/discovery/search/albums',
-        queryParams: {'query': query},
+        queryParameters: {'query': query},
       );
 
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final albums = data.map((json) => Album.fromJson(json)).toList();
-        return ApiResponse.success(albums);
+        return ApiResponse(
+          success: true,
+          data: albums,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to search albums');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to search albums',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -54,18 +70,26 @@ class DiscoveryService {
     try {
       final response = await _apiClient.get(
         '/api/discovery/trending/songs',
-        queryParams: {'limit': limit.toString()},
+        queryParameters: {'limit': limit.toString()},
       );
 
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final songs = data.map((json) => Song.fromJson(json)).toList();
-        return ApiResponse.success(songs);
+        return ApiResponse(
+          success: true,
+          data: songs,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch trending songs');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch trending songs',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -74,36 +98,53 @@ class DiscoveryService {
     try {
       final response = await _apiClient.get(
         '/api/discovery/trending/albums',
-        queryParams: {'limit': limit.toString()},
+        queryParameters: {'limit': limit.toString()},
       );
 
       if (response.success && response.data != null) {
         final List<dynamic> data = response.data as List;
         final albums = data.map((json) => Album.fromJson(json)).toList();
-        return ApiResponse.success(albums);
+        return ApiResponse(
+          success: true,
+          data: albums,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch trending albums');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch trending albums',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
   /// Get recommendations for user
-  Future<ApiResponse<Map<String, dynamic>>> getRecommendations(int userId) async {
+  Future<ApiResponse<Map<String, dynamic>>> getRecommendations(
+      int userId) async {
     try {
       final response = await _apiClient.get(
         '/api/discovery/recommendations',
-        queryParams: {'userId': userId.toString()},
+        queryParameters: {'userId': userId.toString()},
       );
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch recommendations');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch recommendations',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 }

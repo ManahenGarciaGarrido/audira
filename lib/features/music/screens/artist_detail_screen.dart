@@ -1,18 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:audira_frontend/config/theme.dart';
+import 'package:audira_frontend/core/api/services/music_service.dart';
+import 'package:audira_frontend/core/models/album.dart';
+import 'package:audira_frontend/core/models/artist.dart';
+import 'package:audira_frontend/core/models/song.dart';
+import 'package:audira_frontend/core/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/models/artist.dart';
-import '../../../core/models/song.dart';
-import '../../../core/models/album.dart';
-import '../../../core/api/services/music_service.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../../config/theme.dart';
 
 class ArtistDetailScreen extends StatefulWidget {
   final int artistId;
 
-  const ArtistDetailScreen({Key? key, required this.artistId}) : super(key: key);
+  const ArtistDetailScreen({super.key, required this.artistId});
 
   @override
   State<ArtistDetailScreen> createState() => _ArtistDetailScreenState();
@@ -52,30 +54,26 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
     });
 
     try {
-      // Load artist
       final artistResponse = await _musicService.getArtistById(widget.artistId);
       if (artistResponse.success && artistResponse.data != null) {
         _artist = artistResponse.data;
 
-        // Load artist's songs
         final songsResponse =
             await _musicService.getSongsByArtist(widget.artistId);
         if (songsResponse.success && songsResponse.data != null) {
           _songs = songsResponse.data!;
         }
 
-        // Load artist's albums
         final albumsResponse =
             await _musicService.getAlbumsByArtist(widget.artistId);
         if (albumsResponse.success && albumsResponse.data != null) {
           _albums = albumsResponse.data!;
         }
 
-        // Check if user is following artist
         final authProvider = context.read<AuthProvider>();
         if (authProvider.isAuthenticated) {
-          _isFollowing = authProvider.currentUser!.followingIds
-              .contains(widget.artistId);
+          _isFollowing =
+              authProvider.currentUser!.followingIds.contains(widget.artistId);
         }
       } else {
         _error = artistResponse.error ?? 'Failed to load artist';
@@ -186,7 +184,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withValues(alpha: 0.7),
                         ],
                       ),
                     ),
@@ -328,10 +326,10 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
               ),
             ),
           ),
-          if (_artist!.bio != null && _artist!.bio!.isNotEmpty) ...[
+          if (_artist!.artistBio != null && _artist!.artistBio!.isNotEmpty) ...[
             const SizedBox(height: 16),
             Text(
-              _artist!.bio!,
+              _artist!.artistBio!,
               style: TextStyle(color: AppTheme.textSecondary),
             ),
           ],
@@ -417,8 +415,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
                       },
                     ),
                     onTap: () {
-                      Navigator.pushNamed(context, '/song',
-                          arguments: song.id);
+                      Navigator.pushNamed(context, '/song', arguments: song.id);
                     },
                   ),
                 )),
@@ -432,18 +429,18 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
             const SizedBox(height: 8),
             ..._albums.take(3).map((album) => Card(
                   child: ListTile(
-                    leading: album.coverImageUrl != null
+                    leading: album.imageUrls.isNotEmpty
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             child: CachedNetworkImage(
-                              imageUrl: album.coverImageUrl!,
+                              imageUrl: album.imageUrls.first,
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
                             ),
                           )
                         : const Icon(Icons.album),
-                    title: Text(album.title),
+                    title: Text(album.name),
                     subtitle: album.releaseDate != null
                         ? Text(album.releaseDate.toString().split(' ')[0])
                         : null,
@@ -518,18 +515,18 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
         final album = _albums[index];
         return Card(
           child: ListTile(
-            leading: album.coverImageUrl != null
+            leading: album.imageUrls.isNotEmpty
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: CachedNetworkImage(
-                      imageUrl: album.coverImageUrl!,
+                      imageUrl: album.imageUrls.first,
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
                     ),
                   )
                 : const Icon(Icons.album),
-            title: Text(album.title),
+            title: Text(album.name),
             subtitle: album.releaseDate != null
                 ? Text(album.releaseDate.toString().split(' ')[0])
                 : null,
