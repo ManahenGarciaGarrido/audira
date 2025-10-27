@@ -4,6 +4,7 @@ import '../../models/song.dart';
 import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/collaborator.dart';
+import '../../models/artist.dart';
 
 class MusicService {
   final ApiClient _apiClient = ApiClient();
@@ -62,6 +63,24 @@ class MusicService {
     return ApiResponse(success: false, error: response.error);
   }
 
+  Future<ApiResponse<List<Album>>> getAlbumsByArtist(int artistId) async {
+    final response = await _apiClient.get('${AppConstants.albumsUrl}/artist/$artistId', requiresAuth: false);
+    if (response.success && response.data != null) {
+      final albums = (response.data as List).map((json) => Album.fromJson(json)).toList();
+      return ApiResponse(success: true, data: albums);
+    }
+    return ApiResponse(success: false, error: response.error);
+  }
+
+  Future<ApiResponse<List<Album>>> getAlbumsByGenre(int genreId) async {
+    final response = await _apiClient.get('${AppConstants.albumsUrl}/genre/$genreId', requiresAuth: false);
+    if (response.success && response.data != null) {
+      final albums = (response.data as List).map((json) => Album.fromJson(json)).toList();
+      return ApiResponse(success: true, data: albums);
+    }
+    return ApiResponse(success: false, error: response.error);
+  }
+
   Future<ApiResponse<List<Song>>> getAlbumSongs(int albumId) async {
     final response = await _apiClient.get('${AppConstants.songsUrl}/album/$albumId', requiresAuth: false);
     if (response.success && response.data != null) {
@@ -69,6 +88,10 @@ class MusicService {
       return ApiResponse(success: true, data: songs);
     }
     return ApiResponse(success: false, error: response.error);
+  }
+
+  Future<ApiResponse<List<Song>>> getSongsByAlbum(int albumId) async {
+    return getAlbumSongs(albumId);
   }
 
   // Genres
@@ -81,6 +104,14 @@ class MusicService {
     return ApiResponse(success: false, error: response.error);
   }
 
+  Future<ApiResponse<Genre>> getGenreById(int id) async {
+    final response = await _apiClient.get('${AppConstants.genresUrl}/$id', requiresAuth: false);
+    if (response.success && response.data != null) {
+      return ApiResponse(success: true, data: Genre.fromJson(response.data));
+    }
+    return ApiResponse(success: false, error: response.error);
+  }
+
   // Collaborators
   Future<ApiResponse<List<Collaborator>>> getSongCollaborators(int songId) async {
     final response = await _apiClient.get('${AppConstants.collaborationsUrl}/song/$songId', requiresAuth: false);
@@ -89,6 +120,10 @@ class MusicService {
       return ApiResponse(success: true, data: collaborators);
     }
     return ApiResponse(success: false, error: response.error);
+  }
+
+  Future<ApiResponse<List<Collaborator>>> getCollaboratorsBySongId(int songId) async {
+    return getSongCollaborators(songId);
   }
 
   // Create Song (Artist only)
@@ -105,6 +140,15 @@ class MusicService {
     final response = await _apiClient.post(AppConstants.albumsUrl, body: albumData);
     if (response.success && response.data != null) {
       return ApiResponse(success: true, data: Album.fromJson(response.data));
+    }
+    return ApiResponse(success: false, error: response.error);
+  }
+
+  // Artists
+  Future<ApiResponse<Artist>> getArtistById(int id) async {
+    final response = await _apiClient.get('/api/users/$id', requiresAuth: false);
+    if (response.success && response.data != null) {
+      return ApiResponse(success: true, data: Artist.fromJson(response.data));
     }
     return ApiResponse(success: false, error: response.error);
   }
