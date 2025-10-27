@@ -5,7 +5,7 @@ import '../../../config/theme.dart';
 import '../../../core/providers/auth_provider.dart';
 
 class UserStatsScreen extends StatelessWidget {
-  const UserStatsScreen({Key? key}) : super(key: key);
+  const UserStatsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,8 @@ class UserStatsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${user?.fullName}',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
 
             // Overview Cards
@@ -44,10 +45,14 @@ class UserStatsScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.5,
               children: [
-                _buildStatCard('Total Plays', '345', Icons.play_circle, AppTheme.primaryBlue),
-                _buildStatCard('Purchased Songs', '28', Icons.music_note, Colors.purple),
-                _buildStatCard('Purchased Albums', '5', Icons.album, Colors.orange),
-                _buildStatCard('Total Spent', '\$234', Icons.attach_money, Colors.green),
+                _buildStatCard('Total Plays', '345', Icons.play_circle,
+                    AppTheme.primaryBlue),
+                _buildStatCard(
+                    'Purchased Songs', '28', Icons.music_note, Colors.purple),
+                _buildStatCard(
+                    'Purchased Albums', '5', Icons.album, Colors.orange),
+                _buildStatCard(
+                    'Total Spent', '\$234', Icons.attach_money, Colors.green),
               ],
             ).animate().fadeIn(),
             const SizedBox(height: 24),
@@ -60,13 +65,17 @@ class UserStatsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    _buildStatRow('This Week', '45 plays', AppTheme.primaryBlue),
+                    _buildStatRow(
+                        'This Week', '45 plays', AppTheme.primaryBlue),
                     const Divider(),
-                    _buildStatRow('This Month', '178 plays', AppTheme.primaryBlue),
+                    _buildStatRow(
+                        'This Month', '178 plays', AppTheme.primaryBlue),
                     const Divider(),
-                    _buildStatRow('Total Listening Time', '12h 34m', Colors.purple),
+                    _buildStatRow(
+                        'Total Listening Time', '12h 34m', Colors.purple),
                     const Divider(),
-                    _buildStatRow('Avg. Daily Listening', '35 min', Colors.orange),
+                    _buildStatRow(
+                        'Avg. Daily Listening', '35 min', Colors.orange),
                   ],
                 ),
               ),
@@ -130,7 +139,8 @@ class UserStatsScreen extends StatelessWidget {
                           radius: 40,
                           backgroundColor: AppTheme.primaryBlue,
                           child: Text('A${index + 1}',
-                              style: const TextStyle(fontSize: 20, color: Colors.white)),
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.white)),
                         ),
                         const SizedBox(height: 8),
                         Text('Artist ${index + 1}'),
@@ -146,7 +156,8 @@ class UserStatsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -156,7 +167,8 @@ class UserStatsScreen extends StatelessWidget {
             Icon(icon, size: 32, color: color),
             const SizedBox(height: 8),
             Text(value,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+                style: TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold, color: color)),
             const SizedBox(height: 4),
             Text(title,
                 style: const TextStyle(fontSize: 12, color: AppTheme.textGrey),
@@ -175,7 +187,8 @@ class UserStatsScreen extends StatelessWidget {
         children: [
           Text(label),
           Text(value,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.bold, color: color)),
         ],
       ),
     );
@@ -196,7 +209,8 @@ class UserStatsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text('$percentage%', style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          Text('$percentage%',
+              style: TextStyle(color: color, fontWeight: FontWeight.bold)),
         ],
       ),
     );

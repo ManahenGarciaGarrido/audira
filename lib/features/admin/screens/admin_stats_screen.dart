@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
 
 class AdminStatsScreen extends StatelessWidget {
-  const AdminStatsScreen({Key? key}) : super(key: key);
+  const AdminStatsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +40,14 @@ class AdminStatsScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.5,
               children: [
-                _buildStatCard('Total Users', '1,234', Icons.people, AppTheme.primaryBlue),
-                _buildStatCard('Total Songs', '5,678', Icons.music_note, Colors.purple),
-                _buildStatCard('Total Albums', '432', Icons.album, Colors.orange),
-                _buildStatCard('Total Revenue', '\$12,345', Icons.attach_money, Colors.green),
+                _buildStatCard(
+                    'Total Users', '1,234', Icons.people, AppTheme.primaryBlue),
+                _buildStatCard(
+                    'Total Songs', '5,678', Icons.music_note, Colors.purple),
+                _buildStatCard(
+                    'Total Albums', '432', Icons.album, Colors.orange),
+                _buildStatCard('Total Revenue', '\$12,345', Icons.attach_money,
+                    Colors.green),
               ],
             ).animate().fadeIn(),
             const SizedBox(height: 24),
@@ -61,7 +65,8 @@ class AdminStatsScreen extends StatelessWidget {
                   children: [
                     _buildStatRow('Active Users', '987', Colors.green),
                     const Divider(),
-                    _buildStatRow('New Users (This Month)', '123', AppTheme.primaryBlue),
+                    _buildStatRow(
+                        'New Users (This Month)', '123', AppTheme.primaryBlue),
                     const Divider(),
                     _buildStatRow('Artists', '45', Colors.purple),
                     const Divider(),
@@ -83,7 +88,8 @@ class AdminStatsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    _buildStatRow('Total Plays', '45,678', AppTheme.primaryBlue),
+                    _buildStatRow(
+                        'Total Plays', '45,678', AppTheme.primaryBlue),
                     const Divider(),
                     _buildStatRow('Total Downloads', '12,345', Colors.green),
                     const Divider(),
@@ -111,7 +117,8 @@ class AdminStatsScreen extends StatelessWidget {
                   children: [
                     _buildStatRow('Total Sales', '\$12,345', Colors.green),
                     const Divider(),
-                    _buildStatRow('This Month', '\$2,345', AppTheme.primaryBlue),
+                    _buildStatRow(
+                        'This Month', '\$2,345', AppTheme.primaryBlue),
                     const Divider(),
                     _buildStatRow('Last Month', '\$2,100', AppTheme.textGrey),
                     const Divider(),
@@ -131,15 +138,19 @@ class AdminStatsScreen extends StatelessWidget {
             Card(
               child: Column(
                 children: [
-                  _buildTopItem('1', 'Midnight Dreams', '1,234 plays', Icons.music_note),
+                  _buildTopItem(
+                      '1', 'Midnight Dreams', '1,234 plays', Icons.music_note),
                   const Divider(height: 1),
-                  _buildTopItem('2', 'Electric Love', '1,123 plays', Icons.music_note),
+                  _buildTopItem(
+                      '2', 'Electric Love', '1,123 plays', Icons.music_note),
                   const Divider(height: 1),
                   _buildTopItem('3', 'Summer Vibes', '987 plays', Icons.album),
                   const Divider(height: 1),
-                  _buildTopItem('4', 'Jazz Collection', '876 plays', Icons.album),
+                  _buildTopItem(
+                      '4', 'Jazz Collection', '876 plays', Icons.album),
                   const Divider(height: 1),
-                  _buildTopItem('5', 'Blue Notes', '765 plays', Icons.music_note),
+                  _buildTopItem(
+                      '5', 'Blue Notes', '765 plays', Icons.music_note),
                 ],
               ),
             ).animate().fadeIn(delay: 400.ms),
@@ -149,7 +160,8 @@ class AdminStatsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -198,7 +210,8 @@ class AdminStatsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopItem(String rank, String title, String subtitle, IconData icon) {
+  Widget _buildTopItem(
+      String rank, String title, String subtitle, IconData icon) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: AppTheme.primaryBlue,

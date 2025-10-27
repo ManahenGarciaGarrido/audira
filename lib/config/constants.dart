@@ -10,6 +10,8 @@ class AppConstants {
   static const String userProfileUrl = '/api/users/profile';
   static const String userByIdUrl = '/api/users';
 
+  static const String allUsersUrl = '/api/users';
+
   // Song endpoints
   static const String songsUrl = '/api/songs';
 

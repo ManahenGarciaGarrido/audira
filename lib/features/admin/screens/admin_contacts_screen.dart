@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
 
 class AdminContactsScreen extends StatefulWidget {
-  const AdminContactsScreen({Key? key}) : super(key: key);
+  const AdminContactsScreen({super.key});
 
   @override
   State<AdminContactsScreen> createState() => _AdminContactsScreenState();
@@ -35,7 +35,9 @@ class _AdminContactsScreenState extends State<AdminContactsScreen> {
 
   List<Map<String, dynamic>> get _filteredContacts {
     if (_selectedFilter == 'ALL') return _contacts;
-    return _contacts.where((c) => c['status'] == _selectedFilter.toLowerCase()).toList();
+    return _contacts
+        .where((c) => c['status'] == _selectedFilter.toLowerCase())
+        .toList();
   }
 
   @override
@@ -110,9 +112,11 @@ class _AdminContactsScreenState extends State<AdminContactsScreen> {
                                       setState(() {
                                         contact['status'] = 'resolved';
                                       });
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
-                                          content: Text('Message marked as resolved'),
+                                          content: Text(
+                                              'Message marked as resolved'),
                                         ),
                                       );
                                     },

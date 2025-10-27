@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
 
 class AdminOrdersScreen extends StatefulWidget {
-  const AdminOrdersScreen({Key? key}) : super(key: key);
+  const AdminOrdersScreen({super.key});
 
   @override
   State<AdminOrdersScreen> createState() => _AdminOrdersScreenState();
@@ -44,7 +44,9 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
 
   List<Map<String, dynamic>> get _filteredOrders {
     if (_selectedFilter == 'ALL') return _orders;
-    return _orders.where((o) => o['status'] == _selectedFilter.toLowerCase()).toList();
+    return _orders
+        .where((o) => o['status'] == _selectedFilter.toLowerCase())
+        .toList();
   }
 
   @override
@@ -131,20 +133,24 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  ...order['items'].map<Widget>((item) => Padding(
-                                        padding: const EdgeInsets.only(bottom: 4),
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.check_circle,
-                                                size: 16, color: Colors.green),
-                                            const SizedBox(width: 8),
-                                            Text(item),
-                                          ],
-                                        ),
-                                      )),
+                                  ...order['items']
+                                      .map<Widget>((item) => Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 4),
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.check_circle,
+                                                    size: 16,
+                                                    color: Colors.green),
+                                                const SizedBox(width: 8),
+                                                Text(item),
+                                              ],
+                                            ),
+                                          )),
                                   const SizedBox(height: 16),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'Total: \$${order['total'].toStringAsFixed(2)}',
@@ -159,9 +165,11 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
                                             setState(() {
                                               order['status'] = 'completed';
                                             });
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                               const SnackBar(
-                                                content: Text('Order marked as completed'),
+                                                content: Text(
+                                                    'Order marked as completed'),
                                               ),
                                             );
                                           },
@@ -187,7 +195,8 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),

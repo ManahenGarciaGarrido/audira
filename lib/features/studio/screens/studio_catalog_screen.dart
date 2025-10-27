@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +10,7 @@ import '../../../core/api/services/music_service.dart';
 import '../../../core/providers/auth_provider.dart';
 
 class StudioCatalogScreen extends StatefulWidget {
-  const StudioCatalogScreen({Key? key}) : super(key: key);
+  const StudioCatalogScreen({super.key});
 
   @override
   State<StudioCatalogScreen> createState() => _StudioCatalogScreenState();
@@ -107,7 +109,8 @@ class _StudioCatalogScreenState extends State<StudioCatalogScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Album'),
-        content: const Text('Are you sure? This will also remove all songs in the album.'),
+        content: const Text(
+            'Are you sure? This will also remove all songs in the album.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -159,7 +162,8 @@ class _StudioCatalogScreenState extends State<StudioCatalogScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const Icon(Icons.error_outline,
+                          size: 64, color: Colors.red),
                       const SizedBox(height: 16),
                       Text(_error!),
                       ElevatedButton(
@@ -197,7 +201,8 @@ class _StudioCatalogScreenState extends State<StudioCatalogScreen>
               child: Icon(Icons.music_note, color: Colors.white),
             ),
             title: Text(song.name),
-            subtitle: Text('\$${song.price.toStringAsFixed(2)} • ${song.durationFormatted}'),
+            subtitle: Text(
+                '\$${song.price.toStringAsFixed(2)} • ${song.durationFormatted}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -223,7 +228,8 @@ class _StudioCatalogScreenState extends State<StudioCatalogScreen>
 
   Widget _buildAlbumsList() {
     if (_albums.isEmpty) {
-      return const Center(child: Text('No albums yet. Create your first album!'));
+      return const Center(
+          child: Text('No albums yet. Create your first album!'));
     }
 
     return ListView.builder(

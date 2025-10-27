@@ -7,8 +7,10 @@ import 'package:audira_frontend/core/models/artist.dart';
 import 'package:audira_frontend/core/models/collaborator.dart';
 import 'package:audira_frontend/core/models/rating.dart';
 import 'package:audira_frontend/core/models/song.dart';
+import 'package:audira_frontend/core/providers/audio_provider.dart';
 import 'package:audira_frontend/core/providers/auth_provider.dart';
 import 'package:audira_frontend/core/providers/cart_provider.dart';
+import 'package:audira_frontend/core/providers/library_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -753,16 +755,19 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                                       size: 18),
                                   onPressed: () async {
                                     try {
-                                      await _commentService.likeComment(comment.id);
+                                      await _commentService
+                                          .likeComment(comment.id);
                                       _loadRatingsAndComments();
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                           content: Text('Comment liked'),
                                           duration: Duration(seconds: 1),
                                         ),
                                       );
                                     } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(content: Text('Error: $e')),
                                       );
                                     }

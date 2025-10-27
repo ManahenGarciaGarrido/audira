@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -5,7 +7,7 @@ import '../../../config/theme.dart';
 import '../../../core/providers/auth_provider.dart';
 
 class UploadSongScreen extends StatefulWidget {
-  const UploadSongScreen({Key? key}) : super(key: key);
+  const UploadSongScreen({super.key});
 
   @override
   State<UploadSongScreen> createState() => _UploadSongScreenState();
@@ -84,7 +86,7 @@ class _UploadSongScreenState extends State<UploadSongScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
+    Provider.of<AuthProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -128,7 +130,8 @@ class _UploadSongScreenState extends State<UploadSongScreen> {
             // Audio File
             Card(
               child: ListTile(
-                leading: const Icon(Icons.audiotrack, color: AppTheme.primaryBlue),
+                leading:
+                    const Icon(Icons.audiotrack, color: AppTheme.primaryBlue),
                 title: Text(_audioFileName ?? 'Select Audio File'),
                 subtitle: const Text('MP3, WAV, FLAC'),
                 trailing: const Icon(Icons.upload_file),
@@ -275,7 +278,8 @@ class _UploadSongScreenState extends State<UploadSongScreen> {
                 color: AppTheme.surfaceBlack,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.music_note, size: 80, color: AppTheme.primaryBlue),
+              child: const Icon(Icons.music_note,
+                  size: 80, color: AppTheme.primaryBlue),
             ),
           ),
           const SizedBox(height: 24),
@@ -287,7 +291,9 @@ class _UploadSongScreenState extends State<UploadSongScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            _descriptionController.text.isEmpty ? 'Description' : _descriptionController.text,
+            _descriptionController.text.isEmpty
+                ? 'Description'
+                : _descriptionController.text,
             style: const TextStyle(color: AppTheme.textGrey),
           ),
           const SizedBox(height: 16),
@@ -335,7 +341,8 @@ class _UploadSongScreenState extends State<UploadSongScreen> {
               ),
               child: Text(
                 _lyricsController.text,
-                style: const TextStyle(color: AppTheme.textSecondary, height: 1.5),
+                style:
+                    const TextStyle(color: AppTheme.textSecondary, height: 1.5),
               ),
             ),
           ],

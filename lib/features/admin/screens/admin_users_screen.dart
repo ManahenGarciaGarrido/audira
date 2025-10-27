@@ -1,11 +1,13 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
+import 'package:audira_frontend/core/api/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
 import '../../../core/models/user.dart';
-import '../../../core/api/services/auth_service.dart';
 
 class AdminUsersScreen extends StatefulWidget {
-  const AdminUsersScreen({Key? key}) : super(key: key);
+  const AdminUsersScreen({super.key});
 
   @override
   State<AdminUsersScreen> createState() => _AdminUsersScreenState();
@@ -61,7 +63,8 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
 
     // Apply role filter
     if (_selectedRoleFilter != 'ALL') {
-      filtered = filtered.where((user) => user.role == _selectedRoleFilter).toList();
+      filtered =
+          filtered.where((user) => user.role == _selectedRoleFilter).toList();
     }
 
     // Apply search filter
@@ -166,7 +169,8 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
               decoration: InputDecoration(
                 hintText: 'Search users...',
                 prefixIcon: const Icon(Icons.search),
-                suffix: Text(_selectedRoleFilter != 'ALL' ? _selectedRoleFilter : ''),
+                suffix: Text(
+                    _selectedRoleFilter != 'ALL' ? _selectedRoleFilter : ''),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -182,7 +186,8 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                            const Icon(Icons.error_outline,
+                                size: 64, color: Colors.red),
                             const SizedBox(height: 16),
                             Text(_error!),
                             ElevatedButton(
@@ -210,18 +215,21 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                                             : Colors.grey,
                                     child: Text(
                                       user.username[0].toUpperCase(),
-                                      style: const TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
                                   ),
                                   title: Text(user.fullName),
-                                  subtitle: Text('${user.email}\n@${user.username}'),
+                                  subtitle:
+                                      Text('${user.email}\n@${user.username}'),
                                   trailing: Wrap(
                                     spacing: 8,
                                     children: [
                                       Chip(
                                         label: Text(user.role),
                                         backgroundColor: AppTheme.primaryBlue,
-                                        labelStyle: const TextStyle(color: Colors.white),
+                                        labelStyle: const TextStyle(
+                                            color: Colors.white),
                                       ),
                                       PopupMenuButton(
                                         itemBuilder: (context) => [
@@ -229,7 +237,8 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                                             value: 'role',
                                             child: Row(
                                               children: [
-                                                Icon(Icons.admin_panel_settings),
+                                                Icon(
+                                                    Icons.admin_panel_settings),
                                                 SizedBox(width: 8),
                                                 Text('Change Role'),
                                               ],

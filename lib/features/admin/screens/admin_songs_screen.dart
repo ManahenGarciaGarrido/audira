@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
@@ -5,7 +7,7 @@ import '../../../core/models/song.dart';
 import '../../../core/api/services/music_service.dart';
 
 class AdminSongsScreen extends StatefulWidget {
-  const AdminSongsScreen({Key? key}) : super(key: key);
+  const AdminSongsScreen({super.key});
 
   @override
   State<AdminSongsScreen> createState() => _AdminSongsScreenState();
@@ -63,7 +65,10 @@ class _AdminSongsScreenState extends State<AdminSongsScreen> {
         _filteredSongs = _songs
             .where((song) =>
                 song.name.toLowerCase().contains(query.toLowerCase()) ||
-                (song.description?.toLowerCase().contains(query.toLowerCase()) ?? false))
+                (song.description
+                        ?.toLowerCase()
+                        .contains(query.toLowerCase()) ??
+                    false))
             .toList();
       }
     });
@@ -282,10 +287,7 @@ class _AdminSongsScreenState extends State<AdminSongsScreen> {
           ElevatedButton(
             onPressed: () async {
               final name = nameController.text.trim();
-              final description = descriptionController.text.trim();
-              final price = double.tryParse(priceController.text.trim()) ?? 0.0;
-              final duration =
-                  int.tryParse(durationController.text.trim()) ?? 0;
+              descriptionController.text.trim();
 
               if (name.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(

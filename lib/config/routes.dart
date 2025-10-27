@@ -28,7 +28,6 @@ import '../features/studio/screens/studio_dashboard_screen.dart';
 import '../features/studio/screens/upload_song_screen.dart';
 import '../features/studio/screens/upload_album_screen.dart';
 import '../features/studio/screens/studio_stats_screen.dart';
-import '../features/studio/screens/studio_catalog_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -194,33 +193,5 @@ class AppRoutes {
           ),
         );
     }
-  }
-
-  static String _getRouteName(String route) {
-    final routeNames = {
-      playback: 'Playback',
-      playlist: 'Playlist',
-      createPlaylist: 'Create Playlist',
-      editPlaylist: 'Edit Playlist',
-      userStats: 'Statistics',
-      editProfile: 'Edit Profile',
-      search: 'Search',
-      notifications: 'Notifications',
-      studio: 'Studio',
-      studioUploadSong: 'Upload Song',
-      studioUploadAlbum: 'Upload Album',
-      studioStats: 'Studio Statistics',
-      studioCatalog: 'My Catalog',
-      admin: 'Admin Panel',
-      adminSongs: 'Manage Songs',
-      adminAlbums: 'Manage Albums',
-      adminGenres: 'Manage Genres',
-      adminUsers: 'Manage Users',
-      adminFaqs: 'Manage FAQs',
-      adminContacts: 'View Contacts',
-      adminOrders: 'Manage Orders',
-      adminStats: 'Global Statistics',
-    };
-    return routeNames[route] ?? 'Unknown';
   }
 }

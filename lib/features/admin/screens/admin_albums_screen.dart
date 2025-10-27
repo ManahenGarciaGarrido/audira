@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
@@ -5,7 +7,7 @@ import '../../../core/models/album.dart';
 import '../../../core/api/services/music_service.dart';
 
 class AdminAlbumsScreen extends StatefulWidget {
-  const AdminAlbumsScreen({Key? key}) : super(key: key);
+  const AdminAlbumsScreen({super.key});
 
   @override
   State<AdminAlbumsScreen> createState() => _AdminAlbumsScreenState();

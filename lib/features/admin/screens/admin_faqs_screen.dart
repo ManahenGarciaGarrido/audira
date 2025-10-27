@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
@@ -5,7 +7,7 @@ import '../../../core/models/faq.dart';
 import '../../../core/api/services/faq_service.dart';
 
 class AdminFaqsScreen extends StatefulWidget {
-  const AdminFaqsScreen({Key? key}) : super(key: key);
+  const AdminFaqsScreen({super.key});
 
   @override
   State<AdminFaqsScreen> createState() => _AdminFaqsScreenState();
@@ -104,7 +106,8 @@ class _AdminFaqsScreenState extends State<AdminFaqsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const Icon(Icons.error_outline,
+                          size: 64, color: Colors.red),
                       const SizedBox(height: 16),
                       Text(_error!),
                       ElevatedButton(
@@ -130,7 +133,8 @@ class _AdminFaqsScreenState extends State<AdminFaqsScreen> {
                             ),
                             title: Text(
                               faq.question,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text('Category: ${faq.category}'),
                             trailing: Row(
@@ -255,7 +259,8 @@ class _AdminFaqsScreenState extends State<AdminFaqsScreen> {
 
               if (question.isEmpty || answer.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Question and answer are required')),
+                  const SnackBar(
+                      content: Text('Question and answer are required')),
                 );
                 return;
               }

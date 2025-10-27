@@ -5,7 +5,7 @@ import '../../../config/theme.dart';
 import '../../../core/providers/auth_provider.dart';
 
 class StudioStatsScreen extends StatelessWidget {
-  const StudioStatsScreen({Key? key}) : super(key: key);
+  const StudioStatsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,8 @@ class StudioStatsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Artist: ${user?.fullName}',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
 
             // Overview Cards
@@ -44,9 +45,12 @@ class StudioStatsScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.5,
               children: [
-                _buildStatCard('Total Plays', '12,345', Icons.play_circle, AppTheme.primaryBlue),
-                _buildStatCard('Total Revenue', '\$1,234', Icons.attach_money, Colors.green),
-                _buildStatCard('Total Songs', '24', Icons.music_note, Colors.purple),
+                _buildStatCard('Total Plays', '12,345', Icons.play_circle,
+                    AppTheme.primaryBlue),
+                _buildStatCard('Total Revenue', '\$1,234', Icons.attach_money,
+                    Colors.green),
+                _buildStatCard(
+                    'Total Songs', '24', Icons.music_note, Colors.purple),
                 _buildStatCard('Total Albums', '5', Icons.album, Colors.orange),
               ],
             ).animate().fadeIn(),
@@ -60,7 +64,8 @@ class StudioStatsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    _buildStatRow('This Month Plays', '2,345', AppTheme.primaryBlue),
+                    _buildStatRow(
+                        'This Month Plays', '2,345', AppTheme.primaryBlue),
                     const Divider(),
                     _buildStatRow('This Month Revenue', '\$234', Colors.green),
                     const Divider(),
@@ -97,7 +102,8 @@ class StudioStatsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -107,7 +113,8 @@ class StudioStatsScreen extends StatelessWidget {
             Icon(icon, size: 32, color: color),
             const SizedBox(height: 8),
             Text(value,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+                style: TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold, color: color)),
             const SizedBox(height: 4),
             Text(title,
                 style: const TextStyle(fontSize: 12, color: AppTheme.textGrey),
@@ -126,7 +133,8 @@ class StudioStatsScreen extends StatelessWidget {
         children: [
           Text(label),
           Text(value,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.bold, color: color)),
         ],
       ),
     );

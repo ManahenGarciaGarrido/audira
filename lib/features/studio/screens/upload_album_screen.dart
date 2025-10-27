@@ -1,9 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../config/theme.dart';
 
 class UploadAlbumScreen extends StatefulWidget {
-  const UploadAlbumScreen({Key? key}) : super(key: key);
+  const UploadAlbumScreen({super.key});
 
   @override
   State<UploadAlbumScreen> createState() => _UploadAlbumScreenState();
@@ -142,7 +144,6 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
               ),
             ).animate().fadeIn(),
             const SizedBox(height: 16),
-
             TextFormField(
               controller: _titleController,
               decoration: const InputDecoration(
@@ -150,11 +151,9 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.album),
               ),
-              validator: (value) =>
-                  value?.isEmpty ?? true ? 'Required' : null,
+              validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
             ).animate().fadeIn(delay: 50.ms),
             const SizedBox(height: 16),
-
             TextFormField(
               controller: _descriptionController,
               decoration: const InputDecoration(
@@ -164,7 +163,6 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
               maxLines: 3,
             ).animate().fadeIn(delay: 100.ms),
             const SizedBox(height: 16),
-
             Row(
               children: [
                 Expanded(
@@ -207,10 +205,10 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
               ],
             ).animate().fadeIn(delay: 150.ms),
             const SizedBox(height: 24),
-
             Card(
               child: ListTile(
-                leading: const Icon(Icons.music_note, color: AppTheme.primaryBlue),
+                leading:
+                    const Icon(Icons.music_note, color: AppTheme.primaryBlue),
                 title: Text(_selectedSongs.isEmpty
                     ? 'Add Songs'
                     : '${_selectedSongs.length} songs selected'),
@@ -218,7 +216,6 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
                 onTap: _selectSongs,
               ),
             ).animate().fadeIn(delay: 200.ms),
-
             if (_selectedSongs.isNotEmpty) ...[
               const SizedBox(height: 16),
               ..._selectedSongs.asMap().entries.map((entry) => Card(
@@ -237,9 +234,7 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
                     ),
                   )),
             ],
-
             const SizedBox(height: 24),
-
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -272,30 +267,34 @@ class _UploadAlbumScreenState extends State<UploadAlbumScreen> {
                 color: AppTheme.surfaceBlack,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.album, size: 80, color: AppTheme.primaryBlue),
+              child: const Icon(Icons.album,
+                  size: 80, color: AppTheme.primaryBlue),
             ),
           ),
           const SizedBox(height: 24),
-
           Text(
-            _titleController.text.isEmpty ? 'Album Title' : _titleController.text,
+            _titleController.text.isEmpty
+                ? 'Album Title'
+                : _titleController.text,
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Text(_descriptionController.text, style: const TextStyle(color: AppTheme.textGrey)),
+          Text(_descriptionController.text,
+              style: const TextStyle(color: AppTheme.textGrey)),
           const SizedBox(height: 16),
-
           Row(
             children: [
               const Icon(Icons.attach_money, color: AppTheme.primaryBlue),
               Text('\$${_priceController.text}',
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryBlue)),
             ],
           ),
           const SizedBox(height: 24),
-
-          const Text('Track List', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('Track List',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ..._selectedSongs.asMap().entries.map(
                 (entry) => ListTile(

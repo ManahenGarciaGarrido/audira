@@ -278,4 +278,47 @@ class AuthService {
       );
     }
   }
+
+  Future<ApiResponse<List<User>>> getAllUsers() async {
+    try {
+      // Asume que la llamada a 'get' sin 'requiresAuth: false' usa autenticación por defecto
+      final response = await _apiClient.get(AppConstants.allUsersUrl);
+
+      if (response.success && response.data != null) {
+        // Espera que la API devuelva una lista de objetos de usuario
+        final List<dynamic> userListData = response.data as List<dynamic>;
+
+        // Mapea la lista de JSON a una lista de objetos User/Artist
+        final List<User> users = userListData.map((userData) {
+          final userJson = userData as Map<String, dynamic>;
+          final role = userJson['role'] as String;
+
+          if (role == AppConstants.roleArtist) {
+            return Artist.fromJson(userJson);
+          } else {
+            return User.fromJson(userJson);
+          }
+        }).toList();
+
+        return ApiResponse(
+          success: true,
+          data: users,
+          statusCode: response.statusCode,
+        );
+      }
+
+      // Maneja la respuesta de error de la API
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Error desconocido al obtener usuarios',
+        statusCode: response.statusCode,
+      );
+    } catch (e) {
+      // Maneja excepciones de red o de parseo
+      return ApiResponse(
+        success: false,
+        error: 'Excepción al obtener usuarios: $e',
+      );
+    }
+  }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -632,7 +634,8 @@ class PlaybackScreen extends StatelessWidget {
               final authProvider = context.read<AuthProvider>();
               if (!authProvider.isAuthenticated) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please login to add favorites')),
+                  const SnackBar(
+                      content: Text('Please login to add favorites')),
                 );
                 return;
               }
@@ -642,7 +645,8 @@ class PlaybackScreen extends StatelessWidget {
                   authProvider.currentUser!.id,
                   currentSong,
                 );
-                final isFavorite = libraryProvider.isSongFavorite(currentSong.id);
+                final isFavorite =
+                    libraryProvider.isSongFavorite(currentSong.id);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(isFavorite

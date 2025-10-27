@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -11,7 +13,7 @@ import '../../../core/providers/audio_provider.dart';
 class PlaylistDetailScreen extends StatefulWidget {
   final int playlistId;
 
-  const PlaylistDetailScreen({Key? key, required this.playlistId}) : super(key: key);
+  const PlaylistDetailScreen({super.key, required this.playlistId});
 
   @override
   State<PlaylistDetailScreen> createState() => _PlaylistDetailScreenState();
@@ -38,11 +40,12 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
     });
 
     try {
-      final response = await _playlistService.getPlaylistWithSongs(widget.playlistId);
+      final response =
+          await _playlistService.getPlaylistWithSongs(widget.playlistId);
       if (response.success && response.data != null) {
         setState(() {
-          _playlist = response.data['playlist'];
-          _songs = response.data['songs'] ?? [];
+          _playlist = response.data?['playlist'];
+          _songs = response.data?['songs'] ?? [];
         });
       } else {
         setState(() => _error = response.error ?? 'Failed to load playlist');
@@ -76,7 +79,8 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
 
     if (confirmed == true) {
       try {
-        await _playlistService.removeSongFromPlaylist(widget.playlistId, song.id);
+        await _playlistService.removeSongFromPlaylist(
+            widget.playlistId, song.id);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Song removed from playlist')),
         );
@@ -158,15 +162,18 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                     color: AppTheme.primaryBlue,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.playlist_play, size: 60, color: Colors.white),
+                  child: const Icon(Icons.playlist_play,
+                      size: 60, color: Colors.white),
                 ).animate().fadeIn().scale(),
                 const SizedBox(height: 16),
                 Text(
                   _playlist!.name,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
                 ).animate().fadeIn(delay: 100.ms),
                 const SizedBox(height: 8),
-                if (_playlist!.description != null && _playlist!.description!.isNotEmpty)
+                if (_playlist!.description != null &&
+                    _playlist!.description!.isNotEmpty)
                   Text(
                     _playlist!.description!,
                     style: const TextStyle(color: AppTheme.textGrey),
@@ -190,7 +197,8 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                     label: const Text('Play All'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryBlue,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 12),
                     ),
                   ).animate().fadeIn(delay: 300.ms).scale(),
               ],
@@ -205,7 +213,8 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                     itemBuilder: (context, index) {
                       final song = _songs[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 4),
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundColor: AppTheme.primaryBlue,
@@ -224,8 +233,10 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                               ),
                               if (isOwner)
                                 IconButton(
-                                  icon: const Icon(Icons.close, color: Colors.red),
-                                  onPressed: () => _removeSongFromPlaylist(song),
+                                  icon: const Icon(Icons.close,
+                                      color: Colors.red),
+                                  onPressed: () =>
+                                      _removeSongFromPlaylist(song),
                                 ),
                             ],
                           ),
