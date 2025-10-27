@@ -9,6 +9,8 @@ import '../../store/screens/store_screen.dart';
 import '../../library/screens/library_screen.dart';
 import '../../cart/screens/cart_screen.dart';
 import '../../profile/screens/profile_screen.dart';
+import '../../studio/screens/studio_dashboard_screen.dart';
+import '../../admin/screens/admin_dashboard_screen.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -31,9 +33,8 @@ class _MainLayoutState extends State<MainLayout> {
       if (isAuthenticated) const LibraryScreen(),
       const CartScreen(),
       if (isAuthenticated && userRole == 'ARTIST')
-        _buildComingSoonScreen('Studio'),
-      if (isAuthenticated && userRole == 'ADMIN')
-        _buildComingSoonScreen('Admin Panel'),
+        const StudioDashboardScreen(),
+      if (isAuthenticated && userRole == 'ADMIN') const AdminDashboardScreen(),
       if (isAuthenticated) const ProfileScreen(),
     ];
   }
@@ -84,27 +85,6 @@ class _MainLayoutState extends State<MainLayout> {
           label: 'Perfil',
         ),
     ];
-  }
-
-  Widget _buildComingSoonScreen(String title) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.construction, size: 64, color: AppTheme.primaryBlue),
-          const SizedBox(height: 16),
-          Text(
-            '$title Coming Soon',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'This feature is under development',
-            style: TextStyle(color: AppTheme.textGrey),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
