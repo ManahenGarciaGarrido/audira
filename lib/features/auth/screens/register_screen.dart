@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:audira_frontend/features/home/screens/main_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -58,9 +59,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
           : null,
     );
 
-    if (success && mounted) {
-      Navigator.pop(context);
-    } else if (!success && mounted) {
+    if (!mounted) return;
+
+    if (success) {
+      // Registro exitoso - navegar al home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const MainLayout(),
+        ),
+      );
+    } else {
+      // Mostrar error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(authProvider.error ?? 'Error al registrarse'),

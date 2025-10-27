@@ -35,7 +35,18 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
 
-    if (!success && mounted) {
+    if (!mounted) return;
+
+    if (success) {
+      // Login exitoso - navegar al home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const MainLayout(),
+        ),
+      );
+    } else {
+      // Mostrar error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(authProvider.error ?? 'Error al iniciar sesión'),
