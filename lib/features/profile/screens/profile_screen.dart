@@ -148,12 +148,7 @@ class ProfileScreen extends StatelessWidget {
           title: const Text('Editar perfil'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            // TODO: Navigate to edit profile
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Próximamente'),
-              ),
-            );
+            Navigator.pushNamed(context, '/profile/edit');
           },
         ),
 
@@ -162,12 +157,7 @@ class ProfileScreen extends StatelessWidget {
           title: const Text('Estadísticas'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            // TODO: Navigate to statistics
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Próximamente'),
-              ),
-            );
+            Navigator.pushNamed(context, '/stats');
           },
         ),
 
@@ -176,10 +166,9 @@ class ProfileScreen extends StatelessWidget {
           title: const Text('Configuración'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            // TODO: Navigate to settings
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Próximamente'),
+                content: Text('Settings - Coming soon'),
               ),
             );
           },

@@ -12,9 +12,23 @@ import '../features/playback/screens/playback_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../features/notifications/screens/notifications_screen.dart';
 import '../features/playlist/screens/create_playlist_screen.dart';
-import '../features/admin/screens/admin_dashboard_screen.dart';
-import '../features/studio/screens/studio_dashboard_screen.dart';
+import '../features/playlist/screens/playlist_detail_screen.dart';
 import '../features/profile/screens/edit_profile_screen.dart';
+import '../features/profile/screens/user_stats_screen.dart';
+import '../features/admin/screens/admin_dashboard_screen.dart';
+import '../features/admin/screens/admin_songs_screen.dart';
+import '../features/admin/screens/admin_albums_screen.dart';
+import '../features/admin/screens/admin_genres_screen.dart';
+import '../features/admin/screens/admin_users_screen.dart';
+import '../features/admin/screens/admin_faqs_screen.dart';
+import '../features/admin/screens/admin_contacts_screen.dart';
+import '../features/admin/screens/admin_orders_screen.dart';
+import '../features/admin/screens/admin_stats_screen.dart';
+import '../features/studio/screens/studio_dashboard_screen.dart';
+import '../features/studio/screens/upload_song_screen.dart';
+import '../features/studio/screens/upload_album_screen.dart';
+import '../features/studio/screens/studio_stats_screen.dart';
+import '../features/studio/screens/studio_catalog_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -111,45 +125,60 @@ class AppRoutes {
       case admin:
         return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
 
-      // Placeholders for routes to be implemented
+      // Playlist routes
       case playlist:
-      case editPlaylist:
-      case userStats:
-      case studioUploadSong:
-      case studioUploadAlbum:
-      case studioStats:
-      case studioCatalog:
-      case admin:
-      case adminSongs:
-      case adminAlbums:
-      case adminGenres:
-      case adminUsers:
-      case adminFaqs:
-      case adminContacts:
-      case adminOrders:
-      case adminStats:
+        final playlistId = settings.arguments as int;
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            appBar: AppBar(
-              title: Text(_getRouteName(settings.name ?? '')),
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.construction, size: 64),
-                  const SizedBox(height: 16),
-                  Text(
-                    '${_getRouteName(settings.name ?? '')} - Coming Soon',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text('This feature is under development'),
-                ],
-              ),
-            ),
-          ),
+          builder: (_) => PlaylistDetailScreen(playlistId: playlistId),
         );
+
+      case editPlaylist:
+        ScaffoldMessenger.of(settings.arguments as BuildContext).showSnackBar(
+          const SnackBar(content: Text('Edit Playlist - Coming soon')),
+        );
+        return MaterialPageRoute(builder: (_) => const MainLayout());
+
+      // User statistics
+      case userStats:
+        return MaterialPageRoute(builder: (_) => const UserStatsScreen());
+
+      // Studio routes
+      case studioUploadSong:
+        return MaterialPageRoute(builder: (_) => const UploadSongScreen());
+
+      case studioUploadAlbum:
+        return MaterialPageRoute(builder: (_) => const UploadAlbumScreen());
+
+      case studioStats:
+        return MaterialPageRoute(builder: (_) => const StudioStatsScreen());
+
+      case studioCatalog:
+        return MaterialPageRoute(builder: (_) => const StudioCatalogScreen());
+
+      // Admin routes
+      case adminSongs:
+        return MaterialPageRoute(builder: (_) => const AdminSongsScreen());
+
+      case adminAlbums:
+        return MaterialPageRoute(builder: (_) => const AdminAlbumsScreen());
+
+      case adminGenres:
+        return MaterialPageRoute(builder: (_) => const AdminGenresScreen());
+
+      case adminUsers:
+        return MaterialPageRoute(builder: (_) => const AdminUsersScreen());
+
+      case adminFaqs:
+        return MaterialPageRoute(builder: (_) => const AdminFaqsScreen());
+
+      case adminContacts:
+        return MaterialPageRoute(builder: (_) => const AdminContactsScreen());
+
+      case adminOrders:
+        return MaterialPageRoute(builder: (_) => const AdminOrdersScreen());
+
+      case adminStats:
+        return MaterialPageRoute(builder: (_) => const AdminStatsScreen());
 
       default:
         return MaterialPageRoute(
