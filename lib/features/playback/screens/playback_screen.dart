@@ -11,7 +11,7 @@ import '../../../core/models/song.dart';
 import '../../../config/theme.dart';
 
 class PlaybackScreen extends StatelessWidget {
-  const PlaybackScreen({Key? key}) : super(key: key);
+  const PlaybackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -74,27 +74,31 @@ class PlaybackScreen extends StatelessWidget {
               child: Column(
                 children: [
                   // Album Art
-                  _buildAlbumArt(song, audioProvider).animate()
+                  _buildAlbumArt(song, audioProvider)
+                      .animate()
                       .fadeIn(duration: 600.ms)
                       .scale(begin: const Offset(0.8, 0.8)),
 
                   const SizedBox(height: 40),
 
                   // Song Info
-                  _buildSongInfo(context, song).animate()
+                  _buildSongInfo(context, song)
+                      .animate()
                       .fadeIn(delay: 200.ms)
                       .slideY(begin: 0.2, end: 0),
 
                   const SizedBox(height: 32),
 
                   // Progress Bar
-                  _buildProgressBar(audioProvider).animate()
+                  _buildProgressBar(audioProvider)
+                      .animate()
                       .fadeIn(delay: 400.ms),
 
                   const SizedBox(height: 32),
 
                   // Playback Controls
-                  _buildPlaybackControls(audioProvider).animate()
+                  _buildPlaybackControls(audioProvider)
+                      .animate()
                       .fadeIn(delay: 600.ms)
                       .scale(begin: const Offset(0.9, 0.9)),
 
@@ -123,7 +127,7 @@ class PlaybackScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryBlue.withOpacity(0.3),
+              color: AppTheme.primaryBlue.withValues(alpha: 0.3),
               blurRadius: 30,
               spreadRadius: 5,
             ),
@@ -211,8 +215,7 @@ class PlaybackScreen extends StatelessWidget {
           const SizedBox(height: 4),
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/album',
-                  arguments: song.albumId);
+              Navigator.pushNamed(context, '/album', arguments: song.albumId);
             },
             child: const Text(
               'View Album',
@@ -237,9 +240,9 @@ class PlaybackScreen extends StatelessWidget {
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
             activeTrackColor: AppTheme.primaryBlue,
-            inactiveTrackColor: AppTheme.textGrey.withOpacity(0.3),
+            inactiveTrackColor: AppTheme.textGrey.withValues(alpha: 0.3),
             thumbColor: AppTheme.primaryBlue,
-            overlayColor: AppTheme.primaryBlue.withOpacity(0.3),
+            overlayColor: AppTheme.primaryBlue.withValues(alpha: 0.3),
           ),
           child: Slider(
             value: audioProvider.progress.clamp(0.0, 1.0),

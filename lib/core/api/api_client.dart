@@ -12,6 +12,8 @@ class ApiResponse<T> {
   final int? statusCode;
 
   ApiResponse({required this.success, this.data, this.error, this.statusCode});
+
+  void operator [](String other) {}
 }
 
 class ApiClient {
@@ -230,9 +232,8 @@ class ApiClient {
 
     if (statusCode >= 200 && statusCode < 300) {
       try {
-        final data = response.body.isNotEmpty
-            ? jsonDecode(response.body)
-            : null;
+        final data =
+            response.body.isNotEmpty ? jsonDecode(response.body) : null;
         return ApiResponse(
           success: true,
           data: data as T?,

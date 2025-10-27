@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,7 +8,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../config/theme.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  const NotificationsScreen({Key? key}) : super(key: key);
+  const NotificationsScreen({super.key});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
@@ -67,8 +69,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     if (!authProvider.isAuthenticated) return;
 
     try {
-      await _notificationService
-          .markAllAsRead(authProvider.currentUser!.id);
+      await _notificationService.markAllAsRead(authProvider.currentUser!.id);
       _loadNotifications();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All notifications marked as read')),
@@ -220,12 +221,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         : DateTime.now();
 
     return Card(
-      color: isRead ? AppTheme.surfaceBlack : AppTheme.surfaceBlack.withOpacity(0.8),
+      color: isRead
+          ? AppTheme.surfaceBlack
+          : AppTheme.surfaceBlack.withValues(alpha: 0.8),
       child: ListTile(
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: _getTypeColor(type).withOpacity(0.2),
+            color: _getTypeColor(type).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

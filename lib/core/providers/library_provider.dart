@@ -7,21 +7,17 @@ import '../models/playlist.dart';
 class LibraryProvider with ChangeNotifier {
   final PlaylistService _playlistService = PlaylistService();
 
-  // Favorites
   List<Song> _favoriteSongs = [];
   List<Album> _favoriteAlbums = [];
   bool _isFavoritesLoading = false;
 
-  // Playlists
   List<Playlist> _playlists = [];
   bool _isPlaylistsLoading = false;
 
-  // Library items (purchased)
   List<Song> _purchasedSongs = [];
   List<Album> _purchasedAlbums = [];
   bool _isLibraryLoading = false;
 
-  // Getters
   List<Song> get favoriteSongs => _favoriteSongs;
   List<Album> get favoriteAlbums => _favoriteAlbums;
   List<Playlist> get playlists => _playlists;
@@ -31,7 +27,6 @@ class LibraryProvider with ChangeNotifier {
   bool get isPlaylistsLoading => _isPlaylistsLoading;
   bool get isLibraryLoading => _isLibraryLoading;
 
-  // Favorites management
   Future<void> loadFavorites(int userId) async {
     _isFavoritesLoading = true;
     notifyListeners();
@@ -95,7 +90,6 @@ class LibraryProvider with ChangeNotifier {
     }
   }
 
-  // Playlists management
   Future<void> loadPlaylists(int userId) async {
     _isPlaylistsLoading = true;
     notifyListeners();
@@ -120,12 +114,14 @@ class LibraryProvider with ChangeNotifier {
     bool isPublic = false,
   }) async {
     try {
-      final response = await _playlistService.createPlaylist(
-        userId: userId,
-        name: name,
-        description: description,
-        isPublic: isPublic,
-      );
+      final Map<String, dynamic> playlistData = {
+        'userId': userId,
+        'name': name,
+        'description': description,
+        'isPublic': isPublic,
+      };
+
+      final response = await _playlistService.createPlaylist(playlistData);
 
       if (response.success && response.data != null) {
         _playlists.add(response.data!);
@@ -161,6 +157,10 @@ class LibraryProvider with ChangeNotifier {
           notifyListeners();
         }
       }
+      debugPrint(
+          "FUNCIONALIDAD 'updatePlaylist' PENDIENTE DE IMPLEMENTAR EN PlaylistService");
+      throw UnimplementedError(
+          "updatePlaylist no está implementado en PlaylistService");
     } catch (e) {
       debugPrint('Error updating playlist: $e');
       rethrow;
@@ -189,8 +189,8 @@ class LibraryProvider with ChangeNotifier {
       );
 
       if (response.success) {
-        // Reload playlist to get updated song list
-        final playlistResponse = await _playlistService.getPlaylist(playlistId);
+        final playlistResponse =
+            await _playlistService.getPlaylistById(playlistId);
         if (playlistResponse.success && playlistResponse.data != null) {
           final index = _playlists.indexWhere((p) => p.id == playlistId);
           if (index != -1) {
@@ -213,10 +213,9 @@ class LibraryProvider with ChangeNotifier {
       );
 
       if (response.success) {
-        // Update local playlist
         final index = _playlists.indexWhere((p) => p.id == playlistId);
         if (index != -1) {
-          _playlists[index].songs.removeWhere((s) => s.id == songId);
+          _playlists[index].songIds.removeWhere((id) => id == songId);
           notifyListeners();
         }
       }
@@ -226,7 +225,6 @@ class LibraryProvider with ChangeNotifier {
     }
   }
 
-  // Library (purchased items) management
   Future<void> loadLibrary(int userId) async {
     _isLibraryLoading = true;
     notifyListeners();

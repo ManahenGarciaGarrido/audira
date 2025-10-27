@@ -35,8 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
 
-    print('LOGIN_SCREEN: El login fue exitoso? -> $success');
-
     if (!mounted) return;
 
     if (success) {
@@ -48,8 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
-      print(
-          'LOGIN_SCREEN: Error recibido del provider -> ${authProvider.error}');
       // Mostrar error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

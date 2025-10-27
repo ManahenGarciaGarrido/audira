@@ -153,9 +153,6 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const StudioStatsScreen());
 
       case studioCatalog:
-        return MaterialPageRoute(builder: (_) => const StudioCatalogScreen());
-
-      // Admin routes
       case adminSongs:
         return MaterialPageRoute(builder: (_) => const AdminSongsScreen());
 

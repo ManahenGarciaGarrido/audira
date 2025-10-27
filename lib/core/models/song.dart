@@ -50,7 +50,7 @@ class Song extends Equatable {
       id: json['id'] as int,
       artistId: json['artistId'] as int,
       albumId: json['albumId'] as int?,
-      name: json['name'] as String,
+      name: json['title'] as String,
       description: json['description'] as String?,
       price: (json['price'] as num).toDouble(),
       stock: json['stock'] as int? ?? 0,
@@ -59,10 +59,9 @@ class Song extends Equatable {
               ?.map((e) => e as String)
               .toList() ??
           [],
-      genreIds: (json['genreIds'] as List<dynamic>?)
-              ?.map((e) => e as int)
-              .toList() ??
-          [],
+      genreIds:
+          (json['genreIds'] as List<dynamic>?)?.map((e) => e as int).toList() ??
+              [],
       duration: json['duration'] as int,
       audioUrl: json['audioUrl'] as String?,
       lyrics: json['lyrics'] as String?,

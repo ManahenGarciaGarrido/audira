@@ -1,27 +1,27 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:audira_frontend/config/theme.dart';
+import 'package:audira_frontend/core/api/services/music_service.dart';
+import 'package:audira_frontend/core/models/album.dart';
+import 'package:audira_frontend/core/models/artist.dart';
+import 'package:audira_frontend/core/models/collaborator.dart';
+import 'package:audira_frontend/core/models/rating.dart';
+import 'package:audira_frontend/core/models/song.dart';
+import 'package:audira_frontend/core/providers/auth_provider.dart';
+import 'package:audira_frontend/core/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/models/song.dart';
-import '../../../core/models/album.dart';
-import '../../../core/models/artist.dart';
-import '../../../core/models/collaborator.dart';
-import '../../../core/models/rating.dart';
 import '../../../core/models/comment.dart';
-import '../../../core/api/services/music_service.dart';
 import '../../../core/api/services/rating_service.dart';
 import '../../../core/api/services/comment_service.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../../core/providers/cart_provider.dart';
-import '../../../core/providers/audio_provider.dart';
-import '../../../core/providers/library_provider.dart';
-import '../../../config/theme.dart';
 
 class SongDetailScreen extends StatefulWidget {
   final int songId;
 
-  const SongDetailScreen({Key? key, required this.songId}) : super(key: key);
+  const SongDetailScreen({super.key, required this.songId});
 
   @override
   State<SongDetailScreen> createState() => _SongDetailScreenState();
@@ -72,12 +72,10 @@ class _SongDetailScreenState extends State<SongDetailScreen>
     });
 
     try {
-      // Load song
       final songResponse = await _musicService.getSongById(widget.songId);
       if (songResponse.success && songResponse.data != null) {
         _song = songResponse.data;
 
-        // Load album if song belongs to one
         if (_song!.albumId != null) {
           final albumResponse =
               await _musicService.getAlbumById(_song!.albumId!);
@@ -86,13 +84,12 @@ class _SongDetailScreenState extends State<SongDetailScreen>
           }
         }
 
-        // Load artist
-        final artistResponse = await _musicService.getArtistById(_song!.artistId);
+        final artistResponse =
+            await _musicService.getArtistById(_song!.artistId);
         if (artistResponse.success) {
           _artist = artistResponse.data;
         }
 
-        // Load collaborators
         final collabResponse =
             await _musicService.getCollaboratorsBySongId(widget.songId);
         if (collabResponse.success && collabResponse.data != null) {
@@ -115,7 +112,6 @@ class _SongDetailScreenState extends State<SongDetailScreen>
     });
 
     try {
-      // Load rating stats
       final statsResponse = await _ratingService.getEntityRatingStats(
         entityType: 'SONG',
         entityId: widget.songId,
@@ -124,7 +120,6 @@ class _SongDetailScreenState extends State<SongDetailScreen>
         _ratingStats = statsResponse.data;
       }
 
-      // Load all ratings
       final ratingsResponse = await _ratingService.getEntityRatings(
         entityType: 'SONG',
         entityId: widget.songId,
@@ -133,7 +128,6 @@ class _SongDetailScreenState extends State<SongDetailScreen>
         _ratings = ratingsResponse.data!;
       }
 
-      // Load user's rating if authenticated
       final authProvider = context.read<AuthProvider>();
       if (authProvider.isAuthenticated) {
         final userRatingResponse = await _ratingService.getUserEntityRating(
@@ -142,13 +136,12 @@ class _SongDetailScreenState extends State<SongDetailScreen>
           entityId: widget.songId,
         );
         if (userRatingResponse.success && userRatingResponse.data != null) {
-          _userRating = userRatingResponse.data!.ratingValue;
+          _userRating = userRatingResponse.data!.rating;
         }
       }
 
       setState(() => _isLoadingRatings = false);
 
-      // Load comments
       final commentsResponse = await _commentService.getEntityComments(
         entityType: 'SONG',
         entityId: widget.songId,
@@ -182,7 +175,7 @@ class _SongDetailScreenState extends State<SongDetailScreen>
 
       if (response.success) {
         setState(() => _userRating = rating);
-        _loadRatingsAndComments(); // Reload to update stats
+        _loadRatingsAndComments();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Rating submitted successfully')),
         );
@@ -220,7 +213,7 @@ class _SongDetailScreenState extends State<SongDetailScreen>
 
       if (response.success) {
         _commentController.clear();
-        _loadRatingsAndComments(); // Reload comments
+        _loadRatingsAndComments();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Comment posted successfully')),
         );
@@ -252,11 +245,11 @@ class _SongDetailScreenState extends State<SongDetailScreen>
     final cartProvider = context.read<CartProvider>();
     try {
       await cartProvider.addToCart(
-        authProvider.currentUser!.id,
-        'SONG',
-        _song!.id,
-        _song!.price,
-        1,
+        userId: authProvider.currentUser!.id,
+        itemType: 'SONG',
+        itemId: _song!.id,
+        price: _song!.price,
+        quantity: 1,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -340,7 +333,6 @@ class _SongDetailScreenState extends State<SongDetailScreen>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cover image
           Hero(
             tag: 'song-${_song!.id}',
             child: Container(
@@ -350,7 +342,7 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withOpacity(0.3),
+                    color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
@@ -372,7 +364,6 @@ class _SongDetailScreenState extends State<SongDetailScreen>
             ),
           ),
           const SizedBox(width: 16),
-          // Song info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -419,7 +410,7 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            _album!.title,
+                            _album!.name,
                             style: TextStyle(
                               color: AppTheme.textSecondary,
                               decoration: TextDecoration.underline,
@@ -453,7 +444,8 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                     ),
                   ],
                 ),
-                if (_ratingStats != null && _ratingStats!['averageRating'] != null)
+                if (_ratingStats != null &&
+                    _ratingStats!['averageRating'] != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Row(
@@ -461,7 +453,9 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                         ...List.generate(
                           5,
                           (index) => Icon(
-                            index < (_ratingStats!['averageRating'] as num).floor()
+                            index <
+                                    (_ratingStats!['averageRating'] as num)
+                                        .floor()
                                 ? Icons.star
                                 : Icons.star_border,
                             color: Colors.amber,
@@ -599,13 +593,13 @@ class _SongDetailScreenState extends State<SongDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (_song!.description.isNotEmpty) ...[
+          if (_song!.description != null && _song!.description!.isNotEmpty) ...[
             const Text(
               'Description',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text(_song!.description),
+            Text(_song!.description!),
             const SizedBox(height: 16),
           ],
           if (_collaborators.isNotEmpty) ...[
@@ -620,9 +614,6 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                   ),
                   title: Text('Artist ID: ${collab.artistId}'),
                   subtitle: Text(collab.role),
-                  trailing: collab.verified
-                      ? const Icon(Icons.verified, color: Colors.blue)
-                      : null,
                   onTap: () {
                     Navigator.pushNamed(
                       context,
@@ -699,7 +690,7 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                       children: List.generate(
                         5,
                         (index) => Icon(
-                          index < rating.ratingValue
+                          index < rating.rating
                               ? Icons.star
                               : Icons.star_border,
                           color: Colors.amber,
@@ -707,9 +698,8 @@ class _SongDetailScreenState extends State<SongDetailScreen>
                         ),
                       ),
                     ),
-                    subtitle: rating.comment != null
-                        ? Text(rating.comment!)
-                        : null,
+                    subtitle:
+                        rating.comment != null ? Text(rating.comment!) : null,
                     trailing: Text(
                       rating.createdAt.toString().split(' ')[0],
                       style: TextStyle(color: AppTheme.textSecondary),
@@ -792,7 +782,8 @@ class _SongDetailScreenState extends State<SongDetailScreen>
           decoration: BoxDecoration(
             color: AppTheme.surfaceBlack,
             border: Border(
-              top: BorderSide(color: AppTheme.textSecondary.withOpacity(0.2)),
+              top: BorderSide(
+                  color: AppTheme.textSecondary.withValues(alpha: 0.2)),
             ),
           ),
           child: Row(

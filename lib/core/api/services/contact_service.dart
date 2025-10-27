@@ -1,4 +1,4 @@
-import '../api_client.dart';
+import 'package:audira_frontend/core/api/api_client.dart';
 
 class ContactService {
   static final ContactService _instance = ContactService._internal();
@@ -28,12 +28,20 @@ class ContactService {
       );
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to send contact message');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to send contact message',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -43,12 +51,20 @@ class ContactService {
       final response = await _apiClient.get('/api/contact');
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as List<dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as List<dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch contact messages');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch contact messages',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -58,12 +74,20 @@ class ContactService {
       final response = await _apiClient.get('/api/contact/$id');
 
       if (response.success && response.data != null) {
-        return ApiResponse.success(response.data as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          data: response.data as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to fetch contact message');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to fetch contact message',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -73,12 +97,20 @@ class ContactService {
       final response = await _apiClient.patch('/api/contact/$id/read');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to mark message as read');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to mark message as read',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 
@@ -88,12 +120,20 @@ class ContactService {
       final response = await _apiClient.delete('/api/contact/$id');
 
       if (response.success) {
-        return ApiResponse.success(null);
+        return ApiResponse(
+          success: true,
+          data: null,
+          statusCode: response.statusCode,
+        );
       }
 
-      return ApiResponse.error(response.error ?? 'Failed to delete contact message');
+      return ApiResponse(
+        success: false,
+        error: response.error ?? 'Failed to delete contact message',
+        statusCode: response.statusCode,
+      );
     } catch (e) {
-      return ApiResponse.error(e.toString());
+      return ApiResponse(success: false, error: e.toString());
     }
   }
 }

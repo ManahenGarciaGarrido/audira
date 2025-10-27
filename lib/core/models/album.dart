@@ -39,7 +39,7 @@ class Album extends Equatable {
     return Album(
       id: json['id'] as int,
       artistId: json['artistId'] as int,
-      name: json['name'] as String,
+      name: json['title'] as String,
       description: json['description'] as String?,
       price: (json['price'] as num).toDouble(),
       stock: json['stock'] as int? ?? 0,
@@ -48,10 +48,9 @@ class Album extends Equatable {
               ?.map((e) => e as String)
               .toList() ??
           [],
-      genreIds: (json['genreIds'] as List<dynamic>?)
-              ?.map((e) => e as int)
-              .toList() ??
-          [],
+      genreIds:
+          (json['genreIds'] as List<dynamic>?)?.map((e) => e as int).toList() ??
+              [],
       releaseDate: json['releaseDate'] != null
           ? DateTime.parse(json['releaseDate'] as String)
           : null,

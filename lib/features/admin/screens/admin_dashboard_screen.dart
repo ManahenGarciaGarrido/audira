@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../config/theme.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
-  const AdminDashboardScreen({Key? key}) : super(key: key);
+  const AdminDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,6 @@ class AdminDashboardScreen extends StatelessWidget {
             color: Colors.purple,
             route: '/admin/songs',
           ).animate(delay: 0.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
-
           _buildAdminCard(
             context,
             icon: Icons.album,
@@ -34,8 +32,10 @@ class AdminDashboardScreen extends StatelessWidget {
             subtitle: 'Add, edit, delete albums',
             color: Colors.blue,
             route: '/admin/albums',
-          ).animate(delay: 100.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
-
+          )
+              .animate(delay: 100.ms)
+              .fadeIn()
+              .scale(begin: const Offset(0.8, 0.8)),
           _buildAdminCard(
             context,
             icon: Icons.category,
@@ -43,8 +43,10 @@ class AdminDashboardScreen extends StatelessWidget {
             subtitle: 'Add, edit, delete genres',
             color: Colors.green,
             route: '/admin/genres',
-          ).animate(delay: 200.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
-
+          )
+              .animate(delay: 200.ms)
+              .fadeIn()
+              .scale(begin: const Offset(0.8, 0.8)),
           _buildAdminCard(
             context,
             icon: Icons.people,
@@ -52,8 +54,10 @@ class AdminDashboardScreen extends StatelessWidget {
             subtitle: 'View and manage users',
             color: Colors.orange,
             route: '/admin/users',
-          ).animate(delay: 300.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
-
+          )
+              .animate(delay: 300.ms)
+              .fadeIn()
+              .scale(begin: const Offset(0.8, 0.8)),
           _buildAdminCard(
             context,
             icon: Icons.help,
@@ -61,8 +65,10 @@ class AdminDashboardScreen extends StatelessWidget {
             subtitle: 'Add, edit, delete FAQs',
             color: Colors.teal,
             route: '/admin/faqs',
-          ).animate(delay: 400.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
-
+          )
+              .animate(delay: 400.ms)
+              .fadeIn()
+              .scale(begin: const Offset(0.8, 0.8)),
           _buildAdminCard(
             context,
             icon: Icons.email,
@@ -70,8 +76,10 @@ class AdminDashboardScreen extends StatelessWidget {
             subtitle: 'See contact messages',
             color: Colors.pink,
             route: '/admin/contacts',
-          ).animate(delay: 500.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
-
+          )
+              .animate(delay: 500.ms)
+              .fadeIn()
+              .scale(begin: const Offset(0.8, 0.8)),
           _buildAdminCard(
             context,
             icon: Icons.shopping_bag,
@@ -79,8 +87,10 @@ class AdminDashboardScreen extends StatelessWidget {
             subtitle: 'View and manage orders',
             color: Colors.amber,
             route: '/admin/orders',
-          ).animate(delay: 600.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
-
+          )
+              .animate(delay: 600.ms)
+              .fadeIn()
+              .scale(begin: const Offset(0.8, 0.8)),
           _buildAdminCard(
             context,
             icon: Icons.bar_chart,
@@ -88,7 +98,10 @@ class AdminDashboardScreen extends StatelessWidget {
             subtitle: 'View global statistics',
             color: Colors.red,
             route: '/admin/stats',
-          ).animate(delay: 700.ms).fadeIn().scale(begin: const Offset(0.8, 0.8)),
+          )
+              .animate(delay: 700.ms)
+              .fadeIn()
+              .scale(begin: const Offset(0.8, 0.8)),
         ],
       ),
     );
@@ -115,8 +128,8 @@ class AdminDashboardScreen extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                color.withOpacity(0.7),
-                color.withOpacity(0.3),
+                color.withValues(alpha: 0.7),
+                color.withValues(alpha: 0.3),
               ],
             ),
           ),

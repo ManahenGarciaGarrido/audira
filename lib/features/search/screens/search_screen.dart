@@ -1,9 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/models/song.dart';
 import '../../../core/models/album.dart';
 import '../../../core/models/artist.dart';
-import '../../../core/api/services/music_service.dart';
 import '../../../core/api/services/discovery_service.dart';
 import '../../../config/theme.dart';
 import '../../common/widgets/song_list_item.dart';
@@ -12,7 +13,7 @@ import '../../common/widgets/album_list_item.dart';
 enum SearchFilter { all, songs, albums, artists }
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -21,7 +22,6 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
-  final MusicService _musicService = MusicService();
   final DiscoveryService _discoveryService = DiscoveryService();
 
   List<Song> _songs = [];
@@ -30,7 +30,6 @@ class _SearchScreenState extends State<SearchScreen>
 
   bool _isLoading = false;
   bool _hasSearched = false;
-  SearchFilter _currentFilter = SearchFilter.all;
   late TabController _tabController;
 
   @override
@@ -224,8 +223,8 @@ class _SearchScreenState extends State<SearchScreen>
             const SizedBox(height: 8),
             ..._songs.map((song) => SongListItem(
                   song: song,
-                  onTap: () => Navigator.pushNamed(context, '/song',
-                      arguments: song.id),
+                  onTap: () =>
+                      Navigator.pushNamed(context, '/song', arguments: song.id),
                 )),
           ],
           if (_albums.isNotEmpty) ...[
@@ -291,8 +290,8 @@ class _SearchScreenState extends State<SearchScreen>
             const SizedBox(height: 8),
             ..._songs.take(5).map((song) => SongListItem(
                   song: song,
-                  onTap: () => Navigator.pushNamed(context, '/song',
-                      arguments: song.id),
+                  onTap: () =>
+                      Navigator.pushNamed(context, '/song', arguments: song.id),
                 )),
             if (_songs.length > 5)
               TextButton(

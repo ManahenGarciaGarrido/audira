@@ -9,7 +9,6 @@ import '../../store/screens/store_screen.dart';
 import '../../library/screens/library_screen.dart';
 import '../../cart/screens/cart_screen.dart';
 import '../../profile/screens/profile_screen.dart';
-import '../../common/screens/faq_screen.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});

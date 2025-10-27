@@ -20,7 +20,6 @@ class AudioProvider with ChangeNotifier {
   Duration _currentPosition = Duration.zero;
   Duration _totalDuration = Duration.zero;
   bool _isDemoMode = false;
-  DateTime? _demoStartTime;
 
   // Getters
   Song? get currentSong => _currentSong;
@@ -108,8 +107,8 @@ class AudioProvider with ChangeNotifier {
       final songsResponse = await _musicService.getSongsByAlbum(album.id);
       if (songsResponse.success && songsResponse.data != null) {
         _queue = songsResponse.data!;
-        _queue.sort((a, b) =>
-            (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0));
+        _queue
+            .sort((a, b) => (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0));
 
         if (_queue.isNotEmpty) {
           _currentIndex = startIndex;

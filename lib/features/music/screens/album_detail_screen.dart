@@ -1,26 +1,26 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:audira_frontend/config/theme.dart';
+import 'package:audira_frontend/core/api/services/music_service.dart';
+import 'package:audira_frontend/core/models/album.dart';
+import 'package:audira_frontend/core/models/artist.dart';
+import 'package:audira_frontend/core/models/rating.dart';
+import 'package:audira_frontend/core/models/song.dart';
+import 'package:audira_frontend/core/providers/auth_provider.dart';
+import 'package:audira_frontend/core/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/models/album.dart';
-import '../../../core/models/song.dart';
-import '../../../core/models/artist.dart';
-import '../../../core/models/rating.dart';
 import '../../../core/models/comment.dart';
-import '../../../core/api/services/music_service.dart';
 import '../../../core/api/services/rating_service.dart';
 import '../../../core/api/services/comment_service.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../../core/providers/cart_provider.dart';
-import '../../../core/providers/audio_provider.dart';
-import '../../../core/providers/library_provider.dart';
-import '../../../config/theme.dart';
 
 class AlbumDetailScreen extends StatefulWidget {
   final int albumId;
 
-  const AlbumDetailScreen({Key? key, required this.albumId}) : super(key: key);
+  const AlbumDetailScreen({super.key, required this.albumId});
 
   @override
   State<AlbumDetailScreen> createState() => _AlbumDetailScreenState();
@@ -76,7 +76,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
         _album = albumResponse.data;
 
         // Load artist
-        final artistResponse = await _musicService.getArtistById(_album!.artistId);
+        final artistResponse =
+            await _musicService.getArtistById(_album!.artistId);
         if (artistResponse.success) {
           _artist = artistResponse.data;
         }
@@ -87,7 +88,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
         if (songsResponse.success && songsResponse.data != null) {
           _songs = songsResponse.data!;
           // Sort by track number if available
-          _songs.sort((a, b) => (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0));
+          _songs.sort(
+              (a, b) => (a.trackNumber ?? 0).compareTo(b.trackNumber ?? 0));
         }
       } else {
         _error = albumResponse.error ?? 'Failed to load album';
@@ -133,7 +135,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
           entityId: widget.albumId,
         );
         if (userRatingResponse.success && userRatingResponse.data != null) {
-          _userRating = userRatingResponse.data!.ratingValue;
+          // CORREGIDO: El campo se llama 'rating', no 'ratingValue'
+          _userRating = userRatingResponse.data!.rating;
         }
       }
 
@@ -168,7 +171,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
         userId: authProvider.currentUser!.id,
         entityType: 'ALBUM',
         entityId: widget.albumId,
-        ratingValue: rating,
+        ratingValue:
+            rating, // Este es el nombre del PARÁMETRO del servicio, está bien
       );
 
       if (response.success) {
@@ -242,12 +246,14 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
 
     final cartProvider = context.read<CartProvider>();
     try {
+      // CORREGIDO: La llamada a 'addToCart' estaba mal formada.
+      // Asumiendo que los parámetros son nombrados y 'quantity' es el nombre para '1'.
       await cartProvider.addToCart(
-        authProvider.currentUser!.id,
-        'ALBUM',
-        _album!.id,
-        _album!.price,
-        1,
+        userId: authProvider.currentUser!.id,
+        itemType: 'ALBUM',
+        itemId: _album!.id,
+        price: _album!.price,
+        quantity: 1,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -292,7 +298,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_album!.title),
+        // CORREGIDO: El campo se llama 'name', no 'title'
+        title: Text(_album!.name),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -341,7 +348,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withOpacity(0.3),
+                    color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
@@ -349,9 +356,11 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: _album!.coverImageUrl != null
+                // CORREGIDO: El modelo tiene 'imageUrls' (una lista), no 'coverImageUrl'
+                child: _album!.imageUrls.isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl: _album!.coverImageUrl!,
+                        // CORREGIDO: Usamos el primer elemento de la lista
+                        imageUrl: _album!.imageUrls.first,
                         fit: BoxFit.cover,
                         placeholder: (context, url) =>
                             const Center(child: CircularProgressIndicator()),
@@ -369,7 +378,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _album!.title,
+                  // CORREGIDO: El campo se llama 'name', no 'title'
+                  _album!.name,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -675,7 +685,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
                       children: List.generate(
                         5,
                         (index) => Icon(
-                          index < rating.ratingValue
+                          // CORREGIDO: El campo se llama 'rating', no 'ratingValue'
+                          index < rating.rating
                               ? Icons.star
                               : Icons.star_border,
                           color: Colors.amber,
@@ -683,6 +694,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
                         ),
                       ),
                     ),
+                    // CORREGIDO: Ahora 'comment' existe en el modelo Rating
                     subtitle:
                         rating.comment != null ? Text(rating.comment!) : null,
                     trailing: Text(
@@ -767,7 +779,10 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
           decoration: BoxDecoration(
             color: AppTheme.surfaceBlack,
             border: Border(
-              top: BorderSide(color: AppTheme.textSecondary.withOpacity(0.2)),
+              // CORREGIDO: 'withOpacity' está obsoleto, usando 'withValues'
+              // según el patrón en tu propio código (línea 346).
+              top: BorderSide(
+                  color: AppTheme.textSecondary.withValues(alpha: 0.2)),
             ),
           ),
           child: Row(
