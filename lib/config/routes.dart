@@ -11,6 +11,10 @@ import '../features/common/screens/contact_screen.dart';
 import '../features/playback/screens/playback_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../features/notifications/screens/notifications_screen.dart';
+import '../features/playlist/screens/create_playlist_screen.dart';
+import '../features/admin/screens/admin_dashboard_screen.dart';
+import '../features/studio/screens/studio_dashboard_screen.dart';
+import '../features/profile/screens/edit_profile_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -95,15 +99,22 @@ class AppRoutes {
       case notifications:
         return MaterialPageRoute(builder: (_) => const NotificationsScreen());
 
+      case createPlaylist:
+        return MaterialPageRoute(builder: (_) => const CreatePlaylistScreen());
+
+      case editProfile:
+        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+
+      case studio:
+        return MaterialPageRoute(builder: (_) => const StudioDashboardScreen());
+
+      case admin:
+        return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
+
       // Placeholders for routes to be implemented
       case playlist:
-      case createPlaylist:
       case editPlaylist:
       case userStats:
-      case editProfile:
-      case search:
-      case notifications:
-      case studio:
       case studioUploadSong:
       case studioUploadAlbum:
       case studioStats:
