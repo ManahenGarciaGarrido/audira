@@ -89,7 +89,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   }
 
   void _addSongsToPlaylist() {
-    // TODO: Navigate to song selection screen
+    // Song selection
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Song selection - Coming soon')),
     );

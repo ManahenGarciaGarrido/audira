@@ -62,7 +62,7 @@ class _AdminAlbumsScreenState extends State<AdminAlbumsScreen> {
       } else {
         _filteredAlbums = _albums
             .where((album) =>
-                album.title.toLowerCase().contains(query.toLowerCase()))
+                album.name.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -175,7 +175,7 @@ class _AdminAlbumsScreenState extends State<AdminAlbumsScreen> {
                                     child: const Icon(Icons.album,
                                         color: Colors.white),
                                   ),
-                                  title: Text(album.title),
+                                  title: Text(album.name),
                                   subtitle: Text(
                                     'Artist ID: ${album.artistId} • \$${album.price.toStringAsFixed(2)}',
                                   ),
@@ -206,7 +206,7 @@ class _AdminAlbumsScreenState extends State<AdminAlbumsScreen> {
 
   void _showAlbumForm(Album? album) {
     final isEditing = album != null;
-    final titleController = TextEditingController(text: album?.title ?? '');
+    final titleController = TextEditingController(text: album?.name ?? '');
     final priceController =
         TextEditingController(text: album?.price.toString() ?? '');
 

@@ -63,7 +63,7 @@ class _AdminSongsScreenState extends State<AdminSongsScreen> {
         _filteredSongs = _songs
             .where((song) =>
                 song.name.toLowerCase().contains(query.toLowerCase()) ||
-                song.description.toLowerCase().contains(query.toLowerCase()))
+                (song.description?.toLowerCase().contains(query.toLowerCase()) ?? false))
             .toList();
       }
     });

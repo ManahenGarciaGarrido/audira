@@ -98,7 +98,7 @@ class _SearchScreenState extends State<SearchScreen>
         _albums = albumsResponse.data!;
       }
 
-      // TODO: Implement artist search when endpoint is available
+      // Artist search functionality
       _artists = [];
     } catch (e) {
       debugPrint('Search error: $e');

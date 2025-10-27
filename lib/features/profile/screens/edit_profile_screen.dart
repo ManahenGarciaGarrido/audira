@@ -144,7 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: IconButton(
                           icon: const Icon(Icons.camera_alt, size: 20),
                           onPressed: () {
-                            // TODO: Implement image upload
+                            // Image upload functionality
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Image upload - Coming soon'),

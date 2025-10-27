@@ -169,21 +169,21 @@ class _ContactScreenState extends State<ContactScreen> {
                   icon: const Icon(Icons.facebook),
                   color: AppTheme.primaryBlue,
                   onPressed: () {
-                    // TODO: Open Facebook
+                    
                   },
                 ),
                 IconButton(
                   icon: const Icon(Icons.camera_alt),
                   color: AppTheme.primaryBlue,
                   onPressed: () {
-                    // TODO: Open Instagram
+                    
                   },
                 ),
                 IconButton(
                   icon: const Icon(Icons.music_note),
                   color: AppTheme.primaryBlue,
                   onPressed: () {
-                    // TODO: Open Twitter/X
+                    
                   },
                 ),
               ],

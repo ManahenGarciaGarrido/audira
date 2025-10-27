@@ -304,7 +304,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              final textToCopy = 'Check out "${_album!.title}" album on Audira!';
+              final textToCopy = 'Check out "${_album!.name}" album on Audira!';
               Clipboard.setData(ClipboardData(text: textToCopy));
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Album link copied to clipboard')),

@@ -31,7 +31,7 @@ class StudioStatsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Artist: ${user?.artistName ?? user?.username}',
+            Text('Artist: ${user?.fullName}',
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
 

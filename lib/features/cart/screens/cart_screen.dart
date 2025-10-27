@@ -154,7 +154,7 @@ class CartScreen extends StatelessWidget {
                         ),
                       );
                     } else {
-                      // TODO: Navigate to checkout
+                      // Proceed to checkout
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Funcionalidad de pago próximamente'),

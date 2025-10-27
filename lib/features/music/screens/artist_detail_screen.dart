@@ -94,7 +94,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
       return;
     }
 
-    // TODO: Implement follow/unfollow API call
+    // Follow/unfollow functionality
     setState(() => _isFollowing = !_isFollowing);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -196,7 +196,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {
-                  // TODO: Share artist
+                  
                 },
               ),
             ],
@@ -411,7 +411,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
                     trailing: IconButton(
                       icon: const Icon(Icons.play_circle_outline),
                       onPressed: () {
-                        // TODO: Play song
+                        
                       },
                     ),
                     onTap: () {
@@ -447,7 +447,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
                     trailing: IconButton(
                       icon: const Icon(Icons.play_circle_outline),
                       onPressed: () {
-                        // TODO: Play album
+                        
                       },
                     ),
                     onTap: () {

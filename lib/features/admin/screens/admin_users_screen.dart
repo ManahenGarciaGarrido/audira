@@ -260,7 +260,6 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                                       ),
                                     ],
                                   ),
-                                  isThreeLine: true,
                                 ),
                               ).animate().fadeIn(delay: (index * 50).ms);
                             },
