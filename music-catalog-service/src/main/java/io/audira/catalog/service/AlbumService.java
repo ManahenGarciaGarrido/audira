@@ -74,7 +74,14 @@ public class AlbumService {
         Album album = albumRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Album not found with id: " + id));
 
-        if (albumDetails.getTitle() != null) {
+        // Log para debugging
+        System.out.println("=== UPDATE ALBUM DEBUG ===");
+        System.out.println("Album ID: " + id);
+        System.out.println("Received coverImageUrl: " + albumDetails.getCoverImageUrl());
+        System.out.println("Current coverImageUrl: " + album.getCoverImageUrl());
+
+        // Update Product fields (inherited from Product)
+        if (albumDetails.getTitle() != null && !albumDetails.getTitle().isEmpty()) {
             album.setTitle(albumDetails.getTitle());
         }
 
@@ -82,7 +89,17 @@ public class AlbumService {
             album.setArtistId(albumDetails.getArtistId());
         }
 
-        if (albumDetails.getGenreIds() != null) {
+        if (albumDetails.getCoverImageUrl() != null && !albumDetails.getCoverImageUrl().isEmpty()) {
+            album.setCoverImageUrl(albumDetails.getCoverImageUrl());
+            System.out.println("Setting new coverImageUrl: " + albumDetails.getCoverImageUrl());
+        }
+
+        if (albumDetails.getDescription() != null) {
+            album.setDescription(albumDetails.getDescription());
+        }
+
+        // Update Album-specific fields
+        if (albumDetails.getGenreIds() != null && !albumDetails.getGenreIds().isEmpty()) {
             album.setGenreIds(albumDetails.getGenreIds());
         }
 
@@ -90,20 +107,16 @@ public class AlbumService {
             album.setReleaseDate(albumDetails.getReleaseDate());
         }
 
-        if (albumDetails.getCoverImageUrl() != null) {
-            album.setCoverImageUrl(albumDetails.getCoverImageUrl());
-        }
-
         // Price is calculated, not set manually
         // if (albumDetails.getPrice() != null) {
         //     album.setPrice(albumDetails.getPrice());
         // }
 
-        if (albumDetails.getDescription() != null) {
-            album.setDescription(albumDetails.getDescription());
-        }
+        Album savedAlbum = albumRepository.save(album);
+        System.out.println("Saved coverImageUrl: " + savedAlbum.getCoverImageUrl());
+        System.out.println("=======================");
 
-        return albumRepository.save(album);
+        return savedAlbum;
     }
 
     @Transactional
