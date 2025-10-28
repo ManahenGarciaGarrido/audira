@@ -14,7 +14,7 @@ class MiniPlayer extends StatelessWidget {
         final song = audioProvider.currentSong;
 
         // Don't show mini player if no song is playing
-        if (song == null) {
+        if (song == null || audioProvider.demoFinished) {
           return const SizedBox.shrink();
         }
 
@@ -40,9 +40,9 @@ class MiniPlayer extends StatelessWidget {
                   // Album Art
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: song.imageUrls.isNotEmpty
+                    child: song.coverImageUrl != null
                         ? CachedNetworkImage(
-                            imageUrl: song.imageUrls.first,
+                            imageUrl: song.coverImageUrl!,
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
@@ -107,7 +107,7 @@ class MiniPlayer extends StatelessWidget {
                               const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Artist ID: ${song.artistId}',
+                                song.artistName,
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: AppTheme.textGrey,

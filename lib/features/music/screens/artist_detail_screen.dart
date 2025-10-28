@@ -195,9 +195,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
             actions: [
               IconButton(
                 icon: const Icon(Icons.share),
-                onPressed: () {
-                  
-                },
+                onPressed: () {},
               ),
             ],
           ),
@@ -395,11 +393,11 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
             const SizedBox(height: 8),
             ..._songs.take(5).map((song) => Card(
                   child: ListTile(
-                    leading: song.imageUrls.isNotEmpty
+                    leading: song.coverImageUrl != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             child: CachedNetworkImage(
-                              imageUrl: song.imageUrls.first,
+                              imageUrl: song.coverImageUrl!,
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
@@ -410,9 +408,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
                     subtitle: Text(song.durationFormatted),
                     trailing: IconButton(
                       icon: const Icon(Icons.play_circle_outline),
-                      onPressed: () {
-                        
-                      },
+                      onPressed: () {},
                     ),
                     onTap: () {
                       Navigator.pushNamed(context, '/song', arguments: song.id);
@@ -446,9 +442,7 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
                         : null,
                     trailing: IconButton(
                       icon: const Icon(Icons.play_circle_outline),
-                      onPressed: () {
-                        
-                      },
+                      onPressed: () {},
                     ),
                     onTap: () {
                       Navigator.pushNamed(context, '/album',
@@ -474,11 +468,11 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
         final song = _songs[index];
         return Card(
           child: ListTile(
-            leading: song.imageUrls.isNotEmpty
+            leading: song.coverImageUrl != null
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: CachedNetworkImage(
-                      imageUrl: song.imageUrls.first,
+                      imageUrl: song.coverImageUrl!,
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,

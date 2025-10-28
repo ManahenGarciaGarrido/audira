@@ -27,9 +27,9 @@ class SongListItem extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: song.imageUrls.isNotEmpty
+          child: song.coverImageUrl != null
               ? CachedNetworkImage(
-                  imageUrl: song.imageUrls.first,
+                  imageUrl: song.coverImageUrl!,
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,

@@ -352,9 +352,9 @@ class _SongDetailScreenState extends State<SongDetailScreen>
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: _song!.imageUrls.isNotEmpty
+                child: _song!.coverImageUrl != null
                     ? CachedNetworkImage(
-                        imageUrl: _song!.imageUrls.first,
+                        imageUrl: _song!.coverImageUrl!,
                         fit: BoxFit.cover,
                         placeholder: (context, url) =>
                             const Center(child: CircularProgressIndicator()),

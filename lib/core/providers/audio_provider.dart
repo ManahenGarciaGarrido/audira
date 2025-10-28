@@ -20,8 +20,8 @@ class AudioProvider with ChangeNotifier {
   Duration _currentPosition = Duration.zero;
   Duration _totalDuration = Duration.zero;
   bool _isDemoMode = false;
+  bool _demoFinished = false;
 
-  // Getters
   Song? get currentSong => _currentSong;
   List<Song> get queue => _queue;
   int get currentIndex => _currentIndex;
@@ -32,6 +32,7 @@ class AudioProvider with ChangeNotifier {
   Duration get currentPosition => _currentPosition;
   Duration get totalDuration => _totalDuration;
   bool get isDemoMode => _isDemoMode;
+  bool get demoFinished => _demoFinished;
   double get progress => _totalDuration.inMilliseconds > 0
       ? _currentPosition.inMilliseconds / _totalDuration.inMilliseconds
       : 0.0;
@@ -41,21 +42,20 @@ class AudioProvider with ChangeNotifier {
   }
 
   void _init() {
-    // Listen to position updates
     _audioPlayer.positionStream.listen((position) {
       _currentPosition = position;
 
-      // Stop at 10 seconds for demo mode
       if (_isDemoMode && position.inSeconds >= 10) {
         pause();
         seek(Duration.zero);
         _isDemoMode = false;
+        _demoFinished = true;
+        notifyListeners();
       }
 
       notifyListeners();
     });
 
-    // Listen to duration updates
     _audioPlayer.durationStream.listen((duration) {
       if (duration != null) {
         _totalDuration = duration;
@@ -63,13 +63,11 @@ class AudioProvider with ChangeNotifier {
       }
     });
 
-    // Listen to playback state
     _audioPlayer.playerStateStream.listen((state) {
       _isPlaying = state.playing;
       _isLoading = state.processingState == ProcessingState.loading ||
           state.processingState == ProcessingState.buffering;
 
-      // Handle song completion
       if (state.processingState == ProcessingState.completed) {
         _handleSongCompletion();
       }
@@ -79,6 +77,7 @@ class AudioProvider with ChangeNotifier {
   }
 
   Future<void> playSong(Song song, {bool demo = false}) async {
+    _demoFinished = false;
     try {
       _currentSong = song;
       _isDemoMode = demo;
@@ -103,7 +102,6 @@ class AudioProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      // Load album songs
       final songsResponse = await _musicService.getSongsByAlbum(album.id);
       if (songsResponse.success && songsResponse.data != null) {
         _queue = songsResponse.data!;
@@ -163,7 +161,6 @@ class AudioProvider with ChangeNotifier {
       _currentIndex = 0;
       await playSong(_queue[_currentIndex]);
     } else {
-      // Stop at the end
       await pause();
       await seek(Duration.zero);
     }
@@ -172,7 +169,6 @@ class AudioProvider with ChangeNotifier {
   Future<void> previous() async {
     if (_queue.isEmpty) return;
 
-    // If more than 3 seconds into the song, restart it
     if (_currentPosition.inSeconds > 3) {
       await seek(Duration.zero);
     } else if (_currentIndex > 0) {
@@ -191,7 +187,6 @@ class AudioProvider with ChangeNotifier {
   void toggleShuffle() {
     _isShuffleEnabled = !_isShuffleEnabled;
     if (_isShuffleEnabled && _queue.length > 1) {
-      // Shuffle queue but keep current song
       final currentSong = _queue[_currentIndex];
       _queue.shuffle();
       _currentIndex = _queue.indexOf(currentSong);
@@ -235,7 +230,6 @@ class AudioProvider with ChangeNotifier {
     if (index < 0 || index >= _queue.length) return;
 
     if (index == _currentIndex) {
-      // If removing current song, play next
       next();
     } else if (index < _currentIndex) {
       _currentIndex--;

@@ -28,9 +28,9 @@ class SongCard extends StatelessWidget {
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(12)),
-              child: song.imageUrls.isNotEmpty
+              child: song.coverImageUrl != null
                   ? CachedNetworkImage(
-                      imageUrl: song.imageUrls.first,
+                      imageUrl: song.coverImageUrl!,
                       width: 160,
                       height: 120, // Altura fija
                       fit: BoxFit.cover,

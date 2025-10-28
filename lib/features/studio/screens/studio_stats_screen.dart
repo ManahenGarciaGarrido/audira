@@ -69,114 +69,118 @@ class _StudioStatsScreenState extends State<StudioStatsScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Artist: ${user?.fullName}',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Artist: ${user?.fullName}',
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 24),
 
-            // Overview Cards
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.5,
-              children: [
-                _buildStatCard(
-                    'Total Plays',
-                    '${_formatNumber(_artistMetrics?['totalPlays'] ?? 0)}',
-                    Icons.play_circle,
-                    AppTheme.primaryBlue),
-                _buildStatCard(
-                    'Total Revenue',
-                    '\$${(_artistMetrics?['totalRevenue'] ?? 0).toStringAsFixed(2)}',
-                    Icons.attach_money,
-                    Colors.green),
-                _buildStatCard(
-                    'Total Songs',
-                    '${_artistMetrics?['totalSongs'] ?? 0}',
-                    Icons.music_note,
-                    Colors.purple),
-                _buildStatCard(
-                    'Total Albums',
-                    '${_artistMetrics?['totalAlbums'] ?? 0}',
-                    Icons.album,
-                    Colors.orange),
-              ],
-            ).animate().fadeIn(),
-            const SizedBox(height: 24),
+                  // Overview Cards
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.5,
+                    children: [
+                      _buildStatCard(
+                          'Total Plays',
+                          _formatNumber(_artistMetrics?['totalPlays'] ?? 0),
+                          Icons.play_circle,
+                          AppTheme.primaryBlue),
+                      _buildStatCard(
+                          'Total Revenue',
+                          '\$${(_artistMetrics?['totalRevenue'] ?? 0).toStringAsFixed(2)}',
+                          Icons.attach_money,
+                          Colors.green),
+                      _buildStatCard(
+                          'Total Songs',
+                          '${_artistMetrics?['totalSongs'] ?? 0}',
+                          Icons.music_note,
+                          Colors.purple),
+                      _buildStatCard(
+                          'Total Albums',
+                          '${_artistMetrics?['totalAlbums'] ?? 0}',
+                          Icons.album,
+                          Colors.orange),
+                    ],
+                  ).animate().fadeIn(),
+                  const SizedBox(height: 24),
 
-            const Text('Monthly Performance',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    _buildStatRow(
-                        'This Month Plays',
-                        _formatNumber(_artistMetrics?['playsThisMonth'] ?? 0),
-                        AppTheme.primaryBlue),
-                    const Divider(),
-                    _buildStatRow(
-                        'This Month Revenue',
-                        '\$${(_artistMetrics?['revenueThisMonth'] ?? 0).toStringAsFixed(2)}',
-                        Colors.green),
-                    const Divider(),
-                    _buildStatRow(
-                        'New Followers',
-                        '+${_artistMetrics?['newFollowers'] ?? 0}',
-                        Colors.purple),
-                    const Divider(),
-                    _buildStatRow(
-                        'Downloads',
-                        '${_artistMetrics?['downloads'] ?? 0}',
-                        Colors.orange),
-                  ],
-                ),
-              ),
-            ).animate().fadeIn(delay: 100.ms),
-            const SizedBox(height: 24),
-
-            if (_topSongs != null && _topSongs!.isNotEmpty) ...[
-              const Text('Top Performing Songs',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              ...List.generate(
-                _topSongs!.length,
-                (index) {
-                  final song = _topSongs![index];
-                  return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: AppTheme.primaryBlue,
-                        child: Text('${index + 1}'),
+                  const Text('Monthly Performance',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          _buildStatRow(
+                              'This Month Plays',
+                              _formatNumber(
+                                  _artistMetrics?['playsThisMonth'] ?? 0),
+                              AppTheme.primaryBlue),
+                          const Divider(),
+                          _buildStatRow(
+                              'This Month Revenue',
+                              '\$${(_artistMetrics?['revenueThisMonth'] ?? 0).toStringAsFixed(2)}',
+                              Colors.green),
+                          const Divider(),
+                          _buildStatRow(
+                              'New Followers',
+                              '+${_artistMetrics?['newFollowers'] ?? 0}',
+                              Colors.purple),
+                          const Divider(),
+                          _buildStatRow(
+                              'Downloads',
+                              '${_artistMetrics?['downloads'] ?? 0}',
+                              Colors.orange),
+                        ],
                       ),
-                      title: Text(song['songName'] ?? 'Unknown Song'),
-                      subtitle: Text('${song['plays'] ?? 0} plays'),
-                      trailing: Text(
-                          '\$${(song['revenue'] ?? 0).toStringAsFixed(2)}',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      onTap: () {
-                        if (song['songId'] != null) {
-                          Navigator.pushNamed(context, '/song',
-                              arguments: song['songId']);
-                        }
+                    ),
+                  ).animate().fadeIn(delay: 100.ms),
+                  const SizedBox(height: 24),
+
+                  if (_topSongs != null && _topSongs!.isNotEmpty) ...[
+                    const Text('Top Performing Songs',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    ...List.generate(
+                      _topSongs!.length,
+                      (index) {
+                        final song = _topSongs![index];
+                        return Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: AppTheme.primaryBlue,
+                              child: Text('${index + 1}'),
+                            ),
+                            title: Text(song['songName'] ?? 'Unknown Song'),
+                            subtitle: Text('${song['plays'] ?? 0} plays'),
+                            trailing: Text(
+                                '\$${(song['revenue'] ?? 0).toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            onTap: () {
+                              if (song['songId'] != null) {
+                                Navigator.pushNamed(context, '/song',
+                                    arguments: song['songId']);
+                              }
+                            },
+                          ),
+                        ).animate().fadeIn(delay: ((index + 1) * 50).ms);
                       },
                     ),
-                  ).animate().fadeIn(delay: ((index + 1) * 50).ms);
-                },
+                  ],
+                ],
               ),
-            ],
-          ],
-        ),
-      ),
+            ),
     );
   }
 

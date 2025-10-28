@@ -3,15 +3,16 @@ import 'package:equatable/equatable.dart';
 class Song extends Equatable {
   final int id;
   final int artistId;
+  final String artistName;
   final int? albumId;
   final String name;
   final String? description;
   final double price;
   final int stock;
   final String? category;
-  final List<String> imageUrls;
+  final String? coverImageUrl;
   final List<int> genreIds;
-  final int duration; // in seconds
+  final int duration;
   final String? audioUrl;
   final String? lyrics;
   final int? trackNumber;
@@ -22,13 +23,14 @@ class Song extends Equatable {
   const Song({
     required this.id,
     required this.artistId,
+    required this.artistName,
     this.albumId,
     required this.name,
     this.description,
     required this.price,
     this.stock = 0,
     this.category,
-    this.imageUrls = const [],
+    this.coverImageUrl,
     this.genreIds = const [],
     required this.duration,
     this.audioUrl,
@@ -49,16 +51,14 @@ class Song extends Equatable {
     return Song(
       id: json['id'] as int,
       artistId: json['artistId'] as int,
+      artistName: json['artistName'] as String? ?? 'Artista Desconocido',
       albumId: json['albumId'] as int?,
       name: json['title'] as String,
       description: json['description'] as String?,
       price: (json['price'] as num).toDouble(),
       stock: json['stock'] as int? ?? 0,
       category: json['category'] as String?,
-      imageUrls: (json['imageUrls'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
+      coverImageUrl: json['coverImageUrl'] as String?,
       genreIds:
           (json['genreIds'] as List<dynamic>?)?.map((e) => e as int).toList() ??
               [],
@@ -80,13 +80,14 @@ class Song extends Equatable {
     return {
       'id': id,
       'artistId': artistId,
+      'artistName': artistName,
       'albumId': albumId,
       'name': name,
       'description': description,
       'price': price,
       'stock': stock,
       'category': category,
-      'imageUrls': imageUrls,
+      'coverImageUrl': coverImageUrl,
       'genreIds': genreIds,
       'duration': duration,
       'audioUrl': audioUrl,
@@ -101,13 +102,14 @@ class Song extends Equatable {
   Song copyWith({
     int? id,
     int? artistId,
+    String? artistName,
     int? albumId,
     String? name,
     String? description,
     double? price,
     int? stock,
     String? category,
-    List<String>? imageUrls,
+    String? coverImageUrl,
     List<int>? genreIds,
     int? duration,
     String? audioUrl,
@@ -120,13 +122,14 @@ class Song extends Equatable {
     return Song(
       id: id ?? this.id,
       artistId: artistId ?? this.artistId,
+      artistName: artistName ?? this.artistName,
       albumId: albumId ?? this.albumId,
       name: name ?? this.name,
       description: description ?? this.description,
       price: price ?? this.price,
       stock: stock ?? this.stock,
       category: category ?? this.category,
-      imageUrls: imageUrls ?? this.imageUrls,
+      coverImageUrl: coverImageUrl ?? this.coverImageUrl,
       genreIds: genreIds ?? this.genreIds,
       duration: duration ?? this.duration,
       audioUrl: audioUrl ?? this.audioUrl,
@@ -142,13 +145,14 @@ class Song extends Equatable {
   List<Object?> get props => [
         id,
         artistId,
+        artistName,
         albumId,
         name,
         description,
         price,
         stock,
         category,
-        imageUrls,
+        coverImageUrl,
         genreIds,
         duration,
         audioUrl,
