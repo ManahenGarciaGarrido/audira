@@ -68,7 +68,7 @@ $genres = @(
     @{ name = "Rock"; description = "Rock music genre"; imageUrl = "https://i.scdn.co/image/ab67706f00000002e89c6e36ecbf5a967a96c183" },
     @{ name = "Pop"; description = "Pop music genre"; imageUrl = "https://i.scdn.co/image/ab67706f000000029bb6af539d072de6c0ed8903" },
     @{ name = "Hip Hop"; description = "Hip Hop and Rap music"; imageUrl = "https://i.scdn.co/image/ab67706f00000002503f47c87ef9cf8ee0a01cd4" },
-    @{ name = "R&B"; description = "Rhythm and Blues"; imageUrl = "https://i.scdn.co/image/ab67706f00000002f88c27f154471c5fa1ed3c8e" },
+    @{ name = "RnB"; description = "Rhythm and Blues"; imageUrl = "https://i.scdn.co/image/ab67706f00000002f88c27f154471c5fa1ed3c8e" },
     @{ name = "Electronic"; description = "Electronic and Dance music"; imageUrl = "https://i.scdn.co/image/ab67706f00000002a1f2b3b3f3e3f3e3f3e3f3e3" },
     @{ name = "Jazz"; description = "Jazz music genre"; imageUrl = "https://i.scdn.co/image/ab67706f00000002f88c27f154471c5fa1ed3c8e" }
 )
@@ -123,7 +123,7 @@ $albums = @(
         description = "Segundo y último álbum de estudio de Amy Winehouse"
         releaseDate = "2006-10-27"
         price = 11.99
-        genreIds = @($global:genreIds["R&B"], $global:genreIds["Jazz"])
+        genreIds = @($global:genreIds["RnB"], $global:genreIds["Jazz"])
         key = "BackToBlack"
     },
     @{
@@ -288,7 +288,7 @@ $songs = @(
         duration = 213
         audioUrl = "https://example.com/rehab.mp3"
         trackNumber = 1
-        genreIds = @($global:genreIds["R&B"], $global:genreIds["Jazz"])
+        genreIds = @($global:genreIds["RnB"], $global:genreIds["Jazz"])
     },
     @{
         title = "Back to Black"
@@ -300,7 +300,7 @@ $songs = @(
         duration = 241
         audioUrl = "https://example.com/back-to-black.mp3"
         trackNumber = 4
-        genreIds = @($global:genreIds["R&B"])
+        genreIds = @($global:genreIds["RnB"])
     },
 
     # Random Access Memories
@@ -399,4 +399,5 @@ Write-Host "`nCanciones creadas: $($global:songIds.Count)" -ForegroundColor Cyan
 
 Write-Host "`n=================================================================="
 Write-Host "  ✓ Base de datos poblada exitosamente"
-Write-Host "==================================================================`n"
+Write-Host "=================================================================="
+Write-Host ""
