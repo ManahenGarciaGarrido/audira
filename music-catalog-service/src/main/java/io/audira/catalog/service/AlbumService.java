@@ -19,7 +19,22 @@ public class AlbumService {
 
     @Transactional
     public Album createAlbum(Album album) {
-        return albumRepository.save(album);
+        // Log para debugging
+        System.out.println("=== CREATE ALBUM DEBUG ===");
+        System.out.println("Received Album:");
+        System.out.println("  Title: " + album.getTitle());
+        System.out.println("  coverImageUrl: " + album.getCoverImageUrl());
+        System.out.println("  Artist ID: " + album.getArtistId());
+
+        Album savedAlbum = albumRepository.save(album);
+
+        System.out.println("Saved Album:");
+        System.out.println("  ID: " + savedAlbum.getId());
+        System.out.println("  Title: " + savedAlbum.getTitle());
+        System.out.println("  coverImageUrl: " + savedAlbum.getCoverImageUrl());
+        System.out.println("=========================");
+
+        return savedAlbum;
     }
 
     public List<Album> getAllAlbums() {

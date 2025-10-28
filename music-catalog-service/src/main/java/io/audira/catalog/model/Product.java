@@ -1,5 +1,6 @@
 package io.audira.catalog.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
@@ -40,6 +41,7 @@ public abstract class Product {
     private BigDecimal price;
 
     @Column(name = "cover_image_url")
+    @JsonAlias({"coverUrl", "cover_url"})
     private String coverImageUrl;
 
     @Column(columnDefinition = "TEXT")
