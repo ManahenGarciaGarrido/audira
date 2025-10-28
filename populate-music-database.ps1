@@ -50,11 +50,11 @@ function Invoke-ApiRequest {
 
     try {
         $response = Invoke-RestMethod @params
-        Write-Host "✓ Success - Created ID: $($response.id)" -ForegroundColor Green
+        Write-Host "Success - Created ID: $($response.id)" -ForegroundColor Green
         return $response
     } catch {
         $statusCode = $_.Exception.Response.StatusCode.value__
-        Write-Host "✗ Failed - Status: $statusCode" -ForegroundColor Red
+        Write-Host "Failed - Status: $statusCode" -ForegroundColor Red
         return $null
     }
 }
@@ -379,25 +379,3 @@ foreach ($song in $songs) {
         $global:songIds[$song.title] = $response.id
     }
 }
-
-# ================================================================
-# RESUMEN
-# ================================================================
-Print-Header "RESUMEN DE CREACIÓN"
-
-Write-Host "`nGéneros creados: $($global:genreIds.Count)" -ForegroundColor Cyan
-foreach ($genre in $global:genreIds.Keys) {
-    Write-Host "  - $genre (ID: $($global:genreIds[$genre]))" -ForegroundColor Gray
-}
-
-Write-Host "`nÁlbumes creados: $($global:albumIds.Count)" -ForegroundColor Cyan
-foreach ($album in $global:albumIds.Keys) {
-    Write-Host "  - $album (ID: $($global:albumIds[$album]))" -ForegroundColor Gray
-}
-
-Write-Host "`nCanciones creadas: $($global:songIds.Count)" -ForegroundColor Cyan
-
-Write-Host "`n=================================================================="
-Write-Host "  ✓ Base de datos poblada exitosamente"
-Write-Host "=================================================================="
-Write-Host ""

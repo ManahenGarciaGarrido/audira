@@ -24,12 +24,12 @@ class AlbumCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: album.imageUrls.isNotEmpty
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+              child: album.coverImageUrl != null
                   ? CachedNetworkImage(
-                      imageUrl: album.imageUrls.first,
+                      imageUrl: album.coverImageUrl!,
                       width: 180,
                       height: 140,
                       fit: BoxFit.cover,
@@ -55,7 +55,6 @@ class AlbumCard extends StatelessWidget {
                       child: const Icon(Icons.album, size: 48),
                     ),
             ),
-            // Info
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -73,11 +72,10 @@ class AlbumCard extends StatelessWidget {
                     children: [
                       Text(
                         '\$${album.price.toStringAsFixed(2)}',
-                        style:
-                            Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  color: AppTheme.textGrey,
-                                  decoration: TextDecoration.lineThrough,
-                                ),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: AppTheme.textGrey,
+                              decoration: TextDecoration.lineThrough,
+                            ),
                       ),
                       Text(
                         '\$${album.discountedPrice.toStringAsFixed(2)}',

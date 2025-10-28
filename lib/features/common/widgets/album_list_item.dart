@@ -27,9 +27,9 @@ class AlbumListItem extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: album.imageUrls.isNotEmpty
+          child: album.coverImageUrl != null
               ? CachedNetworkImage(
-                  imageUrl: album.imageUrls.first,
+                  imageUrl: album.coverImageUrl!,
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,

@@ -8,7 +8,7 @@ class Album extends Equatable {
   final double price;
   final int stock;
   final String? category;
-  final List<String> imageUrls;
+  final String? coverImageUrl;
   final List<int> genreIds;
   final DateTime? releaseDate;
   final double discountPercentage;
@@ -23,7 +23,7 @@ class Album extends Equatable {
     required this.price,
     this.stock = 0,
     this.category,
-    this.imageUrls = const [],
+    this.coverImageUrl,
     this.genreIds = const [],
     this.releaseDate,
     this.discountPercentage = 15.0,
@@ -44,10 +44,7 @@ class Album extends Equatable {
       price: (json['price'] as num).toDouble(),
       stock: json['stock'] as int? ?? 0,
       category: json['category'] as String?,
-      imageUrls: (json['imageUrls'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
+      coverImageUrl: json['coverImageUrl'] as String?,
       genreIds:
           (json['genreIds'] as List<dynamic>?)?.map((e) => e as int).toList() ??
               [],
@@ -74,7 +71,7 @@ class Album extends Equatable {
       'price': price,
       'stock': stock,
       'category': category,
-      'imageUrls': imageUrls,
+      'coverImageUrl': coverImageUrl,
       'genreIds': genreIds,
       'releaseDate': releaseDate?.toIso8601String(),
       'discountPercentage': discountPercentage,
@@ -106,7 +103,7 @@ class Album extends Equatable {
       price: price ?? this.price,
       stock: stock ?? this.stock,
       category: category ?? this.category,
-      imageUrls: imageUrls ?? this.imageUrls,
+      coverImageUrl: coverImageUrl ?? coverImageUrl,
       genreIds: genreIds ?? this.genreIds,
       releaseDate: releaseDate ?? this.releaseDate,
       discountPercentage: discountPercentage ?? this.discountPercentage,
@@ -124,7 +121,7 @@ class Album extends Equatable {
         price,
         stock,
         category,
-        imageUrls,
+        coverImageUrl,
         genreIds,
         releaseDate,
         discountPercentage,

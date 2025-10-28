@@ -358,11 +358,9 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen>
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                // CORREGIDO: El modelo tiene 'imageUrls' (una lista), no 'coverImageUrl'
-                child: _album!.imageUrls.isNotEmpty
+                child: _album!.coverImageUrl != null
                     ? CachedNetworkImage(
-                        // CORREGIDO: Usamos el primer elemento de la lista
-                        imageUrl: _album!.imageUrls.first,
+                        imageUrl: _album!.coverImageUrl!,
                         fit: BoxFit.cover,
                         placeholder: (context, url) =>
                             const Center(child: CircularProgressIndicator()),

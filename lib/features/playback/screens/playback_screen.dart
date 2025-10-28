@@ -78,55 +78,36 @@ class PlaybackScreen extends StatelessWidget {
               ),
             );
           }
-
-          // --- INICIO DEL CAMBIO: Devolvemos la estructura de SingleChildScrollView ---
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  // --- CAMBIO EN LA CARÁTULA ---
-                  // La envolvemos en AspectRatio para que sea cuadrada
-                  // y Padding para que la sombra "respire"
                   AspectRatio(
                     aspectRatio: 1.0,
                     child: Padding(
-                      // Ajusta este padding horizontal para cambiar el tamaño
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
                       child: _buildAlbumArt(song, audioProvider)
                           .animate()
                           .fadeIn(duration: 600.ms)
                           .scale(begin: const Offset(0.8, 0.8)),
                     ),
                   ),
-                  // --- FIN DEL CAMBIO EN LA CARÁTULA ---
-
                   const SizedBox(height: 40),
-
-                  // Song Info
                   _buildSongInfo(context, song)
                       .animate()
                       .fadeIn(delay: 200.ms)
                       .slideY(begin: 0.2, end: 0),
-
                   const SizedBox(height: 32),
-
-                  // Progress Bar
                   _buildProgressBar(audioProvider)
                       .animate()
                       .fadeIn(delay: 400.ms),
-
                   const SizedBox(height: 32),
-
-                  // Playback Controls
                   _buildPlaybackControls(audioProvider)
                       .animate()
                       .fadeIn(delay: 600.ms)
                       .scale(begin: const Offset(0.9, 0.9)),
-
                   const SizedBox(height: 24),
-
-                  // Secondary Controls
                   _buildSecondaryControls(context, audioProvider, song)
                       .animate()
                       .fadeIn(delay: 800.ms),
@@ -134,24 +115,18 @@ class PlaybackScreen extends StatelessWidget {
               ),
             ),
           );
-          // --- FIN DEL CAMBIO: Fin de SingleChildScrollView ---
         },
       ),
     );
   }
 
   Widget _buildAlbumArt(Song song, AudioProvider audioProvider) {
-    // 1. El widget que representará la carátula/disco que girará.
-    // Esto es ahora el contenido principal que se hará redondo y rotará.
     Widget rotatingDisc = Container(
       decoration: BoxDecoration(
-        shape: BoxShape
-            .circle, // Aseguramos que el contenedor de la imagen sea circular
-        color: AppTheme
-            .surfaceBlack, // Color de fondo por si la imagen tarda en cargar o falla
+        shape: BoxShape.circle,
+        color: AppTheme.surfaceBlack,
       ),
       child: ClipOval(
-        // Recortamos la imagen en un óvalo/círculo
         child: song.coverImageUrl != null
             ? CachedNetworkImage(
                 imageUrl: song.coverImageUrl!,
@@ -162,34 +137,31 @@ class PlaybackScreen extends StatelessWidget {
                 errorWidget: (context, url, error) => const Icon(
                   Icons.music_note,
                   size: 64,
-                  color: AppTheme.textGrey, // Icono en caso de error
+                  color: AppTheme.textGrey,
                 ),
               )
             : const Icon(
                 Icons.music_note,
                 size: 64,
-                color: AppTheme.textGrey, // Icono si no hay URLs de imagen
+                color: AppTheme.textGrey,
               ),
       ),
     );
 
-    // 2. Aplicar rotación al "disco" si está sonando
     if (audioProvider.isPlaying) {
       rotatingDisc = rotatingDisc
           .animate(
             onPlay: (controller) => controller.repeat(),
           )
           .rotate(
-            duration: 3.seconds,
-            curve: Curves.linear, // Rotación constante
+            duration: 15.seconds,
+            curve: Curves.linear,
           );
     }
 
-    // 3. Construir el widget final con la sombra y el centro negro
     return Hero(
       tag: 'song-${song.id}',
       child: Container(
-        // Este Container es el que tendrá la sombra y definirá el tamaño total del "disco".
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           boxShadow: [
@@ -201,22 +173,17 @@ class PlaybackScreen extends StatelessWidget {
           ],
         ),
         child: Stack(
-          fit: StackFit
-              .expand, // El Stack se expandirá a todo el Container padre
+          fit: StackFit.expand,
           alignment: Alignment.center,
           children: [
-            // El disco que rota (con la imagen de la canción)
-            // Ya tiene forma circular por el ClipOval interno y el Container externo.
             rotatingDisc,
-
-            // El "agujero central" negro
             Center(
               child: Container(
-                width: 60, // Tamaño del agujero central
+                width: 60,
                 height: 60,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.backgroundBlack, // Color negro para el centro
+                  color: AppTheme.backgroundBlack,
                   border: Border.all(
                     color: AppTheme.textGrey.withValues(alpha: 0.3),
                     width: 2,
@@ -224,7 +191,6 @@ class PlaybackScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // El chip "DEMO" si está en modo demo
             if (audioProvider.isDemoMode)
               Positioned(
                 top: 16,
@@ -266,7 +232,6 @@ class PlaybackScreen extends StatelessWidget {
         const SizedBox(height: 8),
         InkWell(
           onTap: () {
-            // --- CORRECCIÓN: Se pasa el ID del artista, no el nombre ---
             Navigator.pushNamed(context, '/artist', arguments: song.artistId);
           },
           child: Text(
@@ -349,7 +314,6 @@ class PlaybackScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // Shuffle
         IconButton(
           icon: Icon(
             audioProvider.isShuffleEnabled
@@ -362,15 +326,11 @@ class PlaybackScreen extends StatelessWidget {
           iconSize: 28,
           onPressed: audioProvider.toggleShuffle,
         ),
-
-        // Previous
         IconButton(
           icon: const Icon(Icons.skip_previous_rounded),
           iconSize: 40,
           onPressed: audioProvider.previous,
         ),
-
-        // Play/Pause
         Container(
           width: 70,
           height: 70,
@@ -398,15 +358,11 @@ class PlaybackScreen extends StatelessWidget {
                   onPressed: audioProvider.togglePlayPause,
                 ),
         ),
-
-        // Next
         IconButton(
           icon: const Icon(Icons.skip_next_rounded),
           iconSize: 40,
           onPressed: audioProvider.next,
         ),
-
-        // Repeat
         IconButton(
           icon: Icon(
             audioProvider.repeatMode == RepeatMode.one
@@ -566,7 +522,6 @@ class PlaybackScreen extends StatelessWidget {
         subject: 'Mira esta canción en Audira',
       );
     } catch (e) {
-      // Fallback to clipboard if share fails
       final textToCopy = 'Escucha "${song.name}" en Audira!';
       Clipboard.setData(ClipboardData(text: textToCopy));
       ScaffoldMessenger.of(context).showSnackBar(

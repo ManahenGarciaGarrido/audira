@@ -425,11 +425,11 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
             const SizedBox(height: 8),
             ..._albums.take(3).map((album) => Card(
                   child: ListTile(
-                    leading: album.imageUrls.isNotEmpty
+                    leading: album.coverImageUrl != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             child: CachedNetworkImage(
-                              imageUrl: album.imageUrls.first,
+                              imageUrl: album.coverImageUrl!,
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
@@ -509,11 +509,11 @@ class _ArtistDetailScreenState extends State<ArtistDetailScreen>
         final album = _albums[index];
         return Card(
           child: ListTile(
-            leading: album.imageUrls.isNotEmpty
+            leading: album.coverImageUrl != null
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: CachedNetworkImage(
-                      imageUrl: album.imageUrls.first,
+                      imageUrl: album.coverImageUrl!,
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
