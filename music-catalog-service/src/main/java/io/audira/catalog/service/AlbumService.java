@@ -122,10 +122,10 @@ public class AlbumService {
             album.setReleaseDate(albumDetails.getReleaseDate());
         }
 
-        // Price is calculated, not set manually
-        // if (albumDetails.getPrice() != null) {
-        //     album.setPrice(albumDetails.getPrice());
-        // }
+        // Allow manual price override
+        if (albumDetails.getPrice() != null) {
+            album.setPrice(albumDetails.getPrice());
+        }
 
         Album savedAlbum = albumRepository.save(album);
         System.out.println("Saved coverImageUrl: " + savedAlbum.getCoverImageUrl());
