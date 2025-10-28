@@ -15,7 +15,22 @@
 
         @Transactional
         public Song createSong(Song song) {
-            return songRepository.save(song);
+            // Log para debugging
+            System.out.println("=== CREATE SONG DEBUG ===");
+            System.out.println("Received Song:");
+            System.out.println("  Title: " + song.getTitle());
+            System.out.println("  coverImageUrl: " + song.getCoverImageUrl());
+            System.out.println("  Artist ID: " + song.getArtistId());
+
+            Song savedSong = songRepository.save(song);
+
+            System.out.println("Saved Song:");
+            System.out.println("  ID: " + savedSong.getId());
+            System.out.println("  Title: " + savedSong.getTitle());
+            System.out.println("  coverImageUrl: " + savedSong.getCoverImageUrl());
+            System.out.println("========================");
+
+            return savedSong;
         }
 
         public Song getSongById(Long id) {
