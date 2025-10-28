@@ -42,7 +42,15 @@
         @Transactional
         public Song updateSong(Long id, Song updatedSong) {
             Song existingSong = getSongById(id);
-            if (updatedSong.getTitle() != null) {
+
+            // Log para debugging
+            System.out.println("=== UPDATE SONG DEBUG ===");
+            System.out.println("Song ID: " + id);
+            System.out.println("Received coverImageUrl: " + updatedSong.getCoverImageUrl());
+            System.out.println("Current coverImageUrl: " + existingSong.getCoverImageUrl());
+
+            // Update Product fields (inherited from Product)
+            if (updatedSong.getTitle() != null && !updatedSong.getTitle().isEmpty()) {
                 existingSong.setTitle(updatedSong.getTitle());
             }
             if (updatedSong.getDescription() != null) {
@@ -51,9 +59,15 @@
             if (updatedSong.getPrice() != null) {
                 existingSong.setPrice(updatedSong.getPrice());
             }
-            if (updatedSong.getCoverImageUrl() != null) {
+            if (updatedSong.getCoverImageUrl() != null && !updatedSong.getCoverImageUrl().isEmpty()) {
                 existingSong.setCoverImageUrl(updatedSong.getCoverImageUrl());
+                System.out.println("Setting new coverImageUrl: " + updatedSong.getCoverImageUrl());
             }
+            if (updatedSong.getArtistId() != null) {
+                existingSong.setArtistId(updatedSong.getArtistId());
+            }
+
+            // Update Song-specific fields
             if (updatedSong.getDuration() != null) {
                 existingSong.setDuration(updatedSong.getDuration());
             }
@@ -69,10 +83,15 @@
             if (updatedSong.getTrackNumber() != null) {
                 existingSong.setTrackNumber(updatedSong.getTrackNumber());
             }
-            if (updatedSong.getGenreIds() != null) {
+            if (updatedSong.getGenreIds() != null && !updatedSong.getGenreIds().isEmpty()) {
                 existingSong.setGenreIds(updatedSong.getGenreIds());
             }
-            return songRepository.save(existingSong);
+
+            Song savedSong = songRepository.save(existingSong);
+            System.out.println("Saved coverImageUrl: " + savedSong.getCoverImageUrl());
+            System.out.println("========================");
+
+            return savedSong;
         }
 
         @Transactional

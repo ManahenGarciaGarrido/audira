@@ -1,5 +1,7 @@
 package io.audira.catalog.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +15,11 @@ import java.time.LocalDateTime;
 @Table(name = "products")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "product_type", discriminatorType = DiscriminatorType.STRING)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "productType", visible = true)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Song.class, name = "SONG"),
+    @JsonSubTypes.Type(value = Album.class, name = "ALBUM")
+})
 @Data
 @SuperBuilder
 @NoArgsConstructor
