@@ -69,181 +69,188 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${user?.fullName}',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${user?.fullName}',
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 24),
 
-            // Overview Cards
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.5,
-              children: [
-                _buildStatCard(
-                    'Total Plays',
-                    '${_userMetrics?['totalPlays'] ?? 0}',
-                    Icons.play_circle,
-                    AppTheme.primaryBlue),
-                _buildStatCard(
-                    'Purchased Songs',
-                    '${_userMetrics?['purchasedSongs'] ?? 0}',
-                    Icons.music_note,
-                    Colors.purple),
-                _buildStatCard(
-                    'Purchased Albums',
-                    '${_userMetrics?['purchasedAlbums'] ?? 0}',
-                    Icons.album,
-                    Colors.orange),
-                _buildStatCard(
-                    'Total Spent',
-                    '\$${(_userMetrics?['totalSpent'] ?? 0).toStringAsFixed(2)}',
-                    Icons.attach_money,
-                    Colors.green),
-              ],
-            ).animate().fadeIn(),
-            const SizedBox(height: 24),
+                  // Overview Cards
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.5,
+                    children: [
+                      _buildStatCard(
+                          'Total Plays',
+                          '${_userMetrics?['totalPlays'] ?? 0}',
+                          Icons.play_circle,
+                          AppTheme.primaryBlue),
+                      _buildStatCard(
+                          'Purchased Songs',
+                          '${_userMetrics?['purchasedSongs'] ?? 0}',
+                          Icons.music_note,
+                          Colors.purple),
+                      _buildStatCard(
+                          'Purchased Albums',
+                          '${_userMetrics?['purchasedAlbums'] ?? 0}',
+                          Icons.album,
+                          Colors.orange),
+                      _buildStatCard(
+                          'Total Spent',
+                          '\$${(_userMetrics?['totalSpent'] ?? 0).toStringAsFixed(2)}',
+                          Icons.attach_money,
+                          Colors.green),
+                    ],
+                  ).animate().fadeIn(),
+                  const SizedBox(height: 24),
 
-            const Text('Listening Activity',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    _buildStatRow(
-                        'This Week',
-                        '${_userMetrics?['playsThisWeek'] ?? 0} plays',
-                        AppTheme.primaryBlue),
-                    const Divider(),
-                    _buildStatRow(
-                        'This Month',
-                        '${_userMetrics?['playsThisMonth'] ?? 0} plays',
-                        AppTheme.primaryBlue),
-                    const Divider(),
-                    _buildStatRow(
-                        'Total Listening Time',
-                        _formatMinutes(_userMetrics?['totalListeningTime'] ?? 0),
-                        Colors.purple),
-                    const Divider(),
-                    _buildStatRow(
-                        'Avg. Daily Listening',
-                        _formatMinutes(_userMetrics?['avgDailyListening'] ?? 0),
-                        Colors.orange),
-                  ],
-                ),
-              ),
-            ).animate().fadeIn(delay: 100.ms),
-            const SizedBox(height: 24),
-
-            if (_userMetrics?['topGenres'] != null &&
-                (_userMetrics!['topGenres'] as List).isNotEmpty) ...[
-              const Text('Top Genres',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              Card(
-                child: Column(
-                  children: _buildGenresList(_userMetrics!['topGenres']),
-                ),
-              ).animate().fadeIn(delay: 200.ms),
-              const SizedBox(height: 24),
-            ],
-            const SizedBox(height: 24),
-
-            if (_listeningHistory != null &&
-                _listeningHistory!.isNotEmpty) ...[
-              const Text('Recently Played',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              ...List.generate(
-                _listeningHistory!.length,
-                (index) {
-                  final item = _listeningHistory![index];
-                  return Card(
-                    child: ListTile(
-                      leading: const CircleAvatar(
-                        backgroundColor: AppTheme.primaryBlue,
-                        child: Icon(Icons.music_note, color: Colors.white),
+                  const Text('Listening Activity',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          _buildStatRow(
+                              'This Week',
+                              '${_userMetrics?['playsThisWeek'] ?? 0} plays',
+                              AppTheme.primaryBlue),
+                          const Divider(),
+                          _buildStatRow(
+                              'This Month',
+                              '${_userMetrics?['playsThisMonth'] ?? 0} plays',
+                              AppTheme.primaryBlue),
+                          const Divider(),
+                          _buildStatRow(
+                              'Total Listening Time',
+                              _formatMinutes(
+                                  _userMetrics?['totalListeningTime'] ?? 0),
+                              Colors.purple),
+                          const Divider(),
+                          _buildStatRow(
+                              'Avg. Daily Listening',
+                              _formatMinutes(
+                                  _userMetrics?['avgDailyListening'] ?? 0),
+                              Colors.orange),
+                        ],
                       ),
-                      title: Text(item['songName'] ?? 'Unknown Song'),
-                      subtitle: Text(
-                          '${item['artistName'] ?? 'Unknown Artist'} • ${item['playCount'] ?? 0} plays'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        if (item['songId'] != null) {
-                          Navigator.pushNamed(context, '/song',
-                              arguments: item['songId']);
-                        }
+                    ),
+                  ).animate().fadeIn(delay: 100.ms),
+                  const SizedBox(height: 24),
+
+                  if (_userMetrics?['topGenres'] != null &&
+                      (_userMetrics!['topGenres'] as List).isNotEmpty) ...[
+                    const Text('Top Genres',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Column(
+                        children: _buildGenresList(_userMetrics!['topGenres']),
+                      ),
+                    ).animate().fadeIn(delay: 200.ms),
+                    const SizedBox(height: 24),
+                  ],
+                  const SizedBox(height: 24),
+
+                  if (_listeningHistory != null &&
+                      _listeningHistory!.isNotEmpty) ...[
+                    const Text('Recently Played',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    ...List.generate(
+                      _listeningHistory!.length,
+                      (index) {
+                        final item = _listeningHistory![index];
+                        return Card(
+                          child: ListTile(
+                            leading: const CircleAvatar(
+                              backgroundColor: AppTheme.primaryBlue,
+                              child:
+                                  Icon(Icons.music_note, color: Colors.white),
+                            ),
+                            title: Text(item['songName'] ?? 'Unknown Song'),
+                            subtitle: Text(
+                                '${item['artistName'] ?? 'Unknown Artist'} • ${item['playCount'] ?? 0} plays'),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () {
+                              if (item['songId'] != null) {
+                                Navigator.pushNamed(context, '/song',
+                                    arguments: item['songId']);
+                              }
+                            },
+                          ),
+                        ).animate().fadeIn(delay: ((index + 1) * 50).ms);
                       },
                     ),
-                  ).animate().fadeIn(delay: ((index + 1) * 50).ms);
-                },
-              ),
-              const SizedBox(height: 24),
-            ],
+                    const SizedBox(height: 24),
+                  ],
 
-            if (_userMetrics?['topArtists'] != null &&
-                (_userMetrics!['topArtists'] as List).isNotEmpty) ...[
-              const Text('Favorite Artists',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 120,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: (_userMetrics!['topArtists'] as List).length,
-                  itemBuilder: (context, index) {
-                    final artist = _userMetrics!['topArtists'][index];
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: InkWell(
-                        onTap: () {
-                          if (artist['artistId'] != null) {
-                            Navigator.pushNamed(context, '/artist',
-                                arguments: artist['artistId']);
-                          }
-                        },
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundColor: AppTheme.primaryBlue,
-                              child: Text(
-                                  (artist['artistName'] ?? 'A')
-                                      .substring(0, 1)
-                                      .toUpperCase(),
-                                  style: const TextStyle(
-                                      fontSize: 20, color: Colors.white)),
-                            ),
-                            const SizedBox(height: 8),
-                            SizedBox(
-                              width: 80,
-                              child: Text(
-                                artist['artistName'] ?? 'Unknown',
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                  if (_userMetrics?['topArtists'] != null &&
+                      (_userMetrics!['topArtists'] as List).isNotEmpty) ...[
+                    const Text('Favorite Artists',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: (_userMetrics!['topArtists'] as List).length,
+                        itemBuilder: (context, index) {
+                          final artist = _userMetrics!['topArtists'][index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: InkWell(
+                              onTap: () {
+                                if (artist['artistId'] != null) {
+                                  Navigator.pushNamed(context, '/artist',
+                                      arguments: artist['artistId']);
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundColor: AppTheme.primaryBlue,
+                                    child: Text(
+                                        (artist['artistName'] ?? 'A')
+                                            .substring(0, 1)
+                                            .toUpperCase(),
+                                        style: const TextStyle(
+                                            fontSize: 20, color: Colors.white)),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    width: 80,
+                                    child: Text(
+                                      artist['artistName'] ?? 'Unknown',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ).animate().fadeIn(delay: 350.ms),
-            ],
-          ],
-        ),
-      ),
+                    ).animate().fadeIn(delay: 350.ms),
+                  ],
+                ],
+              ),
+            ),
     );
   }
 
@@ -255,11 +262,11 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 32, color: color),
-            const SizedBox(height: 8),
+            Icon(icon, size: 28, color: color),
+            const SizedBox(height: 4),
             Text(value,
                 style: TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+                    fontSize: 16, fontWeight: FontWeight.bold, color: color)),
             const SizedBox(height: 4),
             Text(title,
                 style: const TextStyle(fontSize: 12, color: AppTheme.textGrey),
@@ -286,7 +293,13 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
   }
 
   List<Widget> _buildGenresList(List<dynamic> genres) {
-    final colors = [Colors.pink, Colors.red, Colors.blue, Colors.purple, Colors.orange];
+    final colors = [
+      Colors.pink,
+      Colors.red,
+      Colors.blue,
+      Colors.purple,
+      Colors.orange
+    ];
     List<Widget> widgets = [];
 
     for (int i = 0; i < genres.length; i++) {
