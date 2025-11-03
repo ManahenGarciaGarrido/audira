@@ -23,15 +23,46 @@ Crear el endpoint básico de registro que acepte datos del formulario.
 ### 6. Configuración application.yml
 **Ruta:** `src/main/resources/application.yml`
 
+## 🐳 Iniciar PostgreSQL con Docker
+
+**IMPORTANTE:** Antes de ejecutar el servicio Spring Boot, debes iniciar PostgreSQL.
+
+### En Windows:
+```bash
+# Desde la carpeta implementacion-progresiva/subtarea1/
+start.bat
+```
+
+### En Linux/Mac:
+```bash
+# Desde la carpeta implementacion-progresiva/subtarea1/
+chmod +x start.sh stop.sh
+./start.sh
+```
+
+Esto iniciará PostgreSQL en un contenedor Docker con:
+- **Base de datos:** `audira_community`
+- **Puerto:** `5432`
+- **Usuario:** `postgres`
+- **Contraseña:** `postgres`
+
+### Detener PostgreSQL:
+**Windows:** `stop.bat`
+**Linux/Mac:** `./stop.sh`
+
+---
+
 ## 🧪 Cómo probar
 
-### Iniciar servicio:
+### 1. Iniciar PostgreSQL (ver sección anterior)
+
+### 2. Iniciar servicio Spring Boot:
 ```bash
 cd community-service
 mvn spring-boot:run
 ```
 
-### Probar endpoint:
+### 3. Probar endpoint:
 ```bash
 curl -X POST http://localhost:9001/api/auth/register \
   -H "Content-Type: application/json" \

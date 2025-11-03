@@ -18,7 +18,33 @@ Esta subtarea agrega validaciones de duplicados antes de crear el usuario.
 ### 3. GlobalExceptionHandler (opcional pero recomendado)
 **Ruta:** `src/main/java/io/audira/community/exception/GlobalExceptionHandler.java`
 
+## 🐳 Iniciar PostgreSQL con Docker
+
+**IMPORTANTE:** Antes de ejecutar el servicio Spring Boot, debes iniciar PostgreSQL.
+
+### En Windows:
+```bash
+# Desde la carpeta implementacion-progresiva/subtarea2/
+start.bat
+```
+
+### En Linux/Mac:
+```bash
+# Desde la carpeta implementacion-progresiva/subtarea2/
+chmod +x start.sh stop.sh
+./start.sh
+```
+
+Esto iniciará PostgreSQL en un contenedor Docker con las credenciales configuradas.
+
+### Detener PostgreSQL:
+**Windows:** `stop.bat` | **Linux/Mac:** `./stop.sh`
+
+---
+
 ## 🧪 Cómo probar
+
+### Paso 0: Iniciar PostgreSQL (ver sección anterior) + mvn spring-boot:run
 
 ### Prueba 1: Registrar usuario nuevo (debe funcionar)
 ```bash

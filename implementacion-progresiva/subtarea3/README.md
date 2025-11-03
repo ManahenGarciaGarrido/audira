@@ -21,7 +21,31 @@ Esta subtarea agrega la capacidad de diferenciar entre usuarios regulares y arti
 ### 4. UserService (modificar - asignar rol)
 **Ruta:** `src/main/java/io/audira/community/service/UserService.java`
 
+## 🐳 Iniciar PostgreSQL con Docker
+
+**IMPORTANTE:** Antes de ejecutar el servicio Spring Boot, debes iniciar PostgreSQL.
+
+### En Windows:
+```bash
+# Desde la carpeta implementacion-progresiva/subtarea3/
+start.bat
+```
+
+### En Linux/Mac:
+```bash
+# Desde la carpeta implementacion-progresiva/subtarea3/
+chmod +x start.sh stop.sh
+./start.sh
+```
+
+### Detener PostgreSQL:
+**Windows:** `stop.bat` | **Linux/Mac:** `./stop.sh`
+
+---
+
 ## 🧪 Cómo probar
+
+### Paso 0: Iniciar PostgreSQL (ver sección anterior) + mvn spring-boot:run
 
 ### Prueba 1: Registrar como USER (Miembro) - por defecto
 ```bash
