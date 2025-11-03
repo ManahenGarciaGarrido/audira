@@ -1,0 +1,46 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: community-service
+
+  # DESHABILITAR EUREKA PARA PRUEBAS
+  cloud:
+    discovery:
+      enabled: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/audira_community
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Configuración JWT (necesaria incluso para endpoints públicos)
+jwt:
+  secret: audira-secret-key-for-jwt-token-generation-should-be-at-least-512-bits
+  expiration: 86400000
+
+# DESHABILITAR EUREKA COMPLETAMENTE
+eureka:
+  client:
+    enabled: false
+    fetch-registry: false
+    register-with-eureka: false
+  instance:
+    prefer-ip-address: false
+
+# Logging para debug
+logging:
+  level:
+    io.audira.community: DEBUG
+    org.springframework.security: DEBUG
