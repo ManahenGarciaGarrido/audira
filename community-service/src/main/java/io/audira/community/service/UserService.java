@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -168,10 +169,67 @@ public class UserService {
     }
 
     @Transactional
+    public UserDTO updateProfile(Long userId, Map<String, Object> updates) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (updates.containsKey("firstName")) {
+            user.setFirstName((String) updates.get("firstName"));
+        }
+        if (updates.containsKey("lastName")) {
+            user.setLastName((String) updates.get("lastName"));
+        }
+        if (updates.containsKey("bio")) {
+            user.setBio((String) updates.get("bio"));
+        }
+        if (updates.containsKey("profileImageUrl")) {
+            user.setProfileImageUrl((String) updates.get("profileImageUrl"));
+        }
+        if (updates.containsKey("bannerImageUrl")) {
+            user.setBannerImageUrl((String) updates.get("bannerImageUrl"));
+        }
+        if (updates.containsKey("location")) {
+            user.setLocation((String) updates.get("location"));
+        }
+        if (updates.containsKey("website")) {
+            user.setWebsite((String) updates.get("website"));
+        }
+
+        user = userRepository.save(user);
+        return mapToDTO(user);
+    }
+
+    @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public void changePassword(Long userId, ChangePasswordRequest request) {
+        // Validar que las contraseñas coincidan
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Las contraseñas no coinciden");
+        }
+
+        // Obtener el usuario
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Verificar que la contraseña actual sea correcta
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("La contraseña actual es incorrecta");
+        }
+
+        // Validar que la nueva contraseña sea diferente de la actual
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new RuntimeException("La nueva contraseña debe ser diferente de la actual");
+        }
+
+        // Actualizar la contraseña
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     @Transactional

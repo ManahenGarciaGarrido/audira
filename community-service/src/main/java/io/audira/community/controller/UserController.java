@@ -1,5 +1,6 @@
 package io.audira.community.controller;
 
+import io.audira.community.dto.ChangePasswordRequest;
 import io.audira.community.dto.UpdateProfileRequest;
 import io.audira.community.dto.UserDTO;
 import io.audira.community.security.UserPrincipal;
@@ -87,5 +88,22 @@ public class UserController {
             @PathVariable("targetUserId") Long targetUserId) {
         UserDTO updatedUser = userService.unfollowUser(userId, targetUserId);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    // Endpoint: POST /api/users/change-password
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestParam("userId") Long userId,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        try {
+            userService.changePassword(userId, request);
+            return ResponseEntity.ok().body(
+                java.util.Map.of("message", "Contraseña actualizada exitosamente")
+            );
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(
+                java.util.Map.of("error", e.getMessage())
+            );
+        }
     }
 }
