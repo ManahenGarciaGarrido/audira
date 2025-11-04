@@ -49,4 +49,43 @@ public class UserController {
         List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    // Endpoint: GET /api/users/{userId}/followers
+    @GetMapping("/{userId}/followers")
+    public ResponseEntity<List<UserDTO>> getUserFollowers(@PathVariable("userId") Long userId) {
+        List<UserDTO> followers = userService.getFollowers(userId);
+        return ResponseEntity.ok(followers);
+    }
+
+    // Endpoint: GET /api/users/{userId}/following
+    @GetMapping("/{userId}/following")
+    public ResponseEntity<List<UserDTO>> getUserFollowing(@PathVariable("userId") Long userId) {
+        List<UserDTO> following = userService.getFollowing(userId);
+        return ResponseEntity.ok(following);
+    }
+
+    // Endpoint: GET /api/users/{userId}/following/artists
+    @GetMapping("/{userId}/following/artists")
+    public ResponseEntity<List<UserDTO>> getFollowedArtists(@PathVariable("userId") Long userId) {
+        List<UserDTO> followedArtists = userService.getFollowedArtists(userId);
+        return ResponseEntity.ok(followedArtists);
+    }
+
+    // Endpoint: POST /api/users/{userId}/follow/{targetUserId}
+    @PostMapping("/{userId}/follow/{targetUserId}")
+    public ResponseEntity<UserDTO> followUser(
+            @PathVariable("userId") Long userId,
+            @PathVariable("targetUserId") Long targetUserId) {
+        UserDTO updatedUser = userService.followUser(userId, targetUserId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    // Endpoint: DELETE /api/users/{userId}/follow/{targetUserId}
+    @DeleteMapping("/{userId}/follow/{targetUserId}")
+    public ResponseEntity<UserDTO> unfollowUser(
+            @PathVariable("userId") Long userId,
+            @PathVariable("targetUserId") Long targetUserId) {
+        UserDTO updatedUser = userService.unfollowUser(userId, targetUserId);
+        return ResponseEntity.ok(updatedUser);
+    }
 }
