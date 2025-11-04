@@ -74,12 +74,30 @@ public class FileStorageService {
 
     public boolean isValidImageFile(MultipartFile file) {
         String contentType = file.getContentType();
-        return contentType != null && (
+        String fileName = file.getOriginalFilename();
+
+        // Verificar por content-type
+        boolean validContentType = contentType != null && (
                 contentType.equals("image/jpeg") ||
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/png") ||
                 contentType.equals("image/gif") ||
-                contentType.equals("image/webp")
+                contentType.equals("image/webp") ||
+                contentType.equals("application/octet-stream") // Permitir este tipo genérico
         );
+
+        // Verificar por extensión del archivo como fallback
+        boolean validExtension = false;
+        if (fileName != null) {
+            String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            validExtension = extension.equals("jpg") ||
+                           extension.equals("jpeg") ||
+                           extension.equals("png") ||
+                           extension.equals("gif") ||
+                           extension.equals("webp");
+        }
+
+        // Aceptar si el content-type O la extensión son válidos
+        return validContentType || validExtension;
     }
 }

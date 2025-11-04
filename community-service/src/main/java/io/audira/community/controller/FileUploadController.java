@@ -31,6 +31,11 @@ public class FileUploadController {
             @RequestParam("userId") Long userId) {
 
         try {
+            // Log para debugging
+            System.out.println("Recibido archivo: " + file.getOriginalFilename());
+            System.out.println("Content-Type: " + file.getContentType());
+            System.out.println("Tamaño: " + file.getSize() + " bytes");
+
             // Validar que sea una imagen
             if (!fileStorageService.isValidImageFile(file)) {
                 return ResponseEntity.badRequest().body(
