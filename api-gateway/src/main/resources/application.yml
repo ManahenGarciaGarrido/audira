@@ -16,7 +16,8 @@ spring:
           uri: lb://community-service
           predicates:
             # AÑADIDO /api/auth/** para permitir el login/registro
-            - Path=/api/auth/**,/api/users/**,/api/metrics/**,/api/ratings/**,/api/comments/**,/api/contact/**,/api/faq/**,/api/notifications/**
+            # AÑADIDO /api/files/** para upload y descarga de archivos
+            - Path=/api/auth/**,/api/users/**,/api/metrics/**,/api/ratings/**,/api/comments/**,/api/contact/**,/api/faq/**,/api/notifications/**,/api/files/**
 
         # ÉPICA 2: Catálogo Musical y Contenido
         - id: music-catalog-service
