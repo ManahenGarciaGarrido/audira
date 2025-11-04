@@ -228,6 +228,17 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public List<UserDTO> getFollowedArtists(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getFollowingIds().stream()
+                .map(followingId -> userRepository.findById(followingId).orElse(null))
+                .filter(followedUser -> followedUser != null && followedUser.getRole() == UserRole.ARTIST)
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     private UserDTO mapToDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())
