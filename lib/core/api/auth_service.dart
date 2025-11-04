@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'api_client.dart';
 import '../../config/constants.dart';
 import '../models/user.dart';
@@ -331,9 +332,32 @@ class AuthService {
 
       final request = http.MultipartRequest('POST', uri);
       request.fields['userId'] = userId.toString();
+
+      // Determinar el content-type basándose en la extensión
+      String? contentType;
+      final extension = imageFile.path.split('.').last.toLowerCase();
+      switch (extension) {
+        case 'jpg':
+        case 'jpeg':
+          contentType = 'image/jpeg';
+          break;
+        case 'png':
+          contentType = 'image/png';
+          break;
+        case 'gif':
+          contentType = 'image/gif';
+          break;
+        case 'webp':
+          contentType = 'image/webp';
+          break;
+        default:
+          contentType = 'application/octet-stream';
+      }
+
       request.files.add(await http.MultipartFile.fromPath(
         'file',
         imageFile.path,
+        contentType: MediaType.parse(contentType),
       ));
 
       final streamedResponse = await request.send();
