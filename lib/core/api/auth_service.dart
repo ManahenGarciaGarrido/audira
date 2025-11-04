@@ -1,7 +1,9 @@
 // ignore_for_file: empty_catches
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'api_client.dart';
 import '../../config/constants.dart';
 import '../models/user.dart';
@@ -318,6 +320,103 @@ class AuthService {
       return ApiResponse(
         success: false,
         error: 'Excepción al obtener usuarios: $e',
+      );
+    }
+  }
+
+  /// Upload profile image
+  Future<ApiResponse<User>> uploadProfileImage(File imageFile, int userId) async {
+    try {
+      final uri = Uri.parse('${AppConstants.apiGatewayUrl}/api/files/upload/profile-image');
+
+      final request = http.MultipartRequest('POST', uri);
+      request.fields['userId'] = userId.toString();
+      request.files.add(await http.MultipartFile.fromPath(
+        'file',
+        imageFile.path,
+      ));
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final userJson = data['user'] as Map<String, dynamic>;
+        final role = userJson['role'] as String;
+
+        User user;
+        if (role == AppConstants.roleArtist) {
+          user = Artist.fromJson(userJson);
+        } else {
+          user = User.fromJson(userJson);
+        }
+
+        // Update stored user data
+        await _storage.write(
+          key: AppConstants.userDataKey,
+          value: jsonEncode(user.toJson()),
+        );
+
+        return ApiResponse(
+          success: true,
+          data: user,
+          statusCode: response.statusCode,
+        );
+      } else {
+        final errorData = jsonDecode(response.body);
+        return ApiResponse(
+          success: false,
+          error: errorData['error'] ?? 'Error al subir imagen',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      return ApiResponse(
+        success: false,
+        error: 'Error al subir imagen: $e',
+      );
+    }
+  }
+
+  /// Change password
+  Future<ApiResponse<void>> changePassword({
+    required int userId,
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      final uri = Uri.parse('${AppConstants.apiGatewayUrl}/api/users/change-password')
+          .replace(queryParameters: {'userId': userId.toString()});
+
+      final body = {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+      };
+
+      final response = await _apiClient.post(
+        '/api/users/change-password?userId=$userId',
+        body: body,
+        requiresAuth: false,
+      );
+
+      if (response.success) {
+        return ApiResponse(
+          success: true,
+          statusCode: response.statusCode,
+        );
+      }
+
+      return ApiResponse(
+        success: false,
+        error: response.error,
+        statusCode: response.statusCode,
+      );
+    } catch (e) {
+      return ApiResponse(
+        success: false,
+        error: 'Error al cambiar contraseña: $e',
       );
     }
   }

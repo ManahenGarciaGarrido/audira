@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/api/users/{userId}/following",
                                 "/api/users/{userId}/following/artists",
                                 "/api/users/{userId}/follow/{targetUserId}",
+                                "/api/files/**",
                                 "/public/**",
                                 "/actuator/**",
                                 "/error"
