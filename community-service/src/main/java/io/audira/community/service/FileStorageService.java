@@ -1,5 +1,7 @@
 package io.audira.community.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -16,9 +18,17 @@ import java.util.UUID;
 public class FileStorageService {
 
     private final Path fileStorageLocation;
+    private final S3StorageService s3StorageService;
 
-    public FileStorageService(@Value("${file.upload-dir:uploads}") String uploadDir) {
+    @Value("${aws.s3.enabled:false}")
+    private boolean s3Enabled;
+
+    @Autowired
+    public FileStorageService(
+            @Value("${file.upload-dir:uploads}") String uploadDir,
+            S3StorageService s3StorageService) {
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
+        this.s3StorageService = s3StorageService;
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
@@ -27,6 +37,15 @@ public class FileStorageService {
     }
 
     public String storeFile(MultipartFile file, String subDirectory) {
+        // Si S3 está habilitado, usar S3, sino usar almacenamiento local
+        if (s3Enabled && s3StorageService.isS3Enabled()) {
+            return s3StorageService.uploadFile(file, subDirectory);
+        }
+
+        return storeFileLocally(file, subDirectory);
+    }
+
+    private String storeFileLocally(MultipartFile file, String subDirectory) {
         // Normalizar nombre del archivo
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -64,6 +83,14 @@ public class FileStorageService {
     }
 
     public void deleteFile(String filePath) {
+        // Si S3 está habilitado y la ruta es una URL de S3, usar S3
+        if (s3Enabled && s3StorageService.isS3Enabled() &&
+            (filePath.startsWith("http://") || filePath.startsWith("https://"))) {
+            s3StorageService.deleteFile(filePath);
+            return;
+        }
+
+        // Sino, usar almacenamiento local
         try {
             Path file = this.fileStorageLocation.resolve(filePath).normalize();
             Files.deleteIfExists(file);
@@ -95,6 +122,43 @@ public class FileStorageService {
                            extension.equals("png") ||
                            extension.equals("gif") ||
                            extension.equals("webp");
+        }
+
+        // Aceptar si el content-type O la extensión son válidos
+        return validContentType || validExtension;
+    }
+
+    public boolean isValidAudioFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        String fileName = file.getOriginalFilename();
+
+        // Verificar por content-type
+        boolean validContentType = contentType != null && (
+                contentType.equals("audio/mpeg") ||
+                contentType.equals("audio/mp3") ||
+                contentType.equals("audio/wav") ||
+                contentType.equals("audio/wave") ||
+                contentType.equals("audio/x-wav") ||
+                contentType.equals("audio/flac") ||
+                contentType.equals("audio/x-flac") ||
+                contentType.equals("audio/midi") ||
+                contentType.equals("audio/x-midi") ||
+                contentType.equals("audio/ogg") ||
+                contentType.equals("audio/aac") ||
+                contentType.equals("application/octet-stream") // Permitir este tipo genérico
+        );
+
+        // Verificar por extensión del archivo como fallback
+        boolean validExtension = false;
+        if (fileName != null) {
+            String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            validExtension = extension.equals("mp3") ||
+                           extension.equals("wav") ||
+                           extension.equals("flac") ||
+                           extension.equals("midi") ||
+                           extension.equals("mid") ||
+                           extension.equals("ogg") ||
+                           extension.equals("aac");
         }
 
         // Aceptar si el content-type O la extensión son válidos
