@@ -7,7 +7,6 @@ import io.audira.commerce.dto.UpdateOrderStatusRequest;
 import io.audira.commerce.model.Order;
 import io.audira.commerce.model.OrderItem;
 import io.audira.commerce.model.OrderStatus;
-import io.audira.commerce.repository.OrderItemRepository;
 import io.audira.commerce.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
 
     @Transactional
     public OrderDTO createOrder(CreateOrderRequest request) {
