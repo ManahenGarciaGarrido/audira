@@ -39,6 +39,12 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.getAlbumsByGenre(genreId));
     }
 
+    @GetMapping("/latest-releases")
+    public ResponseEntity<List<Album>> getLatestReleases(@RequestParam(defaultValue = "20") int limit) {
+        List<Album> albums = albumService.getRecentAlbums();
+        return ResponseEntity.ok(albums.stream().limit(limit).toList());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Album> updateAlbum(@PathVariable Long id, @RequestBody Album album) {
         return ResponseEntity.ok(albumService.updateAlbum(id, album));
