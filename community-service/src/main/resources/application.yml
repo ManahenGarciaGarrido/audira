@@ -24,25 +24,12 @@ jwt:
 
 file:
   upload-dir: uploads
-  base-url: http://158.49.191.109:9001
+  base-url: http://localhost:9001
 
 spring.servlet.multipart:
   enabled: true
   max-file-size: 50MB
   max-request-size: 50MB
-
-# AWS S3 Configuration (optional)
-# Para habilitar S3, configura estas propiedades con tus credenciales
-# También puedes usar servicios compatibles con S3 como MinIO o DigitalOcean Spaces
-aws:
-  s3:
-    enabled: false  # Cambiar a true para habilitar S3
-    access-key: ${AWS_ACCESS_KEY:}
-    secret-key: ${AWS_SECRET_KEY:}
-    bucket-name: ${AWS_S3_BUCKET:audira-media}
-    region: ${AWS_REGION:us-east-1}
-    endpoint: ${AWS_S3_ENDPOINT:}  # Dejar vacío para AWS S3, o especificar para servicios compatibles
-    public-url: ${AWS_S3_PUBLIC_URL:}  # URL pública del bucket (opcional)
 
 eureka:
   client:
