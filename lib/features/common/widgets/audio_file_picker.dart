@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import '../../../config/theme.dart';
 import '../../../core/api/services/file_upload_service.dart';
 import '../../../core/models/file_upload_response.dart';
-import '../../../core/api/api_client.dart';
 
 /// Widget for picking and uploading audio files
 /// Supports: MP3, WAV, FLAC, MIDI, OGG, AAC
@@ -143,7 +142,7 @@ class _AudioFilePickerState extends State<AudioFilePicker> {
             _isUploading ? 'Subiendo...' : widget.buttonText,
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryPurple,
+            backgroundColor: AppTheme.primaryBlue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
@@ -153,8 +152,8 @@ class _AudioFilePickerState extends State<AudioFilePicker> {
           LinearProgressIndicator(
             value: _uploadProgress,
             backgroundColor: AppTheme.textGrey.withValues(alpha: 0.2),
-            valueColor: const AlwaysStoppedAnimation<Color>(
-              AppTheme.primaryPurple,
+            valueColor: AlwaysStoppedAnimation<Color>(
+              AppTheme.primaryBlue,
             ),
           ),
         ],

@@ -25,7 +25,7 @@ class ImageFilePicker extends StatefulWidget {
   final bool showPreview;
   final double? previewHeight;
 
-  const ImageFilePicker({
+  ImageFilePicker({
     super.key,
     required this.uploadType,
     required this.onUploadComplete,
@@ -182,7 +182,7 @@ class _ImageFilePickerState extends State<ImageFilePicker> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.photo_camera, color: AppTheme.primaryPurple),
+                leading: Icon(Icons.photo_camera, color: AppTheme.primaryBlue),
                 title: const Text('Tomar Foto'),
                 onTap: () {
                   Navigator.pop(context);
@@ -190,7 +190,7 @@ class _ImageFilePickerState extends State<ImageFilePicker> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppTheme.primaryPurple),
+                leading: Icon(Icons.photo_library, color: AppTheme.primaryBlue),
                 title: const Text('Seleccionar de Galería'),
                 onTap: () {
                   Navigator.pop(context);
@@ -268,7 +268,7 @@ class _ImageFilePickerState extends State<ImageFilePicker> {
             _isUploading ? 'Subiendo...' : widget.buttonText!,
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryPurple,
+            backgroundColor: AppTheme.primaryBlue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),

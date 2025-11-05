@@ -410,9 +410,6 @@ class AuthService {
     required String confirmPassword,
   }) async {
     try {
-      final uri = Uri.parse('${AppConstants.apiGatewayUrl}/api/users/change-password')
-          .replace(queryParameters: {'userId': userId.toString()});
-
       final body = {
         'currentPassword': currentPassword,
         'newPassword': newPassword,
