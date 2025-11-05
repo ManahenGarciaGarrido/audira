@@ -1,7 +1,5 @@
 package io.audira.community.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,17 +16,9 @@ import java.util.UUID;
 public class FileStorageService {
 
     private final Path fileStorageLocation;
-    private final S3StorageService s3StorageService;
 
-    @Value("${aws.s3.enabled:false}")
-    private boolean s3Enabled;
-
-    @Autowired
-    public FileStorageService(
-            @Value("${file.upload-dir:uploads}") String uploadDir,
-            S3StorageService s3StorageService) {
+    public FileStorageService(@Value("${file.upload-dir:uploads}") String uploadDir) {
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
-        this.s3StorageService = s3StorageService;
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
@@ -37,15 +27,6 @@ public class FileStorageService {
     }
 
     public String storeFile(MultipartFile file, String subDirectory) {
-        // Si S3 está habilitado, usar S3, sino usar almacenamiento local
-        if (s3Enabled && s3StorageService.isS3Enabled()) {
-            return s3StorageService.uploadFile(file, subDirectory);
-        }
-
-        return storeFileLocally(file, subDirectory);
-    }
-
-    private String storeFileLocally(MultipartFile file, String subDirectory) {
         // Normalizar nombre del archivo
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -83,14 +64,6 @@ public class FileStorageService {
     }
 
     public void deleteFile(String filePath) {
-        // Si S3 está habilitado y la ruta es una URL de S3, usar S3
-        if (s3Enabled && s3StorageService.isS3Enabled() &&
-            (filePath.startsWith("http://") || filePath.startsWith("https://"))) {
-            s3StorageService.deleteFile(filePath);
-            return;
-        }
-
-        // Sino, usar almacenamiento local
         try {
             Path file = this.fileStorageLocation.resolve(filePath).normalize();
             Files.deleteIfExists(file);

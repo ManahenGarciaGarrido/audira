@@ -1,16 +1,16 @@
 package io.audira.community.controller;
 
 import io.audira.community.dto.UserDTO;
-import io.audira.community.security.UserPrincipal;
 import io.audira.community.service.FileStorageService;
+import io.audira.community.service.ImageCompressionService;
 import io.audira.community.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +23,8 @@ public class FileUploadController {
     private final UserService userService;
     private final ImageCompressionService imageCompressionService;
 
-    @Value("${file.base-url:http://158.49.191.109:9001}")
+    @Value("${file.base-url:http://localhost:9001}")
     private String baseUrl;
-
-    @Value("${aws.s3.enabled:false}")
-    private boolean s3Enabled;
 
     @PostMapping("/upload/profile-image")
     public ResponseEntity<?> uploadProfileImage(
@@ -309,12 +306,6 @@ public class FileUploadController {
     }
 
     private String buildFileUrl(String filePath) {
-        // Si S3 está habilitado y filePath es una URL completa, retornarla directamente
-        if (s3Enabled && (filePath.startsWith("http://") || filePath.startsWith("https://"))) {
-            return filePath;
-        }
-
-        // Sino, construir URL local
         return baseUrl + "/api/files/" + filePath;
     }
 }

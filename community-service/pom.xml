@@ -68,12 +68,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!-- AWS SDK for S3 -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.529</version>
-        </dependency>
         <!-- Image processing -->
         <dependency>
             <groupId>org.imgscalr</groupId>
