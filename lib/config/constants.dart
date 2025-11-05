@@ -72,6 +72,16 @@ class AppConstants {
   // Payment endpoints
   static const String paymentsUrl = '/api/payments';
 
+  // File endpoints
+  static const String fileUploadUrl = '/api/files/upload';
+  static const String fileUploadAudioUrl = '/api/files/upload/audio';
+  static const String fileUploadProfileImageUrl = '/api/files/upload/profile-image';
+  static const String fileUploadBannerImageUrl = '/api/files/upload/banner-image';
+  static const String fileUploadCoverImageUrl = '/api/files/upload/cover-image';
+  static const String fileCompressImageUrl = '/api/files/compress/image';
+  static const String fileOptimizeImageUrl = '/api/files/optimize/image';
+  static const String fileServeUrl = '/api/files';
+
   // App Configuration
   static const String appName = 'Audira';
   static const String appVersion = '1.0.0';

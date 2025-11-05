@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import '../../config/constants.dart';
 
@@ -225,6 +227,90 @@ class ApiClient {
         error: '${AppConstants.errorNetworkMessage}: $e',
       );
     }
+  }
+
+  /// Upload file with multipart/form-data
+  Future<ApiResponse<T>> postMultipart<T>(
+    String endpoint, {
+    required File file,
+    required String fileFieldName,
+    Map<String, String>? fields,
+    Map<String, String>? queryParameters,
+    bool requiresAuth = true,
+    String? contentType,
+  }) async {
+    try {
+      String? token;
+      if (requiresAuth) {
+        token = await _getAuthToken();
+        if (token == null) {
+          return ApiResponse(
+            success: false,
+            error: AppConstants.errorUnauthorizedMessage,
+            statusCode: 401,
+          );
+        }
+      }
+
+      final uri = Uri.parse(
+        '$baseUrl$endpoint',
+      ).replace(queryParameters: queryParameters);
+
+      final request = http.MultipartRequest('POST', uri);
+
+      // Add auth header if needed
+      if (requiresAuth && token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      // Add the file
+      final mimeType = contentType ?? _getMimeType(file.path);
+      final mimeTypeData = mimeType.split('/');
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          fileFieldName,
+          file.path,
+          contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
+        ),
+      );
+
+      // Add additional fields
+      if (fields != null) {
+        request.fields.addAll(fields);
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      return _handleResponse<T>(response);
+    } catch (e) {
+      return ApiResponse(
+        success: false,
+        error: '${AppConstants.errorNetworkMessage}: $e',
+      );
+    }
+  }
+
+  /// Get MIME type from file extension
+  String _getMimeType(String path) {
+    final ext = path.split('.').last.toLowerCase();
+
+    // Audio types
+    if (ext == 'mp3') return 'audio/mpeg';
+    if (ext == 'wav') return 'audio/wav';
+    if (ext == 'flac') return 'audio/flac';
+    if (ext == 'midi' || ext == 'mid') return 'audio/midi';
+    if (ext == 'ogg') return 'audio/ogg';
+    if (ext == 'aac') return 'audio/aac';
+
+    // Image types
+    if (ext == 'jpg' || ext == 'jpeg') return 'image/jpeg';
+    if (ext == 'png') return 'image/png';
+    if (ext == 'gif') return 'image/gif';
+    if (ext == 'webp') return 'image/webp';
+
+    return 'application/octet-stream';
   }
 
   ApiResponse<T> _handleResponse<T>(http.Response response) {
