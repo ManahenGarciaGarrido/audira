@@ -24,6 +24,7 @@ public class Artist extends User {
     private String artistName; // Stage name
 
     @Column(name = "verified_artist")
+    @Builder.Default
     private Boolean verifiedArtist = false;
 
     @Column(columnDefinition = "TEXT")

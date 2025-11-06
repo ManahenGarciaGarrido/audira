@@ -19,6 +19,7 @@ public class Admin extends User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "admin_level")
+    @Builder.Default
     private AdminLevel adminLevel = AdminLevel.MODERATOR;
 
     @Column(name = "department")

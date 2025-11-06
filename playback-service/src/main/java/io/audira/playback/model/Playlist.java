@@ -39,6 +39,7 @@ public class Playlist {
     @CollectionTable(name = "playlist_songs_list", joinColumns = @JoinColumn(name = "playlist_id"))
     @Column(name = "song_id")
     @OrderColumn(name = "position")
+    @Builder.Default
     private List<Long> songIds = new ArrayList<>();
 
     @Column(nullable = false)
