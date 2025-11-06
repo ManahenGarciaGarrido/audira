@@ -24,6 +24,7 @@ public class Album extends Product {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "album_genres", joinColumns = @JoinColumn(name = "album_id"))
     @Column(name = "genre_id")
+    @Builder.Default
     private Set<Long> genreIds = new HashSet<>();
 
     @Column(name = "release_date")
@@ -32,6 +33,7 @@ public class Album extends Product {
     // Price is calculated based on song prices with discount
     // Not stored directly - calculated when needed
     @Transient
+    @Builder.Default
     private Double discountPercentage = 0.15; // 15% discount by default
 
     @Override

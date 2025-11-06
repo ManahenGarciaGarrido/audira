@@ -28,6 +28,7 @@ public class PlayQueue {
     @CollectionTable(name = "queue_songs", joinColumns = @JoinColumn(name = "queue_id"))
     @Column(name = "song_id")
     @OrderColumn(name = "position")
+    @Builder.Default
     private List<Long> songIds = new ArrayList<>();
 
     @Column(nullable = false)

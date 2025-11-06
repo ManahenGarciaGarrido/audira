@@ -35,6 +35,7 @@ public class LibraryItem {
     private LocalDateTime addedAt;
 
     @Column(name = "is_favorite", nullable = false)
+    @Builder.Default
     private Boolean isFavorite = false;
 
     @PrePersist
